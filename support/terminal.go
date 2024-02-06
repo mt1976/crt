@@ -2,10 +2,9 @@ package support
 
 import (
 	"fmt"
-	"os"
+	"sort"
 	"strings"
-
-	"golang.org/x/term"
+	"time"
 )
 
 const chNormal = "┃"
@@ -19,6 +18,7 @@ const underline = "\033[4m"
 const red = "\033[31m"
 
 var header []string
+var smHeader []string
 
 func init() {
 	header = []string{
@@ -28,7 +28,15 @@ func init() {
 		"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
 		"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
 	}
+
+	smHeader = []string{
+		"StartTerm",
+	}
 }
+
+var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
+var defaultBaud = 9600
+var baudRateError = "Invalid Baud Rate"
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
@@ -46,6 +54,8 @@ type Crt struct {
 	width      int
 	height     int
 	firstRow   bool
+	delay      int // delay in milliseconds
+	baud       int
 }
 
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
@@ -59,11 +69,59 @@ func (T *Crt) row() string {
 	return T.lineBreakJunction(displayChar)
 }
 
+// The `Close()` function is a method of the `Crt` struct. It is used to print a closing line on the
+// terminal. It calls the `row()` method of the `Crt` struct to get the formatted closing line string,
+// and then it prints the string using `fmt.Println()`. This creates a visual separation between
+// different sections or blocks of text on the terminal.
+func (T *Crt) Close() {
+	T.Println(T.row())
+}
+
+func (T *Crt) SetDelayInMs(delay int) {
+	T.delay = delay
+}
+
+func (T *Crt) SetDelayInSec(delay interface{}) {
+	if delay.(float64) > 0 {
+		T.delay = int(delay.(float64) * 1000)
+	} else {
+		T.delay = delay.(int) * 1000
+	}
+}
+
+func (T *Crt) SetDelayInMin(delay int) {
+	T.delay = delay * 60000
+}
+
+func (T *Crt) ResetDelay() {
+	T.defaultDelay()
+}
+
+func (T *Crt) defaultDelay() {
+	T.delay = 0
+}
+
+func (T *Crt) Delay() {
+	if T.delay > 0 {
+		time.Sleep(time.Duration(T.delay) * time.Millisecond)
+	}
+}
+
+// Get Delay
+func (T *Crt) GetDelay() int {
+	return T.delay
+}
+
+// Get Delay in seconds
+func (T *Crt) GetDelayInSec() float64 {
+	return float64(T.delay) / 1000
+}
+
 // The `Blank()` function is used to print a blank line on the terminal. It calls the `Format()` method
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (T *Crt) Blank() {
-	fmt.Println(T.Format("", ""))
+	T.Println(T.Format("", ""))
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -71,14 +129,14 @@ func (T *Crt) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (T *Crt) Break() {
-	fmt.Println(T.row())
+	T.Println(T.row())
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints it to the terminal. It uses the `Format` method of the `Crt` struct to format the message
 // with the normal character (`chNormal`). Then, it prints the formatted string using `fmt.Println()`.
 func (T *Crt) Print(msg string) {
-	fmt.Println(T.Format(msg, ""))
+	T.Println(T.Format(msg, ""))
 }
 
 // The `Special` function is a method of the `Crt` struct. It takes a `msg` parameter of type string
@@ -86,7 +144,7 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	fmt.Println(T.Format(msg, chSpecial))
+	T.Println(T.Format(msg, chSpecial))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -115,48 +173,45 @@ func (T *Crt) Format(in string, t string) string {
 	if t != "" {
 		char = t
 	}
+	T.Delay()
 	return fmt.Sprintf("%s %s", char, in)
+}
+
+// clear the terminal screen
+func (T *Crt) Clear() {
+	T.Println("\033[H\033[2J")
+	T.firstRow = true
 }
 
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	fmt.Println(T.row())
-	fmt.Println(T.Format(bold+"MESSAGE: "+reset+msg, ""))
-	fmt.Println(T.lineBreakEnd())
+	T.Println(T.row())
+	T.Println(T.Format(bold+"MESSAGE: "+reset+msg, ""))
+	T.Println(T.lineBreakEnd())
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
 // and `err` of type error.
 func (T *Crt) Error(msg string, err error) {
-	fmt.Println(T.row())
-	fmt.Println(T.Format(T.Bold(red+"ERROR: ")+msg+fmt.Sprintf(" [%v]", err), ""))
-	fmt.Println(T.row())
+	T.Println(T.row())
+	T.Println(T.Format(T.Bold(red+"ERROR: ")+msg+fmt.Sprintf(" [%v]", err), ""))
+	T.Println(T.row())
 }
 
 // The function `NewCrt` initializes a new `Crt` struct with information about the terminal size and
 // whether it is a terminal or not.
 func NewCrt() Crt {
 	x := Crt{}
-	x.isTerminal = false
+	x.isTerminal = true
 	x.width = 0
 	x.height = 0
 	x.firstRow = true
 
-	if term.IsTerminal(0) {
-		//println("in a term")
-		x.isTerminal = true
-	} else {
-		return Crt{width: 0, height: 0, isTerminal: false, firstRow: false}
-	}
-	err := error(nil)
-	fd := int(os.Stdout.Fd())
-	x.width, x.height, err = term.GetSize(fd)
-	if err != nil {
-		//fmt.Printf("%s Error getting terminal size: %s", CHnormal, err)
-		x.Error("Error getting terminal size", err)
-		return Crt{}
-	}
+	x.width = 80
+	x.height = 25
+	x.defaultDelay() // set delay to 0
+	x.defaultBaud()  // set baud to 9600
 
 	return x
 }
@@ -198,7 +253,7 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	fmt.Println(T.row())
+	T.Println(T.row())
 	for _, line := range header {
 		T.Print(line)
 	}
@@ -206,4 +261,33 @@ func (T *Crt) Banner(msg string) {
 	display := fmt.Sprintf("StarTerm - Utilities 1.0 %s", msg)
 	T.Print(display)
 	T.Break()
+}
+
+func (T *Crt) SmBanner(msg string) {
+	T.Println(T.row())
+	for _, line := range smHeader {
+		T.Print(line + " - " + msg)
+	}
+	T.Break()
+}
+
+func (T *Crt) SetBaud(baud int) {
+	if sort.SearchInts(baudRates, baud) == -1 {
+		T.Error(baudRateError, nil)
+		T.defaultBaud()
+		return
+	}
+	T.baud = baud
+}
+
+func (T *Crt) GetBaud() int {
+	return T.baud
+}
+
+func (T *Crt) defaultBaud() {
+	T.baud = defaultBaud
+}
+
+func (T *Crt) Println(msg string) {
+	fmt.Println(msg)
 }
