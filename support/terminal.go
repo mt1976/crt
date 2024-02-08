@@ -5,6 +5,8 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	gT "github.com/buger/goterm"
 )
 
 var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
@@ -143,17 +145,30 @@ func (T *Crt) Special(msg string) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (T *Crt) Input(msg string, ops string) (output string) {
+	gT.MoveCursor(2, 21)
+	gT.Print(T.row())
+	gT.MoveCursor(2, 22)
 	mesg := msg
 	//T.Format(msg, "")
 	if ops != "" {
 		mesg = (T.Format(msg, "") + " (" + T.Bold(ops) + ")")
 	}
 	mesg = mesg + "? "
-	T.Print(mesg)
+	mesg = T.Format(mesg, "")
+	//T.Print(mesg)
+	gT.Print(mesg)
+	gT.Flush()
 	var out string
 	fmt.Scan(&out)
 	output = out
 	return output
+}
+
+func (T *Crt) InputError(msg string) {
+	gT.MoveCursor(2, 23)
+	gT.Print(T.Format(gT.Bold("ERROR : ")+msg, ""))
+	//T.Print(msg + newline)
+	gT.Flush()
 }
 
 func (T *Crt) lineBreakEnd() string {
@@ -181,9 +196,15 @@ func (T *Crt) Format(in string, t string) string {
 
 // clear the terminal screen
 func (T *Crt) Clear() {
-	T.Println("\033[H\033[2J")
+	//goTerminal.Clean()
+	//goTerminal.CursorLineColumn(0, 0)
+	//fmt.Println("Bold")
+	//T.Println("\033[H\033[2J")
 	T.firstRow = true
 	T.currentRow = 0
+	gT.Clear()
+	gT.MoveCursor(2, 1)
+	gT.Flush()
 }
 
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and

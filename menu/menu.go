@@ -61,19 +61,25 @@ func Run(crt *support.Crt) {
 		m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	}
 	action := DisplayMenu(m, crt)
+	y := NewMenu("Sub Menu")
+	for i := range 14 {
+		y.AddMenuItem(i, fmt.Sprintf("Sub Menu Item %v", action))
+	}
+	action = DisplayMenu(y, crt)
 	crt.Println("Final Action: " + action)
 }
 
 func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
+	crt.Clear()
 	m.AddAction("Q") // Add Quit action
 	crt.Header(m.title)
 	for i := range m.menuItems {
 		crt.Println(printmenuItem(crt, m.menuItems[i].menuItemNumber, m.menuItems[i].menuItemTitle))
 		m.AddAction(m.menuItems[i].menuItemNumberString) // Add action for each menu item
 	}
-	extraRows := maxMenuItems - m.noItems
+	extraRows := (maxMenuItems - m.noItems) + 1
 	//log.Println("Extra Rows: ", extraRows)
-	for i := 0; i < extraRows; i++ {
+	for i := 0; i <= extraRows; i++ {
 		crt.Print("\n")
 	}
 	crt.Break()
@@ -82,7 +88,7 @@ func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
 	for !ok {
 		nextAction = crt.Input(m.prompt, "")
 		if len(nextAction) > m.actionMaxLen {
-			crt.ClearCurrentLine()
+			crt.InputError("Invalid action '" + nextAction + "'")
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			continue
 		}
@@ -94,8 +100,9 @@ func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
 			}
 		}
 		if !ok {
-			crt.ClearCurrentLine()
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
+			crt.InputError("Invalid action '" + nextAction + "'")
+
 		}
 	}
 	//spew.Dump(m)
