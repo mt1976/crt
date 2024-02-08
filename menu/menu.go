@@ -53,20 +53,35 @@ func (m *menu) AddAction(validAction string) {
 }
 
 func Run(crt *support.Crt) {
-	crt.Clear()
-	crt.SetDelayInSec(0.25) // Set delay in milliseconds
-	//crt.Header("Main Menu")
-	m := NewMenu(mainMenuTitle)
-	for i := range 11 {
-		m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
+
+	// loop while ok
+	ok := false
+	for !ok {
+
+		crt.Clear()
+		crt.SetDelayInSec(0.25) // Set delay in milliseconds
+		//crt.Header("Main Menu")
+		m := NewMenu(mainMenuTitle)
+		for i := range 11 {
+			m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
+		}
+		action := DisplayMenu(m, crt)
+		switch action {
+		case "Q":
+			crt.Println("Quitting")
+			ok = true
+			continue
+		case "1":
+			y := NewMenu("Sub Menu")
+			for i := range 14 {
+				y.AddMenuItem(i, fmt.Sprintf("Sub Menu Item %v", action))
+			}
+			action = DisplayMenu(y, crt)
+
+		}
 	}
-	action := DisplayMenu(m, crt)
-	y := NewMenu("Sub Menu")
-	for i := range 14 {
-		y.AddMenuItem(i, fmt.Sprintf("Sub Menu Item %v", action))
-	}
-	action = DisplayMenu(y, crt)
-	crt.Println("Final Action: " + action)
+
+	//crt.Println("Final Action: " + action)
 }
 
 func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {

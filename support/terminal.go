@@ -166,7 +166,8 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 
 func (T *Crt) InputError(msg string) {
 	gT.MoveCursor(2, 23)
-	gT.Print(T.Format(gT.Bold("ERROR : ")+msg, ""))
+	gT.Print(
+		T.Format(gT.Color(gT.Bold("ERROR : "), gT.RED)+msg, ""))
 	//T.Print(msg + newline)
 	gT.Flush()
 }
