@@ -32,8 +32,11 @@ func NewMenu(title string) *menu {
 
 func (m *menu) AddMenuItem(menuItemNumber int, menuItemTitle string) {
 	if m.noItems >= maxMenuItems {
-		log.Fatal(m.title + " - Max menu items reached")
+		log.Fatal(m.title + " " + maxMenuItemsError)
 		return
+	}
+	if menuItemTitle != "" {
+		m.AddAction(fmt.Sprintf("%v", menuItemNumber))
 	}
 	mi := menuItem{menuItemNumber, fmt.Sprintf("%2v", menuItemNumber), menuItemTitle}
 	m.menuItems = append(m.menuItems, mi)
@@ -42,7 +45,7 @@ func (m *menu) AddMenuItem(menuItemNumber int, menuItemTitle string) {
 
 func (m *menu) AddAction(validAction string) {
 	if validAction == "" {
-		log.Fatal("Invalid action")
+		log.Fatal(invalidActionError)
 		return
 	}
 	validAction = strings.ReplaceAll(validAction, " ", "")
@@ -62,22 +65,32 @@ func Run(crt *support.Crt) {
 		crt.SetDelayInSec(0.25) // Set delay in milliseconds
 		//crt.Header("Main Menu")
 		m := NewMenu(mainMenuTitle)
-		for i := range 11 {
-			m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
-		}
+		//for i := range 11 {
+		//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
+		//}
+
+		m.AddMenuItem(1, "Test")
+		m.AddMenuItem(2, newsMenuTitle)
+		m.AddMenuItem(3, weatherMenuTitle)
+		m.AddMenuItem(4, "")
+		m.AddMenuItem(5, "")
+		m.AddMenuItem(6, "")
+		m.AddMenuItem(7, remoteSystemsAccessMenuTitle)
+		m.AddMenuItem(8, systemsMaintenanceMenuTitle)
+		m.AddAction("Q")
+
 		action := DisplayMenu(m, crt)
 		switch action {
 		case "Q":
-			crt.Println("Quitting")
+			crt.Println(quittingMessage)
 			ok = true
 			continue
 		case "1":
-			y := NewMenu("Sub Menu")
+			y := NewMenu(subMenuTitle)
 			for i := range 14 {
-				y.AddMenuItem(i, fmt.Sprintf("Sub Menu Item %v", action))
+				y.AddMenuItem(i, fmt.Sprintf(subMenuTitle+" %v", action))
 			}
 			action = DisplayMenu(y, crt)
-
 		}
 	}
 
@@ -89,6 +102,10 @@ func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
 	m.AddAction("Q") // Add Quit action
 	crt.Header(m.title)
 	for i := range m.menuItems {
+		if m.menuItems[i].menuItemTitle == "" {
+			crt.Println("")
+			continue
+		}
 		crt.Println(printmenuItem(crt, m.menuItems[i].menuItemNumber, m.menuItems[i].menuItemTitle))
 		m.AddAction(m.menuItems[i].menuItemNumberString) // Add action for each menu item
 	}
@@ -103,7 +120,7 @@ func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
 	for !ok {
 		nextAction = crt.Input(m.prompt, "")
 		if len(nextAction) > m.actionMaxLen {
-			crt.InputError("Invalid action '" + nextAction + "'")
+			crt.InputError(invalidActionError + "'" + nextAction + "'")
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			continue
 		}
@@ -116,7 +133,7 @@ func DisplayMenu(m *menu, crt *support.Crt) (nextAction string) {
 		}
 		if !ok {
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
-			crt.InputError("Invalid action '" + nextAction + "'")
+			crt.InputError(invalidActionError + " '" + nextAction + "'")
 
 		}
 	}
