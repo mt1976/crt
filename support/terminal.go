@@ -11,7 +11,6 @@ import (
 
 var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
 var defaultBaud = 0
-var newline = "\n"
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
@@ -224,9 +223,9 @@ func (T *Crt) Error(msg string, err error) {
 	T.Println(T.row())
 }
 
-// The function `NewCrt` initializes a new `Crt` struct with information about the terminal size and
+// The function `New` initializes a new `Crt` struct with information about the terminal size and
 // whether it is a terminal or not.
-func NewCrt() Crt {
+func New() Crt {
 	x := Crt{}
 	x.isTerminal = true
 	x.width = 0

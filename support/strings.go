@@ -33,6 +33,8 @@ func init() {
 
 }
 
+var newline = "\n"
+
 func Upcase(s string) string {
 	return strings.ToUpper(s)
 }

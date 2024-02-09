@@ -21,7 +21,7 @@ func main() {
 	config.term_width = 80
 	config.term_height = 20
 	// define a new instance of the Crt
-	crt := terminal.NewCrt()
+	crt := terminal.New()
 	crt.SetTerminalSize(config.term_width, config.term_height)
 	//xx, yy := crt.GetTerminalSize()
 	//crt.Println(fmt.Sprintf("Terminal Size: %d*%d", xx, yy))
