@@ -5,6 +5,8 @@ import (
 	"github.com/mt1976/admin_me/support/menu"
 )
 
+// The function "Story" displays a story link and allows the user to interact with a menu until they
+// choose to quit.
 func Story(crt *support.Crt, storyLink string) {
 	crt.Println("Story: " + storyLink)
 
@@ -18,5 +20,4 @@ func Story(crt *support.Crt, storyLink string) {
 			ok = true
 		}
 	}
-
 }

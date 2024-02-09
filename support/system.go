@@ -33,20 +33,24 @@ func TrimRepeatingCharacters(s string, c string) string {
 	return result
 }
 
+// The function DateString returns the current date in the format "dd/mm/yy".
 func DateString() string {
 	now := time.Now()
 	return fmt.Sprintf("%v", now.Format("02/01/06"))
 }
 
+// The TimeString function returns the current time in the format "15:04:05".
 func TimeString() string {
 	now := time.Now()
 	return fmt.Sprintf("%v", now.Format("15:04:05"))
 }
 
+// The DateTimeString function returns a string that combines the time and date strings.
 func DateTimeString() string {
 	return TimeString() + " " + DateString()
 }
 
+// The RandomIP function generates a random IP address in IPv4 format.
 func RandomIP() string {
 	// Generate a random IP address in ipv4 format
 	//
@@ -67,6 +71,7 @@ func RandomIP() string {
 	return fmt.Sprintf("%v.%v.%v.%v", ip1, ip2, ip3, ip4)
 }
 
+// The RandomMAC function generates a random MAC address in the format of 00:00:00:00:00:00.
 func RandomMAC() string {
 	// Generate a random MAC address in the format of 00:00:00:00:00:00
 	//
@@ -87,6 +92,7 @@ func RandomMAC() string {
 	return fmt.Sprintf("%v:%v:%v:%v:%v:%v", mac1, mac2, mac3, mac4, mac5, mac6)
 }
 
+// The RandomPort function generates a random port number between 1 and 65535.
 func RandomPort() int {
 	// Generate a random port number between 1 and 65535
 	//
@@ -100,6 +106,7 @@ func RandomPort() int {
 	return RandomNumber(1, 65535)
 }
 
+// The RandomNumber function generates a random number within a given range.
 func RandomNumber(min int, max int) int {
 	// Generate a random number between the given range
 	//

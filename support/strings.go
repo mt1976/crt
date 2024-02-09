@@ -21,6 +21,8 @@ const clearline = "\033[2K"
 var header []string
 var smHeader string
 
+// The init function initializes the header and smHeader variables with ASCII art and a string value,
+// respectively.
 func init() {
 	header = []string{
 		"███████ ████████  █████  ██████  ████████ ███████ ██████  ███    ███ ",
@@ -36,6 +38,7 @@ func init() {
 
 var newline = "\n"
 
+// The Upcase function in Go converts a string to uppercase.
 func Upcase(s string) string {
 	return strings.ToUpper(s)
 }

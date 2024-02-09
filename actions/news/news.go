@@ -7,6 +7,8 @@ import (
 	"github.com/mt1976/admin_me/support/menu"
 )
 
+// The Run function displays a menu of news topics and allows the user to select a topic to view the
+// news articles related to that topic.
 func Run(crt *support.Crt) {
 
 	// Home

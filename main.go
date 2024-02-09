@@ -8,6 +8,12 @@ import (
 	terminal "github.com/mt1976/admin_me/support"
 )
 
+// The `config` struct is used to store configuration settings for the program, including terminal
+// width and height.
+// @property {int} term_width - The `term_width` property is used to store the width of the terminal
+// window.
+// @property {int} term_height - The `term_height` property is used to store the height of the terminal
+// window in characters.
 type config struct {
 	// The `config` struct is used to store the configuration settings for the program. It has the
 	// following fields:
@@ -20,33 +26,18 @@ func main() {
 	config := config{}
 	config.term_width = 80
 	config.term_height = 20
+
 	// define a new instance of the Crt
 	crt := terminal.New()
 	crt.SetTerminalSize(config.term_width, config.term_height)
-	//xx, yy := crt.GetTerminalSize()
-	//crt.Println(fmt.Sprintf("Terminal Size: %d*%d", xx, yy))
-
-	// convert the slice to a string, separated by commas
-	//
 
 	start := time.Now()
-
-	// //Get Current Path
-	// path, err := os.Getwd()
-	// if err != nil {
-
-	//crt.Break()
 
 	startup.Run(&crt)
 
 	mainmenu.Run(&crt)
-	//	crt.Shout("Unknown action '" + crt.Bold(commandAction) + "'")
 
 	elapsed := time.Since(start)
 	crt.Shout(crt.Bold("DONE") + " " + elapsed.String())
-	// `elapsed` is a variable of type `time.Duration` that stores
-	// the amount of time that has passed since the `start` time. It
-	// is used to calculate the total time taken to execute the
-	// program
 
 }

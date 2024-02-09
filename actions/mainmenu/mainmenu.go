@@ -8,6 +8,8 @@ import (
 	menu "github.com/mt1976/admin_me/support/menu"
 )
 
+// The Run function displays a main menu and allows the user to navigate through different sub-menus
+// and perform various actions.
 func Run(crt *support.Crt) {
 
 	// loop while ok

@@ -13,6 +13,20 @@ import (
 
 const MaxMenuItems = 15
 
+// The "menu" type represents a menu with a title, menu items, a prompt, and associated actions.
+// @property {string} title - The title property represents the title of the menu.
+// @property {[]menuItem} menuItems - The `menuItems` property is an array of `menuItem` objects. Each
+// `menuItem` object represents an item in the menu and contains information such as the item's title,
+// description, and action.
+// @property {int} noItems - The `noItems` property represents the number of menu items in the menu.
+// @property {string} prompt - The prompt is a string that represents the message or question displayed
+// to the user to prompt them for input or action.
+// @property {[]string} actions - The "actions" property is a slice of strings that represents the
+// available actions or options for the menu. Each string in the slice represents an action that the
+// user can choose from when interacting with the menu.
+// @property {int} actionMaxLen - The property "actionMaxLen" represents the maximum length of the
+// actions in the menu. It is used to determine the width of the menu display, ensuring that all
+// actions are properly aligned.
 type menu struct {
 	title        string
 	menuItems    []menuItem
@@ -22,6 +36,18 @@ type menu struct {
 	actionMaxLen int
 }
 
+// The above type represents a menu item with various properties such as ID, number, title, alternate
+// ID, and date/time.
+// @property {int} ID - An integer representing the unique identifier of the menu item.
+// @property {string} Number - The "Number" property of the menuItem struct is a string that represents
+// the number associated with the menu item.
+// @property {string} Title - The "Title" property of the menuItem struct represents the title or name
+// of the menu item. It is a string type property.
+// @property {string} AlternateID - The AlternateID property is a string that represents an alternate
+// identifier for the menuItem. It can be used as an additional way to identify the menuItem, apart
+// from the ID property.
+// @property {string} DateTime - The DateTime property in the menuItem struct represents the date and
+// time associated with the menu item. It is of type string.
 type menuItem struct {
 	ID          int
 	Number      string
@@ -30,6 +56,7 @@ type menuItem struct {
 	DateTime    string
 }
 
+// The New function creates a new menu with a truncated title and initializes its properties.
 func New(title string) *menu {
 	// truncate title to 25 characters
 	if len(title) > 25 {
@@ -39,6 +66,7 @@ func New(title string) *menu {
 	return &m
 }
 
+// The `Add` function is a method of the `menu` struct. It is used to add a new menu item to the menu.
 func (m *menu) Add(menuItemNumber int, menuItemTitle string, altID string, dateTime string) {
 	if m.noItems >= MaxMenuItems {
 		log.Fatal(m.title + " " + maxMenuItemsError)
@@ -55,6 +83,8 @@ func (m *menu) Add(menuItemNumber int, menuItemTitle string, altID string, dateT
 	m.noItems++
 }
 
+// The `AddAction` method is used to add a valid action to the menu. It takes a `validAction` string as
+// a parameter.
 func (m *menu) AddAction(validAction string) {
 	if validAction == "" {
 		log.Fatal(invalidActionError)
@@ -67,6 +97,8 @@ func (m *menu) AddAction(validAction string) {
 	}
 }
 
+// The `Display` method of the `menu` struct is responsible for displaying the menu to the user and
+// handling user input. Here is a breakdown of what it does:
 func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) {
 	crt.Clear()
 	m.AddAction("Q") // Add Quit action
@@ -116,6 +148,8 @@ func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) 
 	return support.Upcase(nextAction), menuItem{}
 }
 
+// The function "format" takes a pointer to a support.Crt object and a menuItem object, and returns a
+// formatted string containing the menu item's ID, title, and date.
 func format(crt *support.Crt, m menuItem) string {
 	miNumber := fmt.Sprintf(crt.Bold("%2v"), m.ID)
 	//spew.Dump(m)

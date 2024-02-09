@@ -8,6 +8,9 @@ import (
 	"github.com/mt1976/admin_me/support/menu"
 )
 
+// The function "Topic" takes in a CRT object, a topic, and a title as parameters, and then retrieves
+// news items for that topic from an RSS feed, displays them in a menu, and allows the user to select a
+// news item to view.
 func Topic(crt *support.Crt, topic, title string) {
 	crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic

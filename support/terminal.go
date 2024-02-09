@@ -35,6 +35,12 @@ type Crt struct {
 	scr        page
 }
 
+// The "page" type represents a page with a map of rows and columns.
+// @property row - The "row" property is a map that stores the values of each row in the page. The keys
+// of the map are integers representing the row numbers, and the values are strings representing the
+// content of each row.
+// @property {int} cols - The "cols" property represents the number of columns in the page.
+// @property {int} rows - The "rows" property represents the number of rows in the page.
 type page struct {
 	row  map[int]string
 	cols int
@@ -60,19 +66,29 @@ func (T *Crt) Close() {
 	T.PrintIt(T.row())
 }
 
+// The `SetDelayInMs` function is a method of the `Crt` struct. It takes an `int` parameter `delay` and
+// sets the `delay` property of the `Crt` struct to the value of `delay`. This property represents the
+// delay in milliseconds that should be applied before printing each character to the terminal.
 func (T *Crt) SetDelayInMs(delay int) {
 	T.delay = delay
 }
 
+// The `SetTerminalSize` function is a method of the `Crt` struct. It takes two parameters, `width` and
+// `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
 	T.width = width
 	T.height = height
 }
 
+// The `TerminalSize` function is a method of the `Crt` struct. It returns the width and height of the
+// terminal screen. It retrieves the values of the `width` and `height` properties of the `Crt` struct
+// and returns them as integers.
 func (T *Crt) TerminalSize() (width int, height int) {
 	return T.width, T.height
 }
 
+// The `SetDelayInSec` function is a method of the `Crt` struct. It takes a parameter `delay` of type
+// `interface{}`.
 func (T *Crt) SetDelayInSec(delay interface{}) {
 	T.delay = 0
 
@@ -83,18 +99,29 @@ func (T *Crt) SetDelayInSec(delay interface{}) {
 	}
 }
 
+// The `SetDelayInMin` function is a method of the `Crt` struct. It takes an `int` parameter `delay`
+// and sets the `delay` property of the `Crt` struct to the value of `delay` multiplied by 60000. This
+// function is used to set the delay in milliseconds that should be applied before printing each
+// character to the terminal, but it takes the delay in minutes instead of milliseconds.
 func (T *Crt) SetDelayInMin(delay int) {
 	T.delay = delay * 60000
 }
 
+// The above code is defining a method called "ResetDelay" for a struct type "Crt". This method is a
+// member of the "Crt" struct and has a receiver of type "*Crt". Inside the method, it calls another
+// method called "defaultDelay" on the receiver "T".
 func (T *Crt) ResetDelay() {
 	T.defaultDelay()
 }
 
+// The above code is defining a method called "defaultDelay" for a struct type "Crt". This method sets
+// the "delay" field of the struct to 0.
 func (T *Crt) defaultDelay() {
 	T.delay = 0
 }
 
+// The above code is defining a method called "DelayIt" for a struct type "Crt". This method takes no
+// arguments and has no return value.
 func (T *Crt) DelayIt() {
 	if T.delay > 0 {
 		time.Sleep(time.Duration(T.delay) * time.Millisecond)
@@ -102,11 +129,16 @@ func (T *Crt) DelayIt() {
 }
 
 // Get Delay
+// The above code is defining a method called "Delay" for a struct type "Crt". This method returns an
+// integer value, which is the value of the "delay" field of the struct.
 func (T *Crt) Delay() int {
 	return T.delay
 }
 
 // Get Delay in seconds
+// The above code is defining a method called "DelayInSec" for a struct type "Crt". This method returns
+// the delay value of the "Crt" struct in seconds. The delay value is divided by 1000 to convert it
+// from milliseconds to seconds and then returned as a float64.
 func (T *Crt) DelayInSec() float64 {
 	return float64(T.delay) / 1000
 }
