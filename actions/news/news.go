@@ -50,7 +50,7 @@ func Run(crt *support.Crt) {
 			continue
 		}
 
-		if menu.IsInt(action) {
+		if support.IsInt(action) {
 			Topic(crt, nextLevel.AlternateID, nextLevel.Title)
 			ok = false
 			action = ""
