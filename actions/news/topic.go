@@ -34,7 +34,7 @@ func Topic(crt *support.Crt, topic, title string) {
 			ok = true
 			continue
 		}
-		if menu.IsInt(action) {
+		if support.IsInt(action) {
 			Story(crt, mi.AlternateID)
 			ok = false
 			action = ""
