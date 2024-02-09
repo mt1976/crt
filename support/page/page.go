@@ -5,7 +5,6 @@ import (
 	"log"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/mt1976/admin_me/support"
 )
@@ -105,7 +104,7 @@ func (m *page) DisplayPage(crt *support.Crt) (nextAction string, selected pageRo
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if IsInt(nextAction) {
+	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
 		return upcase(nextAction), m.pageRows[pos]
 	}
@@ -119,13 +118,4 @@ func upcase(s string) string {
 
 func formatRow(crt *support.Crt, m pageRow) string {
 	return m.Content[:50]
-}
-
-func IsInt(s string) bool {
-	for _, c := range s {
-		if !unicode.IsDigit(c) {
-			return false
-		}
-	}
-	return true
 }

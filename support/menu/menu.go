@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"unicode"
 
 	"github.com/mt1976/admin_me/support"
 	"github.com/xeonx/timeago"
@@ -109,7 +108,7 @@ func (m *menu) DisplayMenu(crt *support.Crt) (nextAction string, selected menuIt
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if IsInt(nextAction) {
+	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
 		return upcase(nextAction), m.menuItems[pos]
 	}
@@ -139,13 +138,4 @@ func printmenuItem(crt *support.Crt, m menuItem) string {
 	miDate := m.DateTime
 	miString := fmt.Sprintf(miNumber + ") " + miTitle + " " + miDate)
 	return miString
-}
-
-func IsInt(s string) bool {
-	for _, c := range s {
-		if !unicode.IsDigit(c) {
-			return false
-		}
-	}
-	return true
 }
