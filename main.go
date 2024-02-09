@@ -3,7 +3,7 @@ package main
 import (
 	"time"
 
-	menu "github.com/mt1976/admin_me/menu"
+	"github.com/mt1976/admin_me/actions/mainmenu"
 	startup "github.com/mt1976/admin_me/start"
 	terminal "github.com/mt1976/admin_me/support"
 )
@@ -39,7 +39,7 @@ func main() {
 
 	startup.Run(&crt)
 
-	menu.Run(&crt)
+	mainmenu.Run(&crt)
 	//	crt.Shout("Unknown action '" + crt.Bold(commandAction) + "'")
 
 	elapsed := time.Since(start)
