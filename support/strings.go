@@ -5,9 +5,10 @@ import "strings"
 const chNormal = "┃"
 const chSpecial = "┣"
 const chStart = "┏"
-const chEnd = "┛"
-const chJunction = "┣"
-const chEndFirst = "┓"
+
+// const chEnd = "┛"
+// const chJunction = "┣"
+// const chEndFirst = "┓"
 const chBar = "━"
 
 // const chClose = "┗"

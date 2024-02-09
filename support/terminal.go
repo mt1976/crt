@@ -75,7 +75,7 @@ func (T *Crt) TerminalSize() (width int, height int) {
 
 func (T *Crt) SetDelayInSec(delay interface{}) {
 	T.delay = 0
-	return
+
 	if delay.(float64) > 0 {
 		T.delay = int(delay.(float64) * 1000)
 	} else {

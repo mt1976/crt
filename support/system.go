@@ -2,18 +2,17 @@ package support
 
 import (
 	"fmt"
-	"math"
 	"math/rand"
 	"time"
 )
 
 // The function roundFloatToTwo rounds a float64 number to two decimal places.
-func roundFloatToTwo(input float64) float64 {
-	// round float64 to 2 decimal places
-	rtnVal := math.Round(input*100) / 100
+// func roundFloatToTwo(input float64) float64 {
+// 	// round float64 to 2 decimal places
+// 	rtnVal := math.Round(input*100) / 100
 
-	return rtnVal
-}
+// 	return rtnVal
+// }
 
 // The function `TrimRepeatingCharacters` takes a string `s` and a character `c` as input, and returns
 // a new string with all consecutive occurrences of `c` trimmed down to a single occurrence.
