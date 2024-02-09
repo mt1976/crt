@@ -16,18 +16,18 @@ func Topic(crt *support.Crt, topic, title string) {
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(topic)
 
-	t := menu.NewMenu(feed.Title)
+	t := menu.New(feed.Title)
 	noNewsItems := len(feed.Items)
 	if noNewsItems > menu.MaxMenuItems {
 		noNewsItems = menu.MaxMenuItems
 	}
 	for i := range noNewsItems {
 		log.Println("Adding: ", feed.Items[i].Title, i)
-		t.AddMenuItem(i, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
+		t.Add(i, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
 	}
 	ok := false
 	for !ok {
-		action, mi := t.DisplayMenu(crt)
+		action, mi := t.Display(crt)
 
 		if action == "Q" {
 			crt.Println("Quitting")

@@ -26,7 +26,7 @@ type pageRow struct {
 	Content string
 }
 
-func NewPage(title string) *page {
+func New(title string) *page {
 	// truncate title to 25 characters
 	if len(title) > 25 {
 		title = title[:25] + "..."
@@ -35,7 +35,7 @@ func NewPage(title string) *page {
 	return &m
 }
 
-func (m *page) AddPageRow(pageRowNumber int, rowContent string, altID string, dateTime string) {
+func (m *page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
 	if m.noRows >= MaxPageRows {
 		log.Fatal(m.title + " " + maxPageRowsError)
 		return
@@ -63,7 +63,7 @@ func (m *page) AddAction(validAction string) {
 	}
 }
 
-func (m *page) DisplayPage(crt *support.Crt) (nextAction string, selected pageRow) {
+func (m *page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	m.AddAction("Q") // Add Quit action
 	crt.Header(m.title)
@@ -72,7 +72,7 @@ func (m *page) DisplayPage(crt *support.Crt) (nextAction string, selected pageRo
 			crt.Println("")
 			continue
 		}
-		crt.Println(formatRow(crt, m.pageRows[i]))
+		crt.Println(format(crt, m.pageRows[i]))
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
 	extraRows := (MaxPageRows - m.noRows) + 1
@@ -92,7 +92,7 @@ func (m *page) DisplayPage(crt *support.Crt) (nextAction string, selected pageRo
 		}
 
 		for i := range m.actions {
-			if upcase(nextAction) == upcase(m.actions[i]) {
+			if support.Upcase(nextAction) == support.Upcase(m.actions[i]) {
 				ok = true
 				break
 			}
@@ -106,16 +106,12 @@ func (m *page) DisplayPage(crt *support.Crt) (nextAction string, selected pageRo
 	// if nextAction is a numnber, find the menu item
 	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return upcase(nextAction), m.pageRows[pos]
+		return support.Upcase(nextAction), m.pageRows[pos]
 	}
 	//spew.Dump(m)
-	return upcase(nextAction), pageRow{}
+	return support.Upcase(nextAction), pageRow{}
 }
 
-func upcase(s string) string {
-	return strings.ToUpper(s)
-}
-
-func formatRow(crt *support.Crt, m pageRow) string {
+func format(crt *support.Crt, m pageRow) string {
 	return m.Content[:50]
 }

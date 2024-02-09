@@ -8,12 +8,12 @@ import (
 func Story(crt *support.Crt, storyLink string) {
 	crt.Println("Story: " + storyLink)
 
-	s := menu.NewMenu("Story")
-	s.AddMenuItem(1, storyLink, storyLink, "")
+	s := menu.New("Story")
+	s.Add(1, storyLink, storyLink, "")
 	s.AddAction("Q")
 	ok := false
 	for !ok {
-		x, _ := s.DisplayMenu(crt)
+		x, _ := s.Display(crt)
 		if x == "Q" {
 			ok = true
 		}

@@ -1,5 +1,7 @@
 package support
 
+import "strings"
+
 const chNormal = "┃"
 const chSpecial = "┣"
 const chStart = "┏"
@@ -29,4 +31,8 @@ func init() {
 
 	smHeader = "StarTerm"
 
+}
+
+func Upcase(s string) string {
+	return strings.ToUpper(s)
 }

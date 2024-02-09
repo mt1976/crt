@@ -30,7 +30,7 @@ type menuItem struct {
 	DateTime    string
 }
 
-func NewMenu(title string) *menu {
+func New(title string) *menu {
 	// truncate title to 25 characters
 	if len(title) > 25 {
 		title = title[:25] + "..."
@@ -39,7 +39,7 @@ func NewMenu(title string) *menu {
 	return &m
 }
 
-func (m *menu) AddMenuItem(menuItemNumber int, menuItemTitle string, altID string, dateTime string) {
+func (m *menu) Add(menuItemNumber int, menuItemTitle string, altID string, dateTime string) {
 	if m.noItems >= MaxMenuItems {
 		log.Fatal(m.title + " " + maxMenuItemsError)
 		return
@@ -67,7 +67,7 @@ func (m *menu) AddAction(validAction string) {
 	}
 }
 
-func (m *menu) DisplayMenu(crt *support.Crt) (nextAction string, selected menuItem) {
+func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) {
 	crt.Clear()
 	m.AddAction("Q") // Add Quit action
 	crt.Header(m.title)
@@ -76,7 +76,7 @@ func (m *menu) DisplayMenu(crt *support.Crt) (nextAction string, selected menuIt
 			crt.Println("")
 			continue
 		}
-		crt.Println(printmenuItem(crt, m.menuItems[i]))
+		crt.Println(format(crt, m.menuItems[i]))
 		m.AddAction(m.menuItems[i].Number) // Add action for each menu item
 	}
 	extraRows := (MaxMenuItems - m.noItems) + 1
@@ -96,7 +96,7 @@ func (m *menu) DisplayMenu(crt *support.Crt) (nextAction string, selected menuIt
 		}
 
 		for i := range m.actions {
-			if upcase(nextAction) == upcase(m.actions[i]) {
+			if support.Upcase(nextAction) == support.Upcase(m.actions[i]) {
 				ok = true
 				break
 			}
@@ -110,17 +110,13 @@ func (m *menu) DisplayMenu(crt *support.Crt) (nextAction string, selected menuIt
 	// if nextAction is a numnber, find the menu item
 	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return upcase(nextAction), m.menuItems[pos]
+		return support.Upcase(nextAction), m.menuItems[pos]
 	}
 	//spew.Dump(m)
-	return upcase(nextAction), menuItem{}
+	return support.Upcase(nextAction), menuItem{}
 }
 
-func upcase(s string) string {
-	return strings.ToUpper(s)
-}
-
-func printmenuItem(crt *support.Crt, m menuItem) string {
+func format(crt *support.Crt, m menuItem) string {
 	miNumber := fmt.Sprintf(crt.Bold("%2v"), m.ID)
 	//spew.Dump(m)
 	// Example time Thu, 25 Jan 2024 09:56:00 +0000

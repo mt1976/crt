@@ -22,21 +22,21 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := menu.NewMenu("SKY News")
-	m.AddMenuItem(1, "Home", "https://feeds.skynews.com/feeds/rss/home.xml", "")
-	m.AddMenuItem(2, "UK", "https://feeds.skynews.com/feeds/rss/uk.xml", "")
-	m.AddMenuItem(3, "World", "https://feeds.skynews.com/feeds/rss/world.xml", "")
-	m.AddMenuItem(4, "US", "https://feeds.skynews.com/feeds/rss/us.xml", "")
-	m.AddMenuItem(5, "Business", "https://feeds.skynews.com/feeds/rss/business.xml", "")
-	m.AddMenuItem(6, "Politics", "https://feeds.skynews.com/feeds/rss/politics.xml", "")
-	m.AddMenuItem(7, "Technology", "https://feeds.skynews.com/feeds/rss/technology.xml", "")
-	m.AddMenuItem(8, "Entertainment", "https://feeds.skynews.com/feeds/rss/entertainment.xml", "")
-	m.AddMenuItem(9, "Strange News", "https://feeds.skynews.com/feeds/rss/strange.xml", "")
+	m := menu.New("SKY News")
+	m.Add(1, "Home", "https://feeds.skynews.com/feeds/rss/home.xml", "")
+	m.Add(2, "UK", "https://feeds.skynews.com/feeds/rss/uk.xml", "")
+	m.Add(3, "World", "https://feeds.skynews.com/feeds/rss/world.xml", "")
+	m.Add(4, "US", "https://feeds.skynews.com/feeds/rss/us.xml", "")
+	m.Add(5, "Business", "https://feeds.skynews.com/feeds/rss/business.xml", "")
+	m.Add(6, "Politics", "https://feeds.skynews.com/feeds/rss/politics.xml", "")
+	m.Add(7, "Technology", "https://feeds.skynews.com/feeds/rss/technology.xml", "")
+	m.Add(8, "Entertainment", "https://feeds.skynews.com/feeds/rss/entertainment.xml", "")
+	m.Add(9, "Strange News", "https://feeds.skynews.com/feeds/rss/strange.xml", "")
 	m.AddAction("Q")
 
 	ok := false
 	for !ok {
-		action, nextLevel := m.DisplayMenu(crt)
+		action, nextLevel := m.Display(crt)
 
 		log.Println("Action: ", action)
 		log.Println("Next Level: ", nextLevel)
