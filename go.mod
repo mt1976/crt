@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/buger/goterm v1.0.4
+	github.com/davecgh/go-spew v1.1.1
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/xeonx/timeago v1.0.0-rc5
 )

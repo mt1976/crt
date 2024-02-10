@@ -8,10 +8,10 @@ import (
 
 func Run(crt *support.Crt) {
 	crt.Clear()
-	crt.SetDelayInSec(0.25) // Set delay in milliseconds
+	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	crt.Banner("Starting...")
 	//crt.Print(fmt.Sprintf("Delay in seconds: %v", crt.GetDelayInSec()))
-	crt.SetDelayInSec(0.5) // Set delay in milliseconds
+	//crt.SetDelayInSec(0.5) // Set delay in milliseconds
 	crt.Print("Starting Terminal...")
 	// sleep 2
 	// echo "  Self Testing...";

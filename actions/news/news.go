@@ -22,7 +22,7 @@ func Run(crt *support.Crt) {
 	// Strange News
 
 	crt.Clear()
-	crt.SetDelayInSec(0.25) // Set delay in milliseconds
+	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
 	m := menu.New("SKY News")
 	m.Add(1, "Home", "https://feeds.skynews.com/feeds/rss/home.xml", "")

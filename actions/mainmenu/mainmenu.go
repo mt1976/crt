@@ -17,7 +17,7 @@ func Run(crt *support.Crt) {
 	for !ok {
 
 		crt.Clear()
-		crt.SetDelayInSec(0.25) // Set delay in milliseconds
+		//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 		//crt.Header("Main Menu")
 		m := menu.New(mainMenuTitle)
 		//for i := range 11 {
@@ -45,7 +45,7 @@ func Run(crt *support.Crt) {
 			for i := range 14 {
 				y.Add(i, fmt.Sprintf(subMenuTitle+" %v", action), "", "")
 			}
-			action, _ = y.Display(crt)
+			//action, _ = y.Display(crt)
 		case "2":
 			news.Run(crt)
 		}
