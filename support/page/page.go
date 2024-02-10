@@ -1,7 +1,6 @@
 package menu
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -28,13 +27,14 @@ const MaxPageRows = 15
 // @property {int} noPages - The "noPages" property represents the total number of pages in the page
 // structure.
 type page struct {
-	title        string
-	pageRows     []pageRow
-	noRows       int
-	prompt       string
-	actions      []string
-	actionMaxLen int
-	noPages      int
+	title             string
+	pageRows          []pageRow
+	noRows            int
+	prompt            string
+	actions           []string
+	actionMaxLen      int
+	noPages           int
+	CurrentPageNumber int
 }
 
 // The type "pageRow" represents a row of data for a page, with an ID and content.
@@ -42,8 +42,9 @@ type page struct {
 // @property {string} Content - The "Content" property of the "pageRow" struct is a string that
 // represents the content of a page row.
 type pageRow struct {
-	ID      int
-	Content string
+	ID         int
+	Content    string
+	PageNumber int
 }
 
 // The New function creates a new page with a truncated title and initializes other properties.
@@ -52,7 +53,10 @@ func New(title string) *page {
 	if len(title) > 25 {
 		title = title[:25] + "..."
 	}
-	m := page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString}
+	m := page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, CurrentPageNumber: 1}
+	m.AddAction("Q") // Add Quit action
+	m.AddAction("F") // Add Next action
+	m.AddAction("B") // Add Previous action
 	return &m
 }
 
@@ -60,16 +64,15 @@ func New(title string) *page {
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (m *page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
 	if m.noRows >= MaxPageRows {
-		log.Fatal(m.title + " " + maxPageRowsError)
-		return
+		m.noPages++
 	}
 	if len(rowContent) > 50 {
 		rowContent = rowContent[:50] + "..."
 	}
-	if rowContent != "" {
-		m.AddAction(fmt.Sprintf("%v", pageRowNumber))
-	}
-	mi := pageRow{pageRowNumber, rowContent}
+	// if rowContent != "" {
+	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
+	// }
+	mi := pageRow{pageRowNumber, rowContent, m.noPages + 1}
 	m.pageRows = append(m.pageRows, mi)
 	m.noRows++
 }
