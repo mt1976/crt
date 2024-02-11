@@ -1,3 +1,8 @@
+Stupid old fashioned menu thingy
+
+Add F and b functions as functions that can be called by page 
+
+
 # admin_me
 
 Usage of admin_me:
