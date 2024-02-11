@@ -18,6 +18,8 @@ const underline = "\033[4m"
 const red = "\033[31m"
 const clearline = "\033[2K"
 
+const errorDelay = 7.0
+
 var header []string
 var smHeader string
 
@@ -39,6 +41,7 @@ func init() {
 var newline = "\n"
 
 // The Upcase function in Go converts a string to uppercase.
+// Upcase converts a string to uppercase.
 func Upcase(s string) string {
 	return strings.ToUpper(s)
 }

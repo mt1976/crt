@@ -32,7 +32,7 @@ func Topic(crt *support.Crt, topic, title string) {
 	for !ok {
 		action, mi := t.Display(crt)
 
-		if action == "Q" {
+		if action == menu.Quit {
 			crt.Println("Quitting")
 			ok = true
 			continue

@@ -1,7 +1,7 @@
 package news
 
 import (
-	"github.com/davecgh/go-spew/spew"
+	"github.com/gocolly/colly"
 	"github.com/mt1976/admin_me/support"
 	page "github.com/mt1976/admin_me/support/page"
 )
@@ -19,48 +19,61 @@ func Story(crt *support.Crt, storyLink string) {
 	ok := false
 	for !ok {
 
-		spew.Dump(crt)
-		spew.Dump(storyLink)
-		x, _ := s.Display(crt, 1)
+		//spew.Dump(crt)
+		//spew.Dump(storyLink)
+		x, _ := s.Display(crt)
 
-		if x == "Q" {
+		if x == page.Quit {
 			ok = true
 		}
+		if x == page.Forward {
+			s.NextPage(crt)
+		}
+		if x == page.Back {
+			s.PreviousPage(crt)
+		}
+
 	}
 }
 
+// buildPage creates a new page with the given title and adds a link to the given story to the page.
+// It uses the colly library to fetch the story content and extract the title.
 func buildPage(crt *support.Crt, storyLink string) *page.Page {
+	// Get html from storyLink
+	// Parse html for story
+	// Create page with story
+	// Return page
 
-	//Get html from storyLink
-	//Parse html for story
-	//Create page with story
-	//Return page
-	//c := colly.NewCollector()
+	// Create a new collector
+	c := colly.NewCollector()
 
-	pageTitle := ""
-	pageContent := page.Page{}
-	//rowNumber := 1
+	// Store the page title
+	var pageTitle string
+
 	// Find and visit all links
-	// c.OnHTML("title", func(e *colly.HTMLElement) {
-	// 	pageTitle = e.Text
-	// })
+	c.OnHTML("title", func(e *colly.HTMLElement) {
+		pageTitle = e.Text
+	})
 
-	// c.OnHTML("p", func(e *colly.HTMLElement) {
-	// 	rowNumber++
-	// 	pageContent.Add(rowNumber, e.Text, "", "")
-	// })
-	pageTitle = "Test"
-	// c.Visit(storyLink)
-	for i := 1; i <= 30; i++ {
-		pageContent.Add(i, "This is a test", "", "")
-	}
+	// Store the story content
+	var storyContent []string
 
+	// Parse the story content
+	c.OnHTML("p", func(e *colly.HTMLElement) {
+		storyContent = append(storyContent, e.Text)
+	})
+
+	// Visit the story link
+	c.Visit(storyLink)
+
+	// Create a new page with the title
 	p := page.New(pageTitle)
 
-	spew.Dump(pageTitle)
-	spew.Dump(pageContent)
-	crt.SetDelayInMin(1)
-	crt.DelayIt()
-	p.Add(1, storyLink, storyLink, "")
+	// Add the story content to the page
+	for i, content := range storyContent {
+		p.Add(i+1, content, "", "")
+	}
+
+	// Return the page
 	return p
 }

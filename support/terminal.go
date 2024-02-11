@@ -195,18 +195,45 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 	return output
 }
 
+// The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
 func (T *Crt) InputError(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
 		T.Format(gT.Color(gT.Bold("ERROR : "), gT.RED)+msg, ""))
 	//T.Print(msg + newline)
 	gT.Flush()
+	oldDelay := T.Delay()
+	T.SetDelayInSec(errorDelay)
+	T.DelayIt()
+	T.SetDelayInMs(oldDelay)
+
 }
 
+// The `InputPageInfo` function is a method of the `Crt` struct. It is used to print information about the current page and total number of pages to the terminal.
+//
+// Parameters:
+// page: The current page number.
+// ofPages: The total number of pages.
+//
+// Returns:
+// None.
+func (T *Crt) InputPageInfo(page, ofPages int) {
+	msg := fmt.Sprintf("Page %v of %v", page, ofPages)
+	lmsg := len(msg)
+	gT.MoveCursor(T.width-lmsg-1, 22)
+	//gT.MoveCursor(2, 23)
+	gT.Print(
+		T.Format(gT.Color(msg, gT.YELLOW), ""))
+	//T.Print(msg + newline)
+	gT.Flush()
+}
+
+// lineBreakEnd returns a string that represents a line break with the end character.
 func (T *Crt) lineBreakEnd() string {
 	return T.lineBreakJunction("┗")
 }
 
+// lineBreakJunction returns a string that represents a line break with the end character.
 func (T *Crt) lineBreakJunction(displayChar string) string {
 	//endChar := chEnd
 	//if T.currentRow == 0 {
@@ -276,6 +303,7 @@ func New() Crt {
 	return x
 }
 
+// NewPage initializes a new page with the specified number of columns and rows.
 func NewPage(cols, rows int) page {
 	p := page{}
 	p.cols = cols
@@ -301,6 +329,15 @@ func (T *Crt) Underline(msg string) string {
 	return fmt.Sprintf("%s%s%s", underline, msg, reset)
 }
 
+// Spool prints the contents of a byte slice to the terminal.
+//
+// The byte slice is split into lines by the newline character (\n). For each line, the function
+// determines whether the line is empty. If the line is not empty, it is prepended with "  " (two
+// spaces) and printed to the terminal.
+//
+// If the byte slice is empty, the function returns without printing anything.
+//
+// The function also prints a blank line after all lines have been printed.
 func (T *Crt) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
 	//create an slice of strings, split by newline
@@ -331,6 +368,8 @@ func (T *Crt) Banner(msg string) {
 	T.Break()
 }
 
+// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
+// message to the console.
 func (T *Crt) Header(msg string) {
 	T.PrintIt(T.row() + newline)
 	var line map[int]string = make(map[int]string)
@@ -362,6 +401,9 @@ func (T *Crt) Header(msg string) {
 	T.Break()
 }
 
+// SetBaud sets the baud rate for the CRT.
+//
+// If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(baudRates, baud) == -1 {
 		T.Error(BaudRateError, nil)
@@ -371,14 +413,25 @@ func (T *Crt) SetBaud(baud int) {
 	T.baud = baud
 }
 
+// Baud returns the current baud rate of the CRT.
 func (T *Crt) Baud() int {
 	return T.baud
 }
 
+// SetBaud sets the baud rate for the CRT.
+//
+// If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) defaultBaud() {
 	T.baud = defaultBaud
 }
 
+// PrintIt prints a message to the terminal.
+//
+// If the CRT's baud rate is set to 0, the function prints the message without applying any delays or formatting.
+// If the baud rate is non-zero, the function prints the message character by character, with a delay of 1000000 microseconds (1 millisecond) between each character.
+// The function also prints the current row number at the end of the message.
+//
+// The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) PrintIt(msg string) {
 	T.currentRow++
 	rowString := fmt.Sprintf("%v", T.currentRow-1)
@@ -396,26 +449,38 @@ func (T *Crt) PrintIt(msg string) {
 	}
 }
 
+// Get the height of the terminal
 func (T *Crt) Height() int {
 	return T.height
 }
 
+// Println prints a message to the terminal and adds a new line.
+//
+// If the CRT's baud rate is set to 0, the function prints the message without applying any delays or formatting.
+// If the baud rate is non-zero, the function prints the message character by character, with a delay of 1000000 microseconds (1 millisecond) between each character.
+// The function also prints the current row number at the end of the message.
+//
+// The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) Println(msg string) {
 	T.Print(msg + "\n")
 }
 
+// Get the width of the terminal
 func (T *Crt) Width() int {
 	return T.width
 }
 
+// Get the current row of the terminal
 func (T *Crt) CurrentRow() int {
 	return T.currentRow
 }
 
+// NoBaudRate returns true if the CRT's baud rate is set to 0, false otherwise.
 func (T *Crt) NoBaudRate() bool {
 	return T.baud == 0
 }
 
+// ClearCurrentLine clears the current line in the terminal
 func (T *Crt) ClearCurrentLine() {
 	fmt.Print(clearline)
 }

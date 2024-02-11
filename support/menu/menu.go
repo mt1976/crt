@@ -101,7 +101,7 @@ func (m *menu) AddAction(validAction string) {
 // handling user input. Here is a breakdown of what it does:
 func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) {
 	crt.Clear()
-	m.AddAction("Q") // Add Quit action
+	m.AddAction(Quit) // Add Quit action
 	crt.Header(m.title)
 	for i := range m.menuItems {
 		if m.menuItems[i].Title == "" {

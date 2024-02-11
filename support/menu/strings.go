@@ -13,3 +13,4 @@ const maxMenuItemsError = "Max menu items reached"
 
 const quittingMessage = "Quitting"
 const subMenuTitle = "Sub Menu"
+const Quit string = "Q"

@@ -6,37 +6,67 @@ import (
 	"github.com/mt1976/admin_me/support"
 )
 
+// Run initializes the terminal and runs the main loop.
 func Run(crt *support.Crt) {
+	// Clear the terminal screen.
 	crt.Clear()
-	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
+
+	// Display the banner.
 	crt.Banner("Starting...")
+
+	// Print a message with the current delay value.
 	//crt.Print(fmt.Sprintf("Delay in seconds: %v", crt.GetDelayInSec()))
-	//crt.SetDelayInSec(0.5) // Set delay in milliseconds
+
+	// Set the delay to 0.5 seconds.
+	//crt.SetDelayInSec(0.5)
+
+	// Print a message.
 	crt.Print("Starting Terminal...")
-	// sleep 2
-	// echo "  Self Testing...";
+
+	// Sleep for 2 seconds.
+	// Sleep for 250 milliseconds.
+	//crt.Sleep(250)
+
+	// Print a message.
 	crt.Print("Self Testing...")
+
+	// Print the current date and time.
 	crt.Print("Current Date: " + support.DateString())
 	crt.Print("Current Time: " + support.TimeString())
-	// sleep 2
-	// echo "  Please wait...";
+
+	// Sleep for 2 seconds.
+	// Sleep for 500 milliseconds.
+	//crt.Sleep(500)
+
+	// Print a message.
 	crt.Print("Please wait...")
-	msg := ""
+
+	// Check if the terminal has a baud rate set.
 	if !crt.NoBaudRate() {
-		msg = fmt.Sprintf("Baud Rate Set to %v kbps", crt.Baud())
+		// Print a message with the current baud rate.
+		msg := fmt.Sprintf("Baud Rate Set to %v kbps", crt.Baud())
 		crt.Print(msg)
 	}
-	// sleep 2
-	// echo "  Connecting...";
+
+	// Sleep for 2 seconds.
+	// Sleep for 500 milliseconds.
+	//crt.Sleep(500)
+
+	// Print a message.
+	crt.Print("Connecting...")
+
+	// Generate a random IP address and port number.
 	ip := support.RandomIP()
 	port := support.RandomPort()
-	msg = fmt.Sprintf("Dialing... %v:%v", ip, port)
-	crt.Print(msg)
-	// sleep 2
-	// echo "  Connected.";
-	crt.Print("Connected.")
-	//crt.Break()
-	//crt.Clear()
-	//crt.Close()
 
+	// Print a message with the IP address and port number.
+	msg := fmt.Sprintf("Dialing... %v:%v", ip, port)
+	crt.Print(msg)
+
+	// Sleep for 2 seconds.
+	// Sleep for 500 milliseconds.
+	//crt.DelayIt(500)
+
+	// Print a message.
+	crt.Print("Connected.")
 }

@@ -8,9 +8,9 @@ import (
 	"github.com/mt1976/admin_me/support"
 )
 
-const MaxPageRows = 15
-const RowLength = 999
-const TitleLength = 25
+const MaxPageRows int = 15
+const RowLength int = 999
+const TitleLength int = 25
 
 // The "Page" type represents a Page with a title, rows of data, a prompt, a list of actions, and
 // information about the number of rows and pages.
@@ -57,9 +57,9 @@ func New(title string) *Page {
 		title = title[:TitleLength] + "..."
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, CurrentPageNumber: 1, counter: 0}
-	m.AddAction("Q") // Add Quit action
-	m.AddAction("F") // Add Next action
-	m.AddAction("B") // Add Previous action
+	m.AddAction(Quit)    // Add Quit action
+	m.AddAction(Forward) // Add Next action
+	m.AddAction(Back)    // Add Previous action
 	return &m
 }
 
@@ -98,24 +98,33 @@ func (m *Page) AddAction(validAction string) {
 
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
-func (m *Page) Display(crt *support.Crt, pageNumber int) (nextAction string, selected pageRow) {
+func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
-	m.AddAction("Q") // Add Quit action
+	rowsDisplayed := 0
+	m.AddAction(Quit) // Add Quit action
 	crt.Header(m.title)
 	for i := range m.pageRows {
-		if m.pageRows[i].Content == "" {
-			crt.Println("")
-			continue
+		if i <= MaxPageRows {
+			if m.CurrentPageNumber == m.pageRows[i].PageNumber {
+				rowsDisplayed++
+				if m.pageRows[i].Content == "" {
+					crt.Println("")
+					continue
+				}
+				crt.Println(format(crt, m.pageRows[i]))
+			}
 		}
-		crt.Println(format(crt, m.pageRows[i]))
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
-	extraRows := (MaxPageRows - m.noRows) + 1
+	extraRows := (MaxPageRows - rowsDisplayed) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	for i := 0; i <= extraRows; i++ {
-		crt.Print("\n")
+		crt.Print(newline)
 	}
 	crt.Break()
+	//spew.Dump(m)
+	//spew.Dump(crt)
+	crt.InputPageInfo(m.CurrentPageNumber, m.noPages)
 	//crt.Print(m.prompt)
 	ok := false
 	for !ok {
@@ -148,6 +157,27 @@ func (m *Page) Display(crt *support.Crt, pageNumber int) (nextAction string, sel
 }
 
 // The format function returns the first 50 characters of the content in a pageRow object.
+// format returns the first 50 characters of the content in a pageRow object.
 func format(crt *support.Crt, m pageRow) string {
-	return m.Content[:RowLength]
+	return m.Content
+}
+
+// NextPage moves to the next page.
+// If the current page is the last page, it returns an error.
+func (m *Page) NextPage(crt *support.Crt) {
+	if m.CurrentPageNumber == m.noPages {
+		crt.InputError(noMorePagesError)
+		return
+	}
+	m.CurrentPageNumber++
+}
+
+// PreviousPage moves to the previous page.
+// If the current page is the first page, it returns an error.
+func (m *Page) PreviousPage(crt *support.Crt) {
+	if m.CurrentPageNumber == 1 {
+		crt.InputError(noMorePagesError)
+		return
+	}
+	m.CurrentPageNumber--
 }
