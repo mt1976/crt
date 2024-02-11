@@ -9,24 +9,26 @@ import (
 )
 
 const MaxPageRows = 15
+const RowLength = 999
+const TitleLength = 25
 
-// The "page" type represents a page with a title, rows of data, a prompt, a list of actions, and
+// The "Page" type represents a Page with a title, rows of data, a prompt, a list of actions, and
 // information about the number of rows and pages.
-// @property {string} title - The title property represents the title of the page.
+// @property {string} title - The title property represents the title of the Page.
 // @property {[]pageRow} pageRows - The `pageRows` property is a slice of `pageRow` objects. It
-// represents the rows of content on the page.
-// @property {int} noRows - The `noRows` property represents the number of rows in the page. It
-// indicates how many rows of data can be displayed on a single page.
+// represents the rows of content on the Page.
+// @property {int} noRows - The `noRows` property represents the number of rows in the Page. It
+// indicates how many rows of data can be displayed on a single Page.
 // @property {string} prompt - The prompt is a string that represents the message or question displayed
 // to the user to prompt them for input or action.
 // @property {[]string} actions - The "actions" property is a slice of strings that represents the
-// available actions for the page. Each string in the slice represents an action that the user can take
-// on the page.
+// available actions for the Page. Each string in the slice represents an action that the user can take
+// on the Page.
 // @property {int} actionMaxLen - The property "actionMaxLen" represents the maximum length of the
 // actions in the "actions" slice.
-// @property {int} noPages - The "noPages" property represents the total number of pages in the page
+// @property {int} noPages - The "noPages" property represents the total number of pages in the Page
 // structure.
-type page struct {
+type Page struct {
 	title             string
 	pageRows          []pageRow
 	noRows            int
@@ -35,6 +37,7 @@ type page struct {
 	actionMaxLen      int
 	noPages           int
 	CurrentPageNumber int
+	counter           int
 }
 
 // The type "pageRow" represents a row of data for a page, with an ID and content.
@@ -48,12 +51,12 @@ type pageRow struct {
 }
 
 // The New function creates a new page with a truncated title and initializes other properties.
-func New(title string) *page {
+func New(title string) *Page {
 	// truncate title to 25 characters
-	if len(title) > 25 {
-		title = title[:25] + "..."
+	if len(title) > TitleLength {
+		title = title[:TitleLength] + "..."
 	}
-	m := page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, CurrentPageNumber: 1}
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, CurrentPageNumber: 1, counter: 0}
 	m.AddAction("Q") // Add Quit action
 	m.AddAction("F") // Add Next action
 	m.AddAction("B") // Add Previous action
@@ -62,12 +65,14 @@ func New(title string) *page {
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
-func (m *page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
-	if m.noRows >= MaxPageRows {
+func (m *Page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
+	m.counter++
+	if m.counter >= MaxPageRows {
+		m.counter = 0
 		m.noPages++
 	}
-	if len(rowContent) > 50 {
-		rowContent = rowContent[:50] + "..."
+	if len(rowContent) > RowLength {
+		rowContent = rowContent[:RowLength] + "..."
 	}
 	// if rowContent != "" {
 	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
@@ -79,7 +84,7 @@ func (m *page) Add(pageRowNumber int, rowContent string, altID string, dateTime 
 
 // The `AddAction` function is used to add a valid action to the page. It takes a `validAction` string
 // as a parameter.
-func (m *page) AddAction(validAction string) {
+func (m *Page) AddAction(validAction string) {
 	if validAction == "" {
 		log.Fatal(invalidActionError)
 		return
@@ -93,7 +98,7 @@ func (m *page) AddAction(validAction string) {
 
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
-func (m *page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
+func (m *Page) Display(crt *support.Crt, pageNumber int) (nextAction string, selected pageRow) {
 	crt.Clear()
 	m.AddAction("Q") // Add Quit action
 	crt.Header(m.title)
@@ -144,5 +149,5 @@ func (m *page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 
 // The format function returns the first 50 characters of the content in a pageRow object.
 func format(crt *support.Crt, m pageRow) string {
-	return m.Content[:50]
+	return m.Content[:RowLength]
 }
