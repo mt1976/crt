@@ -1,8 +1,6 @@
 package skynews
 
 import (
-	"log"
-
 	"github.com/mt1976/admin_me/support"
 	"github.com/mt1976/admin_me/support/menu"
 )
@@ -40,8 +38,8 @@ func Run(crt *support.Crt) {
 	for !ok {
 		action, nextLevel := m.Display(crt)
 
-		log.Println("Action: ", action)
-		log.Println("Next Level: ", nextLevel)
+		//log.Println("Action: ", action)
+		//log.Println("Next Level: ", nextLevel)
 		//pause
 		//crt.SetDelayInMin(1)
 		//crt.DelayIt()

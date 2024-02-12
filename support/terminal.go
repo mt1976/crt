@@ -219,6 +219,20 @@ func (T *Crt) InputError(msg string) {
 
 }
 
+func (T *Crt) InfoMessage(msg string) {
+	gT.MoveCursor(2, 23)
+	gT.Print(
+		T.Format(gT.Color(gT.Bold("INFO : "), gT.CYAN)+msg, ""))
+	//T.Print(msg + newline)
+	gT.Flush()
+	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
+	//oldDelay := T.Delay()
+	//T.SetDelayInSec(errorDelay)
+	//T.DelayIt()
+	//T.SetDelayInMs(oldDelay)
+
+}
+
 // The `InputPageInfo` function is a method of the `Crt` struct. It is used to print information about the current page and total number of pages to the terminal.
 //
 // Parameters:

@@ -1,6 +1,7 @@
 package menu
 
 import (
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -9,7 +10,7 @@ import (
 )
 
 const MaxPageRows int = 15
-const RowLength int = 999
+const RowLength int = 80
 const TitleLength int = 25
 
 // The "Page" type represents a Page with a title, rows of data, a prompt, a list of actions, and
@@ -66,20 +67,37 @@ func New(title string) *Page {
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (m *Page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
+	fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
+	if rowContent == "" {
+		return
+	}
+	if strings.Trim(rowContent, " ") == "" {
+		return
+	}
 	m.counter++
 	if m.counter >= MaxPageRows {
 		m.counter = 0
 		m.noPages++
 	}
+	remainder := ""
 	if len(rowContent) > RowLength {
-		rowContent = rowContent[:RowLength] + "..."
+		remainder = rowContent[RowLength:]
+		rowContent = rowContent[:RowLength]
+
+		//m.pageRows = append(m.pageRows, pageRow{ID: m.counter, Content: rowContent, PageNumber: prn})
+		//m.noRows++
+		//m.Add(prn, "***"+remainder, altID, dateTime)
 	}
 	// if rowContent != "" {
 	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
 	// }
-	mi := pageRow{pageRowNumber, rowContent, m.noPages + 1}
+	mi := pageRow{pageRowNumber, rowContent, m.noPages}
 	m.pageRows = append(m.pageRows, mi)
 	m.noRows++
+	if remainder != "" {
+		//prn := pageRowNumber + 1
+		m.Add(pageRowNumber, remainder, altID, dateTime)
+	}
 }
 
 // The `AddAction` function is used to add a valid action to the page. It takes a `validAction` string

@@ -14,6 +14,9 @@ func Story(crt *support.Crt, storyLink string) {
 	//s := page.New("Story")
 	//s.Add(1, storyLink, storyLink, "")
 	//s.AddAction("Q")
+
+	crt.InfoMessage("Retrieving story information")
+
 	s := buildPage(crt, storyLink)
 
 	ok := false
@@ -73,7 +76,8 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	for i, content := range storyContent {
 		p.Add(i+1, content, "", "")
 	}
-
+	//spew.Dump(p)
+	//os.Exit(1)
 	// Return the page
 	return p
 }
