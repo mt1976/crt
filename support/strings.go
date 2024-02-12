@@ -38,7 +38,7 @@ func init() {
 
 }
 
-var newline = "\n"
+const newline string = "\n"
 
 // The Upcase function in Go converts a string to uppercase.
 // Upcase converts a string to uppercase.

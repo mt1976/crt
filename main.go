@@ -32,9 +32,9 @@ func main() {
 	config.term_height = 20
 
 	// create a new instance of the Crt
-	crt := terminal.New()
+	crt := terminal.NewWithSize(config.term_width, config.term_height)
 	// set the terminal size
-	crt.SetTerminalSize(config.term_width, config.term_height)
+	//crt.SetTerminalSize(config.term_width, config.term_height)
 
 	// start a timer
 	start := time.Now()

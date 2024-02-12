@@ -1,3 +1,4 @@
 package support
 
-var BaudRateError = "Invalid Baud Rate"
+var BaudRateError string = "Invalid Baud Rate"
+var TerminalSizeError string = "Invalid Terminal Size"

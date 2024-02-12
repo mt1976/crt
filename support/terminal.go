@@ -2,15 +2,20 @@ package support
 
 import (
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 	"time"
 
 	gT "github.com/buger/goterm"
+	"github.com/gen2brain/beeep"
 )
 
 var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
 var defaultBaud = 0
+
+var defaultBeepFrequency float64 = beeep.DefaultFreq
+var defaultBeepDuration int = beeep.DefaultDuration
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
@@ -76,6 +81,10 @@ func (T *Crt) SetDelayInMs(delay int) {
 // The `SetTerminalSize` function is a method of the `Crt` struct. It takes two parameters, `width` and
 // `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
+	if !(width > 0 && height > 0) {
+		T.Error(TerminalSizeError, nil)
+		os.Exit(1)
+	}
 	T.width = width
 	T.height = height
 }
@@ -202,6 +211,7 @@ func (T *Crt) InputError(msg string) {
 		T.Format(gT.Color(gT.Bold("ERROR : "), gT.RED)+msg, ""))
 	//T.Print(msg + newline)
 	gT.Flush()
+	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
 	oldDelay := T.Delay()
 	T.SetDelayInSec(errorDelay)
 	T.DelayIt()
@@ -301,6 +311,12 @@ func New() Crt {
 	x.scr = NewPage(x.width, x.height)
 
 	return x
+}
+
+func NewWithSize(width, height int) Crt {
+	xx := New()
+	xx.SetTerminalSize(width, height)
+	return xx
 }
 
 // NewPage initializes a new page with the specified number of columns and rows.
