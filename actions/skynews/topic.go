@@ -1,4 +1,4 @@
-package news
+package skynews
 
 import (
 	"github.com/mmcdole/gofeed"

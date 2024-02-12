@@ -3,7 +3,7 @@ package mainmenu
 import (
 	"fmt"
 
-	"github.com/mt1976/admin_me/actions/news"
+	"github.com/mt1976/admin_me/actions/skynews"
 	"github.com/mt1976/admin_me/support"
 	menu "github.com/mt1976/admin_me/support/menu"
 )
@@ -47,7 +47,7 @@ func Run(crt *support.Crt) {
 			}
 			//action, _ = y.Display(crt)
 		case "2":
-			news.Run(crt)
+			skynews.Run(crt)
 		}
 	}
 }
