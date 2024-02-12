@@ -3,9 +3,11 @@ package menu
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mt1976/admin_me/support"
 )
 
@@ -30,16 +32,16 @@ const TitleLength int = 25
 // @property {int} noPages - The "noPages" property represents the total number of pages in the Page
 // structure.
 type Page struct {
-	title             string
-	pageRows          []pageRow
-	noRows            int
-	prompt            string
-	actions           []string
-	actionMaxLen      int
-	noPages           int
-	CurrentPageNumber int
-	counter           int
-	pageRowCounter    int
+	title           string
+	pageRows        []pageRow
+	noRows          int
+	prompt          string
+	actions         []string
+	actionMaxLen    int
+	noPages         int
+	ActivePageIndex int
+	counter         int
+	pageRowCounter  int
 }
 
 // The type "pageRow" represents a row of data for a page, with an ID and content.
@@ -58,7 +60,7 @@ func New(title string) *Page {
 	if len(title) > TitleLength {
 		title = title[:TitleLength] + "..."
 	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, CurrentPageNumber: 1, counter: 0}
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	m.AddAction(Quit)    // Add Quit action
 	m.AddAction(Forward) // Add Next action
 	m.AddAction(Back)    // Add Previous action
@@ -69,6 +71,16 @@ func New(title string) *Page {
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (m *Page) Add(rowContent string, altID string, dateTime string) {
+
+	//lets clean the rowContent
+	rowContent = strings.Replace(rowContent, "\n", "", -1)
+	rowContent = strings.Replace(rowContent, "\r", "", -1)
+	rowContent = strings.Replace(rowContent, "\t", "", -1)
+	rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	rowContent = strings.Replace(rowContent, "\"", " ", -1)
+
 	fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
 	if rowContent == "" {
 		return
@@ -120,32 +132,36 @@ func (m *Page) AddAction(validAction string) {
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
 func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
+	spew.Dump(m)
 	crt.Clear()
 	rowsDisplayed := 0
 	m.AddAction(Quit) // Add Quit action
+	m.AddAction(Exit)
 	crt.Header(m.title)
 	for i := range m.pageRows {
-		if i <= MaxPageRows {
-			if m.CurrentPageNumber == m.pageRows[i].PageNumber {
-				rowsDisplayed++
-				if m.pageRows[i].Content == "" {
-					crt.Println("")
-					continue
-				}
-				crt.Println(format(crt, m.pageRows[i]))
+		//if i <= MaxPageRows {
+		if m.ActivePageIndex == m.pageRows[i].PageNumber {
+			rowsDisplayed++
+			if m.pageRows[i].Content == "" {
+				crt.Println("")
+				continue
 			}
+			crt.Println(format(crt, m.pageRows[i]))
 		}
+		//}
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
 	extraRows := (MaxPageRows - rowsDisplayed) + 1
 	//log.Println("Extra Rows: ", extraRows)
-	for i := 0; i <= extraRows; i++ {
-		crt.Print(newline)
+	if extraRows > 0 {
+		for i := 0; i <= extraRows; i++ {
+			crt.Print(newline)
+		}
 	}
 	crt.Break()
 	//spew.Dump(m)
 	//spew.Dump(crt)
-	crt.InputPageInfo(m.CurrentPageNumber, m.noPages)
+	crt.InputPageInfo(m.ActivePageIndex+1, m.noPages+1)
 	//crt.Print(m.prompt)
 	ok := false
 	for !ok {
@@ -171,7 +187,11 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	// if nextAction is a numnber, find the menu item
 	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return support.Upcase(nextAction), m.pageRows[pos]
+		return support.Upcase(nextAction), m.pageRows[pos-1]
+	}
+
+	if support.Upcase(nextAction) == Exit {
+		os.Exit(0)
 	}
 	//spew.Dump(m)
 	return support.Upcase(nextAction), pageRow{}
@@ -186,19 +206,27 @@ func format(crt *support.Crt, m pageRow) string {
 // NextPage moves to the next page.
 // If the current page is the last page, it returns an error.
 func (m *Page) NextPage(crt *support.Crt) {
-	if m.CurrentPageNumber == m.noPages {
+	if m.ActivePageIndex == m.noPages {
 		crt.InputError(noMorePagesError)
 		return
 	}
-	m.CurrentPageNumber++
+	m.ActivePageIndex++
 }
 
 // PreviousPage moves to the previous page.
 // If the current page is the first page, it returns an error.
 func (m *Page) PreviousPage(crt *support.Crt) {
-	if m.CurrentPageNumber == 1 {
+	if m.ActivePageIndex == 0 {
 		crt.InputError(noMorePagesError)
 		return
 	}
-	m.CurrentPageNumber--
+	m.ActivePageIndex--
+}
+
+func (m *Page) GetDebugRow(rowNo int) pageRow {
+	return m.pageRows[rowNo]
+}
+
+func (m *Page) GetRows() int {
+	return m.noRows
 }

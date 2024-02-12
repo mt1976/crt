@@ -1,6 +1,7 @@
 package skynews
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gocolly/colly"
 	"github.com/mt1976/admin_me/support"
 	page "github.com/mt1976/admin_me/support/page"
@@ -18,6 +19,7 @@ func Story(crt *support.Crt, storyLink string) {
 	crt.InfoMessage("Retrieving story information")
 
 	s := buildPage(crt, storyLink)
+	s.ActivePageIndex = 0
 
 	ok := false
 	for !ok {
@@ -76,7 +78,12 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	for _, content := range storyContent {
 		p.Add(content, "", "")
 	}
-	//spew.Dump(p)
+	spew.Dump(p)
+
+	for i := range p.GetRows() {
+		spew.Dump(p.GetDebugRow(i))
+	}
+
 	//os.Exit(1)
 	// Return the page
 	return p

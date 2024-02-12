@@ -32,15 +32,15 @@ func TestPage_NextPage(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			m := &Page{
-				title:             tt.fields.title,
-				pageRows:          tt.fields.pageRows,
-				noRows:            tt.fields.noRows,
-				prompt:            tt.fields.prompt,
-				actions:           tt.fields.actions,
-				actionMaxLen:      tt.fields.actionMaxLen,
-				noPages:           tt.fields.noPages,
-				CurrentPageNumber: tt.fields.CurrentPageNumber,
-				counter:           tt.fields.counter,
+				title:           tt.fields.title,
+				pageRows:        tt.fields.pageRows,
+				noRows:          tt.fields.noRows,
+				prompt:          tt.fields.prompt,
+				actions:         tt.fields.actions,
+				actionMaxLen:    tt.fields.actionMaxLen,
+				noPages:         tt.fields.noPages,
+				ActivePageIndex: tt.fields.CurrentPageNumber,
+				counter:         tt.fields.counter,
 			}
 			m.NextPage(tt.args.crt)
 		})
