@@ -47,7 +47,7 @@ func Run(crt *support.Crt) {
 		//crt.DelayIt()
 
 		if action == "Q" {
-			crt.Println("Quitting")
+			//	crt.Println("Quitting")
 			ok = true
 			continue
 		}

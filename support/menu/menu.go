@@ -114,7 +114,7 @@ func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) 
 	extraRows := (MaxMenuItems - m.noItems) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	for i := 0; i <= extraRows; i++ {
-		crt.Print("\n")
+		crt.Print(newline)
 	}
 	crt.Break()
 	//crt.Print(m.prompt)

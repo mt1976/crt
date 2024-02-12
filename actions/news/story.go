@@ -9,7 +9,7 @@ import (
 // The function "Story" displays a story link and allows the user to interact with a menu until they
 // choose to quit.
 func Story(crt *support.Crt, storyLink string) {
-	crt.Println("Story: " + storyLink)
+	//crt.Println("Story: " + storyLink)
 
 	//s := page.New("Story")
 	//s.Add(1, storyLink, storyLink, "")

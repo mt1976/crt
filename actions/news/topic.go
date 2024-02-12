@@ -1,8 +1,6 @@
 package news
 
 import (
-	"log"
-
 	"github.com/mmcdole/gofeed"
 	"github.com/mt1976/admin_me/support"
 	"github.com/mt1976/admin_me/support/menu"
@@ -12,7 +10,7 @@ import (
 // news items for that topic from an RSS feed, displays them in a menu, and allows the user to select a
 // news item to view.
 func Topic(crt *support.Crt, topic, title string) {
-	crt.Println("Topic: " + topic + " - " + title)
+	//crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic
 
 	// get the news for the topic from an rss feed
@@ -25,7 +23,7 @@ func Topic(crt *support.Crt, topic, title string) {
 		noNewsItems = menu.MaxMenuItems
 	}
 	for i := range noNewsItems {
-		log.Println("Adding: ", feed.Items[i].Title, i)
+		//log.Println("Adding: ", feed.Items[i].Title, i)
 		t.Add(i, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
 	}
 	ok := false
@@ -33,7 +31,7 @@ func Topic(crt *support.Crt, topic, title string) {
 		action, mi := t.Display(crt)
 
 		if action == menu.Quit {
-			crt.Println("Quitting")
+			//crt.Println("Quitting")
 			ok = true
 			continue
 		}
@@ -43,8 +41,8 @@ func Topic(crt *support.Crt, topic, title string) {
 			action = ""
 		}
 
-		log.Println("Action: ", action)
-		log.Println("Next Level: ", mi)
+		//log.Println("Action: ", action)
+		//log.Println("Next Level: ", mi)
 
 		//spew.Dump(nextLevel)
 	}
