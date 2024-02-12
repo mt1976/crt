@@ -223,10 +223,14 @@ func (m *Page) PreviousPage(crt *support.Crt) {
 	m.ActivePageIndex--
 }
 
+// GetDebugRow returns the pageRow at the specified index.
+//
+// This function is used for debugging purposes.
 func (m *Page) GetDebugRow(rowNo int) pageRow {
 	return m.pageRows[rowNo]
 }
 
+// GetRows returns the number of rows in the page.
 func (m *Page) GetRows() int {
 	return m.noRows
 }
