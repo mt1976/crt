@@ -25,9 +25,9 @@ func Run(crt *support.Crt) {
 		//}
 
 		m.Add(1, "Test", "", "")
-		m.Add(2, newsMenuTitle, "", "")
-		m.Add(3, weatherMenuTitle, "", "")
-		m.Add(4, "", "", "")
+		m.Add(2, skyNewsMenuTitle, "", "")
+		m.Add(3, bbcNewsMenuTitle, "", "")
+		m.Add(4, weatherMenuTitle, "", "")
 		m.Add(5, "", "", "")
 		m.Add(6, "", "", "")
 		m.Add(7, remoteSystemsAccessMenuTitle, "", "")

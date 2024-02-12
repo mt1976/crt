@@ -3,7 +3,8 @@ package mainmenu
 const promptString = "Enter Selection or (Q)uit"
 const mainMenuTitle = "Main Menu"
 
-const newsMenuTitle = "News"
+const skyNewsMenuTitle = "SKY News"
+const bbcNewsMenuTitle = "BBC News"
 const weatherMenuTitle = "Weather"
 const remoteSystemsAccessMenuTitle = "Remote Systems Access"
 const systemsMaintenanceMenuTitle = "Systems Maintenance"
