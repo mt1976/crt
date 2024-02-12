@@ -39,6 +39,7 @@ type Page struct {
 	noPages           int
 	CurrentPageNumber int
 	counter           int
+	pageRowCounter    int
 }
 
 // The type "pageRow" represents a row of data for a page, with an ID and content.
@@ -61,12 +62,13 @@ func New(title string) *Page {
 	m.AddAction(Quit)    // Add Quit action
 	m.AddAction(Forward) // Add Next action
 	m.AddAction(Back)    // Add Previous action
+	m.pageRowCounter = 0
 	return &m
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
-func (m *Page) Add(pageRowNumber int, rowContent string, altID string, dateTime string) {
+func (m *Page) Add(rowContent string, altID string, dateTime string) {
 	fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
 	if rowContent == "" {
 		return
@@ -91,12 +93,13 @@ func (m *Page) Add(pageRowNumber int, rowContent string, altID string, dateTime 
 	// if rowContent != "" {
 	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
 	// }
-	mi := pageRow{pageRowNumber, rowContent, m.noPages}
+	m.pageRowCounter++
+	mi := pageRow{m.pageRowCounter, rowContent, m.noPages}
 	m.pageRows = append(m.pageRows, mi)
 	m.noRows++
 	if remainder != "" {
-		//prn := pageRowNumber + 1
-		m.Add(pageRowNumber, remainder, altID, dateTime)
+		//m.pageRowCounter++
+		m.Add(remainder, altID, dateTime)
 	}
 }
 

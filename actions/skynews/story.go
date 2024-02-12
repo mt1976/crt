@@ -73,8 +73,8 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	p := page.New(pageTitle)
 
 	// Add the story content to the page
-	for i, content := range storyContent {
-		p.Add(i+1, content, "", "")
+	for _, content := range storyContent {
+		p.Add(content, "", "")
 	}
 	//spew.Dump(p)
 	//os.Exit(1)
