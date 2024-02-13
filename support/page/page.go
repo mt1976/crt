@@ -1,7 +1,6 @@
 package menu
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -80,7 +79,7 @@ func (m *Page) Add(rowContent string, altID string, dateTime string) {
 	rowContent = strings.Replace(rowContent, "  ", " ", -1)
 	rowContent = strings.Replace(rowContent, "\"", " ", -1)
 
-	fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
+	//fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
 	if rowContent == "" {
 		return
 	}
