@@ -1,16 +1,16 @@
 package mainmenu
 
-const promptString = "Enter Selection or (Q)uit"
-const mainMenuTitle = "Main Menu"
+const promptText = "Enter Selection or (Q)uit"
+const mainMenuTitleText = "Main Menu"
 
-const skyNewsMenuTitle = "SKY News"
-const bbcNewsMenuTitle = "BBC News"
-const weatherMenuTitle = "Weather"
-const remoteSystemsAccessMenuTitle = "Remote Systems Access"
-const systemsMaintenanceMenuTitle = "Systems Maintenance"
+const skyNewsMenuTitleText = "SKY News"
+const bbcNewsMenuTitleText = "BBC News"
+const weatherMenuTitleText = "Weather"
+const remoteSystemsAccessMenuTitleText = "Remote Systems Access"
+const systemsMaintenanceMenuTitleText = "Systems Maintenance"
 
-const invalidActionError = "Invalid action"
-const maxMenuItemsError = "Max menu items reached"
+const invalidActionErrorText = "Invalid action"
+const maxMenuItemsErrorText = "Max menu items reached"
 
-const quittingMessage = "Quitting"
-const subMenuTitle = "Sub Menu"
+const quittingMessageText = "Quitting"
+const subMenuTitleText = "Sub Menu"

@@ -19,31 +19,31 @@ func Run(crt *support.Crt) {
 		crt.Clear()
 		//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 		//crt.Header("Main Menu")
-		m := menu.New(mainMenuTitle)
+		m := menu.New(mainMenuTitleText)
 		//for i := range 11 {
 		//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 		//}
 
 		m.Add(1, "Test", "", "")
-		m.Add(2, skyNewsMenuTitle, "", "")
-		m.Add(3, bbcNewsMenuTitle, "", "")
-		m.Add(4, weatherMenuTitle, "", "")
+		m.Add(2, skyNewsMenuTitleText, "", "")
+		m.Add(3, bbcNewsMenuTitleText, "", "")
+		m.Add(4, weatherMenuTitleText, "", "")
 		m.Add(5, "", "", "")
 		m.Add(6, "", "", "")
-		m.Add(7, remoteSystemsAccessMenuTitle, "", "")
-		m.Add(8, systemsMaintenanceMenuTitle, "", "")
+		m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
+		m.Add(8, systemsMaintenanceMenuTitleText, "", "")
 		m.AddAction("Q")
 
 		action, _ := m.Display(crt)
 		switch action {
 		case "Q":
-			crt.Println(quittingMessage)
+			crt.Println(quittingMessageText)
 			ok = true
 			continue
 		case "1":
-			y := menu.New(subMenuTitle)
+			y := menu.New(subMenuTitleText)
 			for i := range 14 {
-				y.Add(i, fmt.Sprintf(subMenuTitle+" %v", action), "", "")
+				y.Add(i, fmt.Sprintf(subMenuTitleText+" %v", action), "", "")
 			}
 			//action, _ = y.Display(crt)
 		case "2":
