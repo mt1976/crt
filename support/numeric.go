@@ -1,6 +1,9 @@
 package support
 
-import "unicode"
+import (
+	"math/rand"
+	"unicode"
+)
 
 // The IsInt function checks if a given string consists only of digits.
 // IsInt checks if a given string consists only of digits.
@@ -11,4 +14,10 @@ func IsInt(s string) bool {
 		}
 	}
 	return true
+}
+
+func CoinToss() bool {
+	// This function simulates a coin toss.
+	var coinSides = 2
+	return rand.Intn(coinSides) != 0
 }

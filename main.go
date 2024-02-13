@@ -40,8 +40,9 @@ func main() {
 	start := time.Now()
 
 	// run the startup sequence
+	crt.SetDelayInSec(0.125)
 	startup.Run(&crt)
-
+	crt.ResetDelay()
 	// run the main menu
 	mainmenu.Run(&crt)
 

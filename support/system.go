@@ -36,13 +36,13 @@ func TrimRepeatingCharacters(s string, c string) string {
 // The function DateString returns the current date in the format "dd/mm/yy".
 func DateString() string {
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format("02/01/06"))
+	return fmt.Sprintf("%v", now.Format(defaultDateFormat))
 }
 
 // The TimeString function returns the current time in the format "15:04:05".
 func TimeString() string {
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format("15:04:05"))
+	return fmt.Sprintf("%v", now.Format(defaultTimeFormat))
 }
 
 // The DateTimeString function returns a string that combines the time and date strings.
@@ -63,10 +63,10 @@ func RandomIP() string {
 	// 	ip := randomIP()
 	// 	fmt.Println(ip)
 	//
-	ip1 := RandomNumber(1, 255)
-	ip2 := RandomNumber(1, 255)
-	ip3 := RandomNumber(1, 255)
-	ip4 := RandomNumber(1, 255)
+	ip1 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
+	ip2 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
+	ip3 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
+	ip4 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
 
 	return fmt.Sprintf("%v.%v.%v.%v", ip1, ip2, ip3, ip4)
 }
@@ -82,12 +82,12 @@ func RandomMAC() string {
 	// 	mac := randomMAC()
 	// 	fmt.Println(mac)
 	//
-	mac1 := fmt.Sprintf("%02x", RandomNumber(0, 255))
-	mac2 := fmt.Sprintf("%02x", RandomNumber(0, 255))
-	mac3 := fmt.Sprintf("%02x", RandomNumber(0, 255))
-	mac4 := fmt.Sprintf("%02x", RandomNumber(0, 255))
-	mac5 := fmt.Sprintf("%02x", RandomNumber(0, 255))
-	mac6 := fmt.Sprintf("%02x", RandomNumber(0, 255))
+	mac1 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac2 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac3 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac4 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac5 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac6 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
 
 	return fmt.Sprintf("%v:%v:%v:%v:%v:%v", mac1, mac2, mac3, mac4, mac5, mac6)
 }
@@ -103,7 +103,7 @@ func RandomPort() int {
 	// 	port := randomPort()
 	// 	fmt.Println(port)
 	//
-	return RandomNumber(1, 65535)
+	return RandomNumber(defaultRandomPortMin, defaultRandomPortMax)
 }
 
 // The RandomNumber function generates a random number within a given range.
@@ -111,6 +111,18 @@ func RandomNumber(min int, max int) int {
 	// Generate a random number between the given range
 	//
 	xx := rand.Intn(max-min+1) + min
+
+	return xx
+}
+
+func RandomFloat(min int, max int) float64 {
+	// Generate a random number between the given range
+	//
+
+	minFloat := float64(min)
+	maxFloat := float64(max)
+
+	xx := minFloat + rand.Float64()*(maxFloat-minFloat)
 
 	return xx
 }

@@ -98,14 +98,11 @@ func (T *Crt) TerminalSize() (width int, height int) {
 
 // The `SetDelayInSec` function is a method of the `Crt` struct. It takes a parameter `delay` of type
 // `interface{}`.
-func (T *Crt) SetDelayInSec(delay interface{}) {
+func (T *Crt) SetDelayInSec(delay float64) {
 	T.delay = 0
 
-	if delay.(float64) > 0 {
-		T.delay = int(delay.(float64) * 1000)
-	} else {
-		T.delay = delay.(int) * 1000
-	}
+	T.delay = int(delay * 1000)
+
 }
 
 // The `SetDelayInMin` function is a method of the `Crt` struct. It takes an `int` parameter `delay`
@@ -213,7 +210,7 @@ func (T *Crt) InputError(msg string) {
 	gT.Flush()
 	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
 	oldDelay := T.Delay()
-	T.SetDelayInSec(errorDelay)
+	T.SetDelayInSec(defaultErrorDelay)
 	T.DelayIt()
 	T.SetDelayInMs(oldDelay)
 
@@ -293,9 +290,9 @@ func (T *Crt) Clear() {
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	T.Println(T.row())
-	T.Println(T.Format(bold+"MESSAGE: "+reset+msg, ""))
-	T.Println(T.lineBreakEnd())
+	T.PrintIt(T.row() + newline)
+	T.PrintIt(T.Format(bold+reset+msg, "") + newline)
+	T.PrintIt(T.lineBreakEnd() + newline)
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -388,13 +385,13 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	T.Println(T.row())
+	T.PrintIt(T.row() + newline)
 	for _, line := range header {
-		T.Print(line)
+		T.PrintIt(T.Format(line+newline, ""))
 	}
-	T.Blank()
-	display := fmt.Sprintf("StarTerm - Utilities 1.0 %s", msg)
-	T.Println(display)
+	T.PrintIt(T.row() + newline)
+	display := fmt.Sprintf(versionText, msg)
+	T.PrintIt(T.Format(display+newline, ""))
 	T.Break()
 }
 

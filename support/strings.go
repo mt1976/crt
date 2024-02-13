@@ -38,6 +38,8 @@ func init() {
 
 const newline string = "\n"
 
+var versionText = "StarTerm - Utilities 1.0 %s"
+
 // The Upcase function in Go converts a string to uppercase.
 // Upcase converts a string to uppercase.
 func Upcase(s string) string {

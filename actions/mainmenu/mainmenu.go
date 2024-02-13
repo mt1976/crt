@@ -38,7 +38,7 @@ func Run(crt *support.Crt) {
 		action, _ := m.Display(crt)
 		switch action {
 		case menu.Quit:
-			crt.Println(quittingMessageText)
+			crt.InfoMessage(quittingMessageText + "\n ")
 			ok = true
 			continue
 		case "1":
