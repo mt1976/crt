@@ -4,13 +4,12 @@ go 1.22
 
 require (
 	github.com/buger/goterm v1.0.4
-	github.com/davecgh/go-spew v1.1.1
+	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/mmcdole/gofeed v1.2.1
 	github.com/xeonx/timeago v1.0.0-rc5
 )
 
 require (
-	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea // indirect
 	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
@@ -25,7 +24,6 @@ require (
 	github.com/antchfx/xpath v1.2.5 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
-	github.com/gocolly/colly/v2 v2.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect

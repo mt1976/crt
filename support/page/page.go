@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/mt1976/admin_me/support"
 )
 
@@ -132,7 +131,7 @@ func (m *Page) AddAction(validAction string) {
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
 func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
-	spew.Dump(m)
+	//spew.Dump(m)
 	crt.Clear()
 	rowsDisplayed := 0
 	m.AddAction(Quit) // Add Quit action
