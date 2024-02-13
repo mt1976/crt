@@ -16,7 +16,7 @@ func Story(crt *support.Crt, storyLink string) {
 	//s.Add(1, storyLink, storyLink, "")
 	//s.AddAction("Q")
 
-	crt.InfoMessage("Retrieving story information")
+	crt.InfoMessage(storyLoadingText)
 
 	s := buildPage(crt, storyLink)
 	s.ActivePageIndex = 0

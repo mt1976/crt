@@ -12,6 +12,21 @@ import (
 // and perform various actions.
 func Run(crt *support.Crt) {
 
+	m := menu.New(mainMenuTitleText)
+	//for i := range 11 {
+	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
+	//}
+
+	m.Add(1, "Test", "", "")
+	m.Add(2, skyNewsMenuTitleText, "", "")
+	m.Add(3, bbcNewsMenuTitleText, "", "")
+	m.Add(4, weatherMenuTitleText, "", "")
+	m.Add(5, "", "", "")
+	m.Add(6, "", "", "")
+	m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
+	m.Add(8, systemsMaintenanceMenuTitleText, "", "")
+	m.AddAction(menu.Quit)
+
 	// loop while ok
 	ok := false
 	for !ok {
@@ -19,24 +34,10 @@ func Run(crt *support.Crt) {
 		crt.Clear()
 		//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 		//crt.Header("Main Menu")
-		m := menu.New(mainMenuTitleText)
-		//for i := range 11 {
-		//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
-		//}
-
-		m.Add(1, "Test", "", "")
-		m.Add(2, skyNewsMenuTitleText, "", "")
-		m.Add(3, bbcNewsMenuTitleText, "", "")
-		m.Add(4, weatherMenuTitleText, "", "")
-		m.Add(5, "", "", "")
-		m.Add(6, "", "", "")
-		m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
-		m.Add(8, systemsMaintenanceMenuTitleText, "", "")
-		m.AddAction("Q")
 
 		action, _ := m.Display(crt)
 		switch action {
-		case "Q":
+		case menu.Quit:
 			crt.Println(quittingMessageText)
 			ok = true
 			continue
@@ -48,6 +49,8 @@ func Run(crt *support.Crt) {
 			//action, _ = y.Display(crt)
 		case "2":
 			skynews.Run(crt)
+		default:
+			crt.InputError(invalidActionErrorText + "'" + action + "'")
 		}
 	}
 }
