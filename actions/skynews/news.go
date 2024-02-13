@@ -22,17 +22,27 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := menu.New("SKY News")
-	m.Add(1, "Home", "https://feeds.skynews.com/feeds/rss/home.xml", "")
-	m.Add(2, "UK", "https://feeds.skynews.com/feeds/rss/uk.xml", "")
-	m.Add(3, "World", "https://feeds.skynews.com/feeds/rss/world.xml", "")
-	m.Add(4, "US", "https://feeds.skynews.com/feeds/rss/us.xml", "")
-	m.Add(5, "Business", "https://feeds.skynews.com/feeds/rss/business.xml", "")
-	m.Add(6, "Politics", "https://feeds.skynews.com/feeds/rss/politics.xml", "")
-	m.Add(7, "Technology", "https://feeds.skynews.com/feeds/rss/technology.xml", "")
-	m.Add(8, "Entertainment", "https://feeds.skynews.com/feeds/rss/entertainment.xml", "")
-	m.Add(9, "Strange News", "https://feeds.skynews.com/feeds/rss/strange.xml", "")
-	m.AddAction("Q")
+	m := menu.New(menuTitleText)
+	c := 0
+	c++
+	m.Add(c, topicHomeText, topicHomeURI, "")
+	c++
+	m.Add(c, topicUKText, topicUKURI, "")
+	c++
+	m.Add(c, topicWorldText, topicWorldURI, "")
+	c++
+	m.Add(c, topicUSText, topicUSURI, "")
+	c++
+	m.Add(c, topicBusinessText, topicBusinessURI, "")
+	c++
+	m.Add(c, topicPoliticsText, topicPoliticsURI, "")
+	c++
+	m.Add(c, topicTechnologyText, topicTechnologyURI, "")
+	c++
+	m.Add(c, topicEntertainmentText, topicEntertainmentURI, "")
+	c++
+	m.Add(c, topicStrangeText, topicStrangeURI, "")
+	m.AddAction(menu.Quit)
 
 	ok := false
 	for !ok {
@@ -44,7 +54,7 @@ func Run(crt *support.Crt) {
 		//crt.SetDelayInMin(1)
 		//crt.DelayIt()
 
-		if action == "Q" {
+		if action == menu.Quit {
 			//	crt.Println("Quitting")
 			ok = true
 			continue
