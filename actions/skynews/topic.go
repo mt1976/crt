@@ -24,7 +24,7 @@ func Topic(crt *support.Crt, topic, title string) {
 	}
 	for i := range noNewsItems {
 		//log.Println("Adding: ", feed.Items[i].Title, i)
-		t.Add(i, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
+		t.Add(i+1, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
 	}
 	ok := false
 	for !ok {

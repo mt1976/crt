@@ -142,7 +142,7 @@ func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) 
 	// if nextAction is a numnber, find the menu item
 	if support.IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return support.Upcase(nextAction), m.menuItems[pos]
+		return support.Upcase(nextAction), m.menuItems[pos-1]
 	}
 	//spew.Dump(m)
 	return support.Upcase(nextAction), menuItem{}
