@@ -3,7 +3,7 @@ package start
 import (
 	"fmt"
 
-	"github.com/mt1976/admin_me/support"
+	"github.com/mt1976/crt/support"
 )
 
 // Run initializes the terminal and runs the main loop.

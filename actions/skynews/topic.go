@@ -2,8 +2,8 @@ package skynews
 
 import (
 	"github.com/mmcdole/gofeed"
-	"github.com/mt1976/admin_me/support"
-	"github.com/mt1976/admin_me/support/menu"
+	"github.com/mt1976/crt/support"
+	"github.com/mt1976/crt/support/menu"
 )
 
 // The function "Topic" takes in a CRT object, a topic, and a title as parameters, and then retrieves

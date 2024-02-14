@@ -3,9 +3,10 @@ package mainmenu
 import (
 	"fmt"
 
-	"github.com/mt1976/admin_me/actions/skynews"
-	"github.com/mt1976/admin_me/support"
-	menu "github.com/mt1976/admin_me/support/menu"
+	"github.com/mt1976/crt/actions/skynews"
+	"github.com/mt1976/crt/actions/weather"
+	"github.com/mt1976/crt/support"
+	menu "github.com/mt1976/crt/support/menu"
 )
 
 // The Run function displays a main menu and allows the user to navigate through different sub-menus
@@ -49,6 +50,9 @@ func Run(crt *support.Crt) {
 			//action, _ = y.Display(crt)
 		case "2":
 			skynews.Run(crt)
+		case "4":
+			weather.Run(crt)
+
 		default:
 			crt.InputError(invalidActionErrorText + "'" + action + "'")
 		}

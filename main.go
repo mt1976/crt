@@ -3,9 +3,9 @@ package main
 import (
 	"time"
 
-	"github.com/mt1976/admin_me/actions/mainmenu"
-	startup "github.com/mt1976/admin_me/start"
-	terminal "github.com/mt1976/admin_me/support"
+	mainmenu "github.com/mt1976/crt/actions/mainmenu"
+	startup "github.com/mt1976/crt/start"
+	terminal "github.com/mt1976/crt/support"
 )
 
 // config is used to store configuration settings for the program, including terminal

@@ -45,3 +45,22 @@ var versionText = "StarTerm - Utilities 1.0 %s"
 func Upcase(s string) string {
 	return strings.ToUpper(s)
 }
+
+// The function `TrimRepeatingCharacters` takes a string `s` and a character `c` as input, and returns
+// a new string with all consecutive occurrences of `c` trimmed down to a single occurrence.
+func TrimRepeatingCharacters(s string, c string) string {
+
+	result := ""
+	lenS := len(s)
+
+	for i := 0; i < lenS; i++ {
+		if i == 0 {
+			result = string(s[i])
+		} else {
+			if string(s[i]) != c || string(s[i-1]) != c {
+				result = result + string(s[i])
+			}
+		}
+	}
+	return result
+}

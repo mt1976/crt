@@ -3,7 +3,6 @@ package support
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
 // The function roundFloatToTwo rounds a float64 number to two decimal places.
@@ -13,42 +12,6 @@ import (
 
 // 	return rtnVal
 // }
-
-// The function `TrimRepeatingCharacters` takes a string `s` and a character `c` as input, and returns
-// a new string with all consecutive occurrences of `c` trimmed down to a single occurrence.
-func TrimRepeatingCharacters(s string, c string) string {
-
-	result := ""
-	lenS := len(s)
-
-	for i := 0; i < lenS; i++ {
-		if i == 0 {
-			result = string(s[i])
-		} else {
-			if string(s[i]) != c || string(s[i-1]) != c {
-				result = result + string(s[i])
-			}
-		}
-	}
-	return result
-}
-
-// The function DateString returns the current date in the format "dd/mm/yy".
-func DateString() string {
-	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(defaultDateFormat))
-}
-
-// The TimeString function returns the current time in the format "15:04:05".
-func TimeString() string {
-	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(defaultTimeFormat))
-}
-
-// The DateTimeString function returns a string that combines the time and date strings.
-func DateTimeString() string {
-	return TimeString() + " " + DateString()
-}
 
 // The RandomIP function generates a random IP address in IPv4 format.
 func RandomIP() string {

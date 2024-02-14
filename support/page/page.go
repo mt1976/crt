@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/mt1976/admin_me/support"
+	"github.com/mt1976/crt/support"
 )
 
 const MaxPageRows int = 15
@@ -117,7 +117,7 @@ func (m *Page) Add(rowContent string, altID string, dateTime string) {
 // as a parameter.
 func (m *Page) AddAction(validAction string) {
 	if validAction == "" {
-		log.Fatal(invalidActionError)
+		log.Fatal(InvalidActionError)
 		return
 	}
 	validAction = strings.ReplaceAll(validAction, " ", "")
@@ -165,7 +165,7 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	for !ok {
 		nextAction = crt.Input(m.prompt, "")
 		if len(nextAction) > m.actionMaxLen {
-			crt.InputError(invalidActionError + "'" + nextAction + "'")
+			crt.InputError(InvalidActionError + "'" + nextAction + "'")
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			continue
 		}
@@ -178,7 +178,7 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		}
 		if !ok {
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
-			crt.InputError(invalidActionError + " '" + nextAction + "'")
+			crt.InputError(InvalidActionError + " '" + nextAction + "'")
 
 		}
 	}

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mt1976/admin_me/support"
+	"github.com/mt1976/crt/support"
 	"github.com/xeonx/timeago"
 )
 

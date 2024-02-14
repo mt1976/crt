@@ -2,7 +2,7 @@ package menu
 
 const promptString = "Enter (F)orward, (B)ack or (Q)uit"
 const maxPageRowsError = "Max page rows reached"
-const invalidActionError = "Invalid action"
+const InvalidActionError = "Invalid action specified "
 const noMorePagesError = "No more pages"
 const Quit string = "Q"
 const Forward string = "F"
