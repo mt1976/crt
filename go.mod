@@ -4,17 +4,20 @@ go 1.22
 
 require (
 	github.com/buger/goterm v1.0.4
+	github.com/davecgh/go-spew v1.1.1
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/mmcdole/gofeed v1.2.1
+	github.com/odwrtw/transmission v0.0.0-20191103153330-cbf08fea0b8c
 	github.com/xeonx/timeago v1.0.0-rc5
 )
 
 require (
 	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/mattn/go-runewidth v0.0.2 // indirect
-	github.com/mitchellh/go-wordwrap v0.0.0-20150314170334-ad45545899c7 // indirect
-	github.com/nsf/termbox-go v0.0.0-20190121233118-02980233997d // indirect
+	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+	github.com/hekmon/cunits/v2 v2.1.0 // indirect
+	github.com/hekmon/transmissionrpc v1.1.0 // indirect
+	github.com/hekmon/transmissionrpc/v3 v3.0.0 // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 )
@@ -25,10 +28,8 @@ require (
 	github.com/antchfx/htmlquery v1.3.0 // indirect
 	github.com/antchfx/xmlquery v1.3.18 // indirect
 	github.com/antchfx/xpath v1.2.5 // indirect
-	github.com/aquilax/truncate v1.0.0
 	github.com/briandowns/openweathermap v0.19.0
 	github.com/dustin/go-humanize v1.0.1
-	github.com/gizak/termui/v3 v3.1.0
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect

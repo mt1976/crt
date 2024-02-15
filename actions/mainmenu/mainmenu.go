@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/mt1976/crt/actions/skynews"
+	torrents "github.com/mt1976/crt/actions/torrents"
 	"github.com/mt1976/crt/actions/weather"
 	"github.com/mt1976/crt/support"
 	menu "github.com/mt1976/crt/support/menu"
@@ -22,7 +23,7 @@ func Run(crt *support.Crt) {
 	m.Add(2, skyNewsMenuTitleText, "", "")
 	m.Add(3, bbcNewsMenuTitleText, "", "")
 	m.Add(4, weatherMenuTitleText, "", "")
-	m.Add(5, "", "", "")
+	m.Add(5, "Torrents", "", "")
 	m.Add(6, "", "", "")
 	m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
 	m.Add(8, systemsMaintenanceMenuTitleText, "", "")
@@ -52,7 +53,8 @@ func Run(crt *support.Crt) {
 			skynews.Run(crt)
 		case "4":
 			weather.Run(crt)
-
+		case "5":
+			torrents.Run(crt)
 		default:
 			crt.InputError(invalidActionErrorText + "'" + action + "'")
 		}
