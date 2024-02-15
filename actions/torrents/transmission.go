@@ -2,6 +2,7 @@ package skynews
 
 import (
 	"net/url"
+	"os"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/hekmon/transmissionrpc"
@@ -26,8 +27,10 @@ func Trans(crt *support.Crt, uri, title string) {
 	if err != nil {
 		panic(err)
 	}
-	spew.Dump(tbt)
-
+	//spew.Dump(tbt)
+	//spew.Dump(tbt.RPCVersion())
+	spew.Dump(tbt.TorrentGetAll())
+	os.Exit(0)
 	// torrents, _ := tbt.TorrentGetAll()
 	// noTorrents := len(torrents)
 	// if noTorrents > menu.MaxMenuItems {
