@@ -19,8 +19,8 @@ func Topic(crt *support.Crt, topic, title string) {
 
 	t := menu.New(feed.Title)
 	noNewsItems := len(feed.Items)
-	if noNewsItems > menu.MaxMenuItems {
-		noNewsItems = menu.MaxMenuItems
+	if noNewsItems > support.MaxPageRows {
+		noNewsItems = support.MaxPageRows
 	}
 	for i := range noNewsItems {
 		//log.Println("Adding: ", feed.Items[i].Title, i)

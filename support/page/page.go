@@ -9,9 +9,10 @@ import (
 	"github.com/mt1976/crt/support"
 )
 
-const MaxPageRows int = 15
-const RowLength int = 80
-const TitleLength int = 25
+// const MaxPageRows int = support.MaxPageRows
+//const RowLength int = support.RowLength
+
+//const TitleLength int = support.TitleLength
 
 // The "Page" type represents a Page with a title, rows of data, a prompt, a list of actions, and
 // information about the number of rows and pages.
@@ -55,8 +56,8 @@ type pageRow struct {
 // The New function creates a new page with a truncated title and initializes other properties.
 func New(title string) *Page {
 	// truncate title to 25 characters
-	if len(title) > TitleLength {
-		title = title[:TitleLength] + "..."
+	if len(title) > support.TitleLength {
+		title = title[:support.TitleLength] + "..."
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	m.AddAction(Quit)    // Add Quit action
@@ -87,14 +88,14 @@ func (m *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 	m.counter++
-	if m.counter >= MaxPageRows {
+	if m.counter >= support.MaxPageRows {
 		m.counter = 0
 		m.noPages++
 	}
 	remainder := ""
-	if len(rowContent) > RowLength {
-		remainder = rowContent[RowLength:]
-		rowContent = rowContent[:RowLength]
+	if len(rowContent) > support.RowLength {
+		remainder = rowContent[support.RowLength:]
+		rowContent = rowContent[:support.RowLength]
 
 		//m.pageRows = append(m.pageRows, pageRow{ID: m.counter, Content: rowContent, PageNumber: prn})
 		//m.noRows++
@@ -149,7 +150,7 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		//}
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
-	extraRows := (MaxPageRows - rowsDisplayed) + 1
+	extraRows := (support.MaxPageRows - rowsDisplayed) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {

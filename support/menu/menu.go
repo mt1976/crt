@@ -11,8 +11,6 @@ import (
 	"github.com/xeonx/timeago"
 )
 
-const MaxMenuItems = 15
-
 // The "menu" type represents a menu with a title, menu items, a prompt, and associated actions.
 // @property {string} title - The title property represents the title of the menu.
 // @property {[]menuItem} menuItems - The `menuItems` property is an array of `menuItem` objects. Each
@@ -59,8 +57,8 @@ type menuItem struct {
 // The New function creates a new menu with a truncated title and initializes its properties.
 func New(title string) *menu {
 	// truncate title to 25 characters
-	if len(title) > 25 {
-		title = title[:25] + "..."
+	if len(title) > support.TitleLength {
+		title = title[:support.TitleLength] + "..."
 	}
 	m := menu{title: title, menuItems: []menuItem{}, noItems: 0, prompt: promptString}
 	return &m
@@ -68,12 +66,12 @@ func New(title string) *menu {
 
 // The `Add` function is a method of the `menu` struct. It is used to add a new menu item to the menu.
 func (m *menu) Add(menuItemNumber int, menuItemTitle string, altID string, dateTime string) {
-	if m.noItems >= MaxMenuItems {
+	if m.noItems >= support.MaxPageRows {
 		log.Fatal(m.title + " " + maxMenuItemsError)
 		return
 	}
-	if len(menuItemTitle) > 50 {
-		menuItemTitle = menuItemTitle[:50] + "..."
+	if len(menuItemTitle) > support.MenuItemLength {
+		menuItemTitle = menuItemTitle[:support.MenuItemLength] + "..."
 	}
 	if menuItemTitle != "" {
 		m.AddAction(fmt.Sprintf("%v", menuItemNumber))
@@ -111,7 +109,7 @@ func (m *menu) Display(crt *support.Crt) (nextAction string, selected menuItem) 
 		crt.Println(format(crt, m.menuItems[i]))
 		m.AddAction(m.menuItems[i].Number) // Add action for each menu item
 	}
-	extraRows := (MaxMenuItems - m.noItems) + 1
+	extraRows := (support.MaxPageRows - m.noItems) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	for i := 0; i <= extraRows; i++ {
 		crt.Print(newline)

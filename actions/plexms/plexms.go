@@ -68,7 +68,7 @@ func Run(crt *support.Crt) {
 	}
 
 	spew.Dump(res)
-	os.Exit(1)
+	//os.Exit(1)
 	//spew.Dump(libs)
 	//os.Exit(1)
 
