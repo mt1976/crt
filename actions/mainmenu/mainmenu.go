@@ -3,6 +3,7 @@ package mainmenu
 import (
 	"fmt"
 
+	plexmediaserver "github.com/mt1976/crt/actions/plexms"
 	"github.com/mt1976/crt/actions/skynews"
 	torrents "github.com/mt1976/crt/actions/torrents"
 	"github.com/mt1976/crt/actions/weather"
@@ -24,7 +25,7 @@ func Run(crt *support.Crt) {
 	m.Add(3, bbcNewsMenuTitleText, "", "")
 	m.Add(4, weatherMenuTitleText, "", "")
 	m.Add(5, "Torrents", "", "")
-	m.Add(6, "", "", "")
+	m.Add(6, plexmediaserversMenuTitleText, "", "")
 	m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
 	m.Add(8, systemsMaintenanceMenuTitleText, "", "")
 	m.AddAction(menu.Quit)
@@ -55,6 +56,8 @@ func Run(crt *support.Crt) {
 			weather.Run(crt)
 		case "5":
 			torrents.Run(crt)
+		case "6":
+			plexmediaserver.Run(crt)
 		default:
 			crt.InputError(invalidActionErrorText + "'" + action + "'")
 		}

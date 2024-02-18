@@ -8,6 +8,7 @@ const bbcNewsMenuTitleText = "BBC News"
 const weatherMenuTitleText = "Weather"
 const remoteSystemsAccessMenuTitleText = "Remote Systems Access"
 const systemsMaintenanceMenuTitleText = "Systems Maintenance"
+const plexmediaserversMenuTitleText = "Plex Media Server"
 
 const invalidActionErrorText = "Invalid action"
 const maxMenuItemsErrorText = "Max menu items reached"
