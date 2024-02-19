@@ -75,9 +75,9 @@ func (m *Page) Add(rowContent string, altID string, dateTime string) {
 	rowContent = strings.Replace(rowContent, "\n", "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
-	rowContent = strings.Replace(rowContent, "  ", " ", -1)
-	rowContent = strings.Replace(rowContent, "  ", " ", -1)
-	rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
+	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
 	rowContent = strings.Replace(rowContent, "\"", " ", -1)
 
 	//fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")

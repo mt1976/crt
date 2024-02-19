@@ -71,21 +71,28 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 	//p.Add("Duration:"+dur, "", "")
 	AddFieldValuePair(crt, p, "Duration", dur)
 	count := 0
+	p.Add("---", "", "")
+	AddC(crt, p, "Container", "Resolution", "Codec", "Aspect")
+
 	for range info.Media {
 		med := info.Media[count]
-		p.Add("---", "", "")
+
 		//p.Add("Container:"+med.Container, "", "")
-		AddFieldValuePair(crt, p, "Container", med.Container)
-		AddFieldValuePair(crt, p, "VideoResolution", med.VideoResolution)
+		//AddFieldValuePair(crt, p, "Container", med.Container)
+		//AddFieldValuePair(crt, p, "VideoResolution", med.VideoResolution)
 
-		AddFieldValuePair(crt, p, "VideoCodec", med.VideoCodec)
-		AddFieldValuePair(crt, p, "AspectRatio", med.AspectRatio.String())
+		//AddFieldValuePair(crt, p, "VideoCodec", med.VideoCodec)
+		//AddFieldValuePair(crt, p, "AspectRatio", med.AspectRatio.String())
 
+		AddC(crt, p, med.Container, med.VideoResolution, med.VideoCodec, med.AspectRatio.String())
+		//p.Add("", "", "")
 		//p.Add("Resolution:"+med.VideoResolution, "", "")
-		AddFieldValuePair(crt, p, "AudioCodec", med.AudioCodec)
+		//AddFieldValuePair(crt, p, "AudioCodec", med.AudioCodec)
 		//p.Add("FrameRate:"+med.VideoFrameRate, "", "")
-		AddFieldValuePair(crt, p, "FrameRate", med.VideoFrameRate)
+		//AddFieldValuePair(crt, p, "FrameRate", med.VideoFrameRate)
 		//p.Add("AudioCodec:"+med.AudioCodec, "", "")
+		//AddC(crt, p, "AudioChannels", "AudioCodec", "Bitrate", "")
+		//AddC(crt, p, fmt.Sprintf("%d", med.AudioChannels), med.AudioCodec, fmt.Sprintf("%d", med.Bitrate), "")
 		count++
 	}
 	exit := false
@@ -108,5 +115,13 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 func AddFieldValuePair(crt *support.Crt, p *page.Page, key string, value string) {
 	format := "%-20s : %s\n"
 	p.Add(fmt.Sprintf(format, key, crt.Bold(value)), "", "")
+	//return p
+}
+
+func AddC(crt *support.Crt, p *page.Page, col1 string, col2 string, col3 string, col4 string) {
+	format := "%-16s : %-16s : %-16s : %-16s\n"
+	result := fmt.Sprintf(format, crt.Bold(col1), crt.Bold(col2), crt.Bold(col3), crt.Bold(col4))
+
+	p.Add(result, "", "")
 	//return p
 }
