@@ -7,6 +7,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	support "github.com/mt1976/crt/support"
+	cfg "github.com/mt1976/crt/support/config"
 	page "github.com/mt1976/crt/support/page"
 )
 
@@ -17,7 +18,10 @@ func Run(crt *support.Crt) {
 
 	crt.Clear()
 
-	plexConnection, err := plex.New(apiHost+":"+apiPort, apiToken)
+	//spew.Dump(cfg.Configuration)
+	//os.Exit(1)
+
+	plexConnection, err := plex.New(cfg.Configuration.PlexURI+":"+cfg.Configuration.PlexPort, cfg.Configuration.PlexToken)
 	if err != nil {
 		crt.Error(plexInitError, err)
 		os.Exit(1)
@@ -39,7 +43,7 @@ func Run(crt *support.Crt) {
 
 	mediaV := 0
 	for i := 0; i < len(devices); i++ {
-		if devices[i].ClientIdentifier == clientID {
+		if devices[i].ClientIdentifier == cfg.Configuration.PlexClientID {
 			mediaV = i
 		}
 	}
@@ -47,7 +51,7 @@ func Run(crt *support.Crt) {
 	mediaVaultProperties := devices[mediaV]
 	spew.Dump(mediaVaultProperties)
 
-	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, apiToken)
+	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, cfg.Configuration.PlexToken)
 	if err != nil {
 		crt.Error(fmt.Sprintf(mvInitError, mediaVaultProperties.Name), err)
 		os.Exit(1)
