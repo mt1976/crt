@@ -3,12 +3,14 @@ package plexmediaserver
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
+	"github.com/mt1976/crt/actions/plexms/library/movies"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
-	page "github.com/mt1976/crt/support/page"
+	"github.com/mt1976/crt/support/menu"
 )
 
 // The main function initializes and runs a terminal-based news reader application called StarTerm,
@@ -76,31 +78,53 @@ func Run(crt *support.Crt) {
 	//spew.Dump(libs)
 	//os.Exit(1)
 
-	p := page.New(plexTitle + " - " + mediaVaultProperties.Name)
-
+	p := menu.New(plexTitle + " - " + mediaVaultProperties.Name)
+	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
-		p.Add(xx.Title, "", "")
+		count++
+		p.Add(count, xx.Title, "", "")
 	}
 
-	p.AddAction(page.Quit)
-	p.AddAction(page.Forward)
-	p.AddAction(page.Back)
+	p.AddAction(menu.Quit)
+	p.AddAction(menu.Forward)
+	p.AddAction(menu.Back)
 	ok := false
 	for !ok {
 
 		nextAction, _ := p.Display(crt)
-		switch nextAction {
-		case page.Forward:
+		switch {
+		case nextAction == menu.Forward:
 			p.NextPage(crt)
-		case page.Back:
+		case nextAction == menu.Back:
 			p.PreviousPage(crt)
-		case page.Quit:
+		case nextAction == menu.Quit:
 			ok = true
 			return
+		case support.IsInt(nextAction):
+			crt.Error("You selected: "+nextAction, nil)
+			naInt, _ := strconv.Atoi(nextAction)
+			wi := mvLibraries.MediaContainer.Directory[naInt-1]
+			Action(crt, mediaVault, wi)
+			//spew.Dump(wi)
+			os.Exit(1)
+
 		default:
-			crt.InputError(page.InvalidActionError + "'" + nextAction + "'")
+			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 		}
 	}
 
+}
+
+func Action(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
+
+	switch wi.Type {
+	case "movie":
+		crt.Shout(wi.Title)
+		movies.Run(crt, mediaVault, wi)
+	case "show":
+		crt.Shout(wi.Title)
+	default:
+		crt.Shout(wi.Title)
+	}
 }
