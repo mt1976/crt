@@ -3,7 +3,7 @@ package movies
 import (
 	"fmt"
 	"os"
-	"strconv"
+	"time"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
@@ -58,20 +58,35 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 
 func Detail(crt *support.Crt, info plex.Metadata) {
 	p := page.New(info.Title)
-	p.Add("Title:"+info.Title, "", "")
-	p.Add("ContentRating:"+info.ContentRating, "", "")
-	p.Add("Summary:"+info.Summary, "", "")
-	dur := strconv.Itoa(info.Duration) + " mins"
-	p.Add("Duration:"+dur, "", "")
+	//p.Add("Title:"+info.Title, "", "")
+	AddFieldValuePair(crt, p, "Title", info.Title)
+	//p.Add("ContentRating:"+info.ContentRating, "", "")
+	AddFieldValuePair(crt, p, "ContentRating", info.ContentRating)
+
+	//p.Add("Summary:"+info.Summary, "", "")
+	AddFieldValuePair(crt, p, "Summary", info.Summary)
+	//unix time to hrs mins secs
+	xy := time.UnixMilli(int64(info.Duration))
+	dur := xy.Format("15:04:05")
+	//p.Add("Duration:"+dur, "", "")
+	AddFieldValuePair(crt, p, "Duration", dur)
 	count := 0
 	for range info.Media {
 		med := info.Media[count]
+		p.Add("---", "", "")
+		//p.Add("Container:"+med.Container, "", "")
+		AddFieldValuePair(crt, p, "Container", med.Container)
+		AddFieldValuePair(crt, p, "VideoResolution", med.VideoResolution)
 
-		p.Add("Resolution:"+med.VideoResolution, "", "")
-		p.Add("FrameRate:"+med.VideoFrameRate, "", "")
-		p.Add("AudioCodec:"+med.AudioCodec, "", "")
+		AddFieldValuePair(crt, p, "VideoCodec", med.VideoCodec)
+		AddFieldValuePair(crt, p, "AspectRatio", med.AspectRatio.String())
+
+		//p.Add("Resolution:"+med.VideoResolution, "", "")
+		AddFieldValuePair(crt, p, "AudioCodec", med.AudioCodec)
+		//p.Add("FrameRate:"+med.VideoFrameRate, "", "")
+		AddFieldValuePair(crt, p, "FrameRate", med.VideoFrameRate)
+		//p.Add("AudioCodec:"+med.AudioCodec, "", "")
 		count++
-
 	}
 	exit := false
 	for !exit {
@@ -88,4 +103,10 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 		}
 	}
+}
+
+func AddFieldValuePair(crt *support.Crt, p *page.Page, key string, value string) {
+	format := "%-20s : %s\n"
+	p.Add(fmt.Sprintf(format, key, crt.Bold(value)), "", "")
+	//return p
 }
