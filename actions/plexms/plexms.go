@@ -107,7 +107,7 @@ func Run(crt *support.Crt) {
 			wi := mvLibraries.MediaContainer.Directory[naInt-1]
 			Action(crt, mediaVault, wi)
 			//spew.Dump(wi)
-			os.Exit(1)
+			//os.Exit(1)
 
 		default:
 			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
