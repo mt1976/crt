@@ -2,6 +2,7 @@ package skynews
 
 import (
 	"github.com/mt1976/crt/support"
+	config "github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/menu"
 )
 
@@ -9,13 +10,15 @@ import (
 // news articles related to that topic.
 func Run(crt *support.Crt) {
 
+	C := config.Configuration
+
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
 	m := menu.New(menuTitleText)
 	c := 0
 	c++
-	m.Add(c, serviceTransText, serviceTransURI, "")
+	m.Add(c, serviceTransText, C.TransmissionURI, "")
 	c++
 	m.Add(c, serviceQTorText, serviceQTorURI, "")
 	c++

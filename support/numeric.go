@@ -6,10 +6,9 @@ import (
 	"unicode"
 )
 
-const MaxPageRows int = 18
-const RowLength int = 80
-const TitleLength int = 40
-const MenuItemLength int = 50
+// const RowLength int = 80
+// const TitleLength int = 40
+//const MenuItemLength int = 50
 
 // The IsInt function checks if a given string consists only of digits.
 // IsInt checks if a given string consists only of digits.

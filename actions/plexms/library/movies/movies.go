@@ -3,7 +3,6 @@ package movies
 import (
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/davecgh/go-spew/spew"
@@ -13,7 +12,7 @@ import (
 	page "github.com/mt1976/crt/support/page"
 )
 
-func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
+func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 	crt.Shout("Movies-" + wi.Title)
 
 	res, err := mediaVault.GetLibraryContent(wi.Key, "")
@@ -60,34 +59,31 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 func Detail(crt *support.Crt, info plex.Metadata) {
 	p := page.New(info.Title)
 	//p.Add("Title:"+info.Title, "", "")
-	AddFieldValuePair(crt, p, "Title", info.Title)
+	//AddFieldValuePair(crt, p, "Title", info.Title)
+	p.AddFieldValuePair(crt, "Title", info.Title)
 	//p.Add("ContentRating:"+info.ContentRating, "", "")
-	AddFieldValuePair(crt, p, "ContentRating", info.ContentRating)
+	//AddFieldValuePair(crt, p, "ContentRating", info.ContentRating)
+	p.AddFieldValuePair(crt, "ContentRating", info.ContentRating)
 
 	//p.Add("Summary:"+info.Summary, "", "")
-	AddFieldValuePair(crt, p, "Summary", info.Summary)
+	//AddFieldValuePair(crt, p, "Summary", info.Summary)
+	p.AddFieldValuePair(crt, "Summary", info.Summary)
 	//unix time to hrs mins secs
 	xy := time.UnixMilli(int64(info.Duration))
 	dur := xy.Format("15:04:05")
 	//p.Add("Duration:"+dur, "", "")
-	AddFieldValuePair(crt, p, "Duration", dur)
+	//AddFieldValuePair(crt, p, "Duration", dur)
+	p.AddFieldValuePair(crt, "Duration", dur)
 	count := 0
 	p.Add("---", "", "")
-	AddColumns(true, crt, p, "Container", "Resolution", "Codec", "Aspect")
+	//AddColumns(true, crt, p, "Container", "Resolution", "Codec", "Aspect","FrameRate")
+	p.AddColumns(crt, "Container", "Resolution", "Codec", "Aspect", "FrameRate")
+	p.AddColumns(crt, "---------", "----------", "-----", "------", "---------")
 
 	for range info.Media {
 		med := info.Media[count]
 
-		//p.Add("Container:"+med.Container, "", "")
-		//AddFieldValuePair(crt, p, "Container", med.Container)
-		//AddFieldValuePair(crt, p, "VideoResolution", med.VideoResolution)
-
-		//AddFieldValuePair(crt, p, "VideoCodec", med.VideoCodec)
-		//AddFieldValuePair(crt, p, "AspectRatio", med.AspectRatio.String())
-
-		AddColumns(false, crt, p, med.Container, med.VideoResolution, med.VideoCodec, med.AspectRatio.String())
-		//p.Add("", "", "")
-		//p.Add("Resolution:"+med.VideoResolution, "", "")
+		p.AddColumns(crt, med.Container, med.VideoResolution, med.VideoCodec, med.AspectRatio.String(), med.VideoFrameRate)
 		//AddFieldValuePair(crt, p, "AudioCodec", med.AudioCodec)
 		//p.Add("FrameRate:"+med.VideoFrameRate, "", "")
 		//AddFieldValuePair(crt, p, "FrameRate", med.VideoFrameRate)
@@ -111,47 +107,4 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 		}
 	}
-}
-
-func AddFieldValuePair(crt *support.Crt, p *page.Page, key string, value string) {
-	format := "%-20s : %s\n"
-	p.Add(fmt.Sprintf(format, key, crt.Bold(value)), "", "")
-	//return p
-}
-
-func AddColumns(heading bool, crt *support.Crt, p *page.Page, cols ...string) {
-	spew.Dump(cols)
-	//format := "%-16s : %-16s : %-16s : %-16s\n"
-	if len(cols) > 10 {
-		crt.Error("AddColumns", nil)
-		os.Exit(1)
-	}
-	var output []string
-	screenWidth := crt.Width()
-	colSize := screenWidth / len(cols)
-	spew.Dump(colSize)
-	spew.Dump(screenWidth)
-	for i := 0; i < len(cols); i++ {
-		spew.Dump(i)
-		spew.Dump(cols[i])
-		op := crt.Underline(cols[i])
-		if !heading {
-			op = crt.Bold(cols[i])
-		}
-		if len(op) > colSize {
-			op = op[0:colSize]
-		} else {
-			noToAdd := colSize - len(op)
-			op = op + strings.Repeat(" ", noToAdd)
-		}
-		// append op to output
-		output = append(output, op)
-		spew.Dump(op)
-	}
-
-	// turn string array into sigle string
-	p.Add(strings.Join(output, "|"), "", "")
-	//return p
-	spew.Dump(output)
-	//os.Exit(1)
 }

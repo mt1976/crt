@@ -1,4 +1,4 @@
-package shows
+package music
 
 import (
 	"fmt"
@@ -7,12 +7,9 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/support"
-	"github.com/mt1976/crt/support/config"
 	menu "github.com/mt1976/crt/support/menu"
 	page "github.com/mt1976/crt/support/page"
 )
-
-var C = config.Configuration
 
 func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 	crt.Shout("Movies-" + wi.Title)
@@ -47,7 +44,8 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 		default:
 			if support.IsInt(nextAction) {
 				//	Action(crt, mediaVault, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
-				Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1], mediaVault)
+				Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
+
 			} else {
 				crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 			}
@@ -58,14 +56,17 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 	os.Exit(1)
 }
 
-func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
+func Detail(crt *support.Crt, info plex.Metadata) {
+
+	spew.Dump(info)
+	os.Exit(1)
 	p := page.New(info.Title)
 	//p.Add("Title:"+info.Title, "", "")
 	//AddFieldValuePair(crt, p, "Title", info.Title)
 	p.AddFieldValuePair(crt, "Title", info.Title)
 	//p.Add("ContentRating:"+info.ContentRating, "", "")
 	//AddFieldValuePair(crt, p, "ContentRating", info.ContentRating)
-	p.AddFieldValuePair(crt, "ContentRating", info.ContentRating)
+	//p.AddFieldValuePair(crt, "ContentRating", info.ContentRating)
 
 	//p.Add("Summary:"+info.Summary, "", "")
 	//AddFieldValuePair(crt, p, "Summary", info.Summary)
@@ -94,7 +95,6 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 		//AddC(crt, p, fmt.Sprintf("%d", med.AudioChannels), med.AudioCodec, fmt.Sprintf("%d", med.Bitrate), "")
 		count++
 	}
-	p.AddAction("E") //Drilldown to episodes
 	exit := false
 	for !exit {
 		nextAction, _ := p.Display(crt)
@@ -106,25 +106,8 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 			p.NextPage(crt)
 		case page.Back:
 			p.PreviousPage(crt)
-		case "E":
-			Episodes(crt, mediaVault, info)
 		default:
 			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 		}
 	}
-}
-
-func Episodes(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) {
-
-	key := C.PlexURI + ":" + C.PlexPort + info.Key
-	spew.Dump(info, key)
-	yy, err := mediaVault.GetEpisodes(key)
-	if err != nil {
-		crt.Error("mvLibError", err)
-		os.Exit(1)
-	}
-	p := page.New("Episodes" + yy.MediaContainer.LibrarySectionTitle)
-
-	p.Display(crt)
-	os.Exit(1)
 }

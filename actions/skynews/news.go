@@ -2,8 +2,11 @@ package skynews
 
 import (
 	"github.com/mt1976/crt/support"
+	"github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/menu"
 )
+
+var C = config.Configuration
 
 // The Run function displays a menu of news topics and allows the user to select a topic to view the
 // news articles related to that topic.
@@ -25,23 +28,23 @@ func Run(crt *support.Crt) {
 	m := menu.New(menuTitleText)
 	c := 0
 	c++
-	m.Add(c, topicHomeText, topicHomeURI, "")
+	m.Add(c, topicHomeText, C.SkyNewsURI+topicHomeURI, "")
 	c++
-	m.Add(c, topicUKText, topicUKURI, "")
+	m.Add(c, topicUKText, C.SkyNewsURI+topicUKURI, "")
 	c++
-	m.Add(c, topicWorldText, topicWorldURI, "")
+	m.Add(c, topicWorldText, C.SkyNewsURI+topicWorldURI, "")
 	c++
-	m.Add(c, topicUSText, topicUSURI, "")
+	m.Add(c, topicUSText, C.SkyNewsURI+topicUSURI, "")
 	c++
-	m.Add(c, topicBusinessText, topicBusinessURI, "")
+	m.Add(c, topicBusinessText, C.SkyNewsURI+topicBusinessURI, "")
 	c++
-	m.Add(c, topicPoliticsText, topicPoliticsURI, "")
+	m.Add(c, topicPoliticsText, C.SkyNewsURI+topicPoliticsURI, "")
 	c++
-	m.Add(c, topicTechnologyText, topicTechnologyURI, "")
+	m.Add(c, topicTechnologyText, C.SkyNewsURI+topicTechnologyURI, "")
 	c++
-	m.Add(c, topicEntertainmentText, topicEntertainmentURI, "")
+	m.Add(c, topicEntertainmentText, C.SkyNewsURI+topicEntertainmentURI, "")
 	c++
-	m.Add(c, topicStrangeText, topicStrangeURI, "")
+	m.Add(c, topicStrangeText, C.SkyNewsURI+topicStrangeURI, "")
 	m.AddAction(menu.Quit)
 
 	ok := false

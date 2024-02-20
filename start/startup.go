@@ -4,9 +4,13 @@ import (
 	"fmt"
 
 	"github.com/mt1976/crt/support"
+	"github.com/mt1976/crt/support/config"
 )
 
 // Run initializes the terminal and runs the main loop.
+
+var C = config.Configuration
+
 func Run(crt *support.Crt) {
 	// Clear the terminal screen.
 	crt.Clear()
@@ -66,9 +70,10 @@ func Run(crt *support.Crt) {
 	// Print a message with the IP address and port number.
 	msg := fmt.Sprintf(dialingText, support.RandomIP(), support.RandomPort())
 	crt.Print(msg + newline)
-	crt.SetDelayInSec(support.RandomFloat(1, 5))
-
-	if support.CoinToss() {
+	if !C.Debug {
+		crt.SetDelayInSec(support.RandomFloat(1, 5))
+	}
+	if support.CoinToss() && !C.Debug {
 		crt.Print(dialingFailedText + newline)
 		// Print a message with the IP address and port number.
 		crt.ResetDelay()

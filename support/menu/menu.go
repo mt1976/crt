@@ -9,11 +9,13 @@ import (
 	"time"
 
 	"github.com/mt1976/crt/support"
+	"github.com/mt1976/crt/support/config"
 	"github.com/xeonx/timeago"
 )
 
 // const MaxPageRows int = support.MaxPageRows
-//const RowLength int = support.RowLength
+// const RowLength int = support.RowLength
+var C = config.Configuration
 
 //const TitleLength int = support.TitleLength
 
@@ -62,8 +64,8 @@ type pageRow struct {
 // The New function creates a new page with a truncated title and initializes other properties.
 func New(title string) *Page {
 	// truncate title to 25 characters
-	if len(title) > support.TitleLength {
-		title = title[:support.TitleLength] + "..."
+	if len(title) > C.TitleLength {
+		title = title[:C.TitleLength] + "..."
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	m.AddAction(Quit)    // Add Quit action
@@ -94,14 +96,14 @@ func (m *Page) Add(id int, rowContent string, altID string, dateTime string) {
 		return
 	}
 	m.counter++
-	if m.counter >= support.MaxPageRows {
+	if m.counter >= C.MaxContentRows {
 		m.counter = 0
 		m.noPages++
 	}
 	//remainder := ""
-	if len(rowContent) > support.RowLength {
+	if len(rowContent) > C.TerminalWidth {
 		//	remainder = rowContent[support.RowLength:]
-		rowContent = rowContent[:support.RowLength]
+		rowContent = rowContent[:C.TerminalWidth]
 
 		//m.pageRows = append(m.pageRows, pageRow{ID: m.counter, Content: rowContent, PageNumber: prn})
 		//m.noRows++
@@ -170,7 +172,7 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		//}
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
-	extraRows := (support.MaxPageRows - rowsDisplayed) + 1
+	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {

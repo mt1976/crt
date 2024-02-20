@@ -8,6 +8,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/actions/plexms/library/movies"
+	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
@@ -106,7 +107,7 @@ func Run(crt *support.Crt) {
 			crt.Error("You selected: "+nextAction, nil)
 			naInt, _ := strconv.Atoi(nextAction)
 			wi := mvLibraries.MediaContainer.Directory[naInt-1]
-			Action(crt, mediaVault, wi)
+			Action(crt, mediaVault, &wi)
 			//spew.Dump(wi)
 			//os.Exit(1)
 
@@ -117,7 +118,8 @@ func Run(crt *support.Crt) {
 
 }
 
-func Action(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
+func Action(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
+
 	switch wi.Type {
 	case "movie":
 		crt.Shout(wi.Title)
@@ -125,9 +127,9 @@ func Action(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 	case "show":
 		crt.Shout(wi.Title)
 		shows.Run(crt, mediaVault, wi)
-	case "music":
+	case "artist":
 		crt.Shout(wi.Title)
-		shows.Run(crt, mediaVault, wi)
+		music.Run(crt, mediaVault, wi)
 	default:
 		crt.Shout(wi.Title)
 	}
