@@ -1,4 +1,4 @@
-package movies
+package shows
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ import (
 )
 
 func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
-	crt.Shout("Movies-" + wi.Title)
+	crt.Shout("Shows-" + wi.Title)
 
 	res, err := mediaVault.GetLibraryContent(wi.Key, "")
 	if err != nil {
@@ -46,7 +46,8 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 		default:
 			if support.IsInt(nextAction) {
 				//	Action(crt, mediaVault, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
-				Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
+				spew.Dump(res)
+				Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1], mediaVault, wi)
 			} else {
 				crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 			}
@@ -57,7 +58,11 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 	os.Exit(1)
 }
 
-func Detail(crt *support.Crt, info plex.Metadata) {
+func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex, wi plex.Directory) {
+
+	spew.Dump(info)
+
+	os.Exit(1)
 	p := page.New(info.Title)
 	//p.Add("Title:"+info.Title, "", "")
 	AddFieldValuePair(crt, p, "Title", info.Title)

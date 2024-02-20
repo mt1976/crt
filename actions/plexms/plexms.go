@@ -8,6 +8,7 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/actions/plexms/library/movies"
+	"github.com/mt1976/crt/actions/plexms/library/shows"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/menu"
@@ -124,6 +125,7 @@ func Action(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
 		movies.Run(crt, mediaVault, wi)
 	case "show":
 		crt.Shout(wi.Title)
+		shows.Run(crt, mediaVault, wi)
 	default:
 		crt.Shout(wi.Title)
 	}
