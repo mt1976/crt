@@ -118,12 +118,14 @@ func Run(crt *support.Crt) {
 }
 
 func Action(crt *support.Crt, mediaVault *plex.Plex, wi plex.Directory) {
-
 	switch wi.Type {
 	case "movie":
 		crt.Shout(wi.Title)
 		movies.Run(crt, mediaVault, wi)
 	case "show":
+		crt.Shout(wi.Title)
+		shows.Run(crt, mediaVault, wi)
+	case "music":
 		crt.Shout(wi.Title)
 		shows.Run(crt, mediaVault, wi)
 	default:
