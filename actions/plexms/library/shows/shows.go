@@ -116,15 +116,15 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 
 func Episodes(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) {
 
-	key := C.PlexURI + ":" + C.PlexPort + info.Key
-	spew.Dump(info, key)
-	yy, err := mediaVault.GetEpisodes(key)
+	//key := C.PlexURI + ":" + C.PlexPort + info.Key
+	spew.Dump(info)
+	yy, err := mediaVault.GetLibraryContent(info.RatingKey, "")
 	if err != nil {
 		crt.Error("mvLibError", err)
 		os.Exit(1)
 	}
-	p := page.New("Episodes" + yy.MediaContainer.LibrarySectionTitle)
-
+	p := page.New("Episodes")
+	spew.Dump(yy)
 	p.Display(crt)
 	os.Exit(1)
 }
