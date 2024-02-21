@@ -20,6 +20,7 @@ type Config struct {
 	TransmissionURI string  `mapstructure:"TransmissionURI"`
 	SkyNewsURI      string  `mapstructure:"SkyNewsURI"`
 	MaxContentRows  int     `mapstructure:"MaxContentRows"`
+	MaxNoItems      int     `mapstructure:"MaxNoItems"`
 	TitleLength     int     `mapstructure:"TitleLength"`
 	Debug           bool    `mapstructure:"Debug"`
 }

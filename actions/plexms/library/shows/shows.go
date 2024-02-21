@@ -35,6 +35,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	exit := false
 	for !exit {
+
 		nextAction, _ := m.Display(crt)
 		switch nextAction {
 		case menu.Quit:
@@ -94,7 +95,9 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 		//AddC(crt, p, fmt.Sprintf("%d", med.AudioChannels), med.AudioCodec, fmt.Sprintf("%d", med.Bitrate), "")
 		count++
 	}
-	p.AddAction("E") //Drilldown to episodes
+	p.AddAction(Seasons) //Drilldown to episodes
+	p.SetPrompt(prompt)
+
 	exit := false
 	for !exit {
 		nextAction, _ := p.Display(crt)
@@ -106,25 +109,10 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 			p.NextPage(crt)
 		case page.Back:
 			p.PreviousPage(crt)
-		case "E":
-			Episodes(crt, mediaVault, info)
+		case Seasons:
+			SeasonDetails(crt, mediaVault, info)
 		default:
 			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 		}
 	}
-}
-
-func Episodes(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) {
-
-	//key := C.PlexURI + ":" + C.PlexPort + info.Key
-	spew.Dump(info)
-	yy, err := mediaVault.GetLibraryContent(info.RatingKey, "")
-	if err != nil {
-		crt.Error("mvLibError", err)
-		os.Exit(1)
-	}
-	p := page.New("Episodes")
-	spew.Dump(yy)
-	p.Display(crt)
-	os.Exit(1)
 }

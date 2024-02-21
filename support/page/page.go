@@ -92,6 +92,9 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	if strings.Trim(rowContent, " ") == "" {
 		return
 	}
+	if rowContent == "{{blank}}" {
+		rowContent = ""
+	}
 	p.counter++
 	if p.counter >= C.MaxContentRows {
 		p.counter = 0
@@ -285,4 +288,16 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	//return p
 	spew.Dump(output, p, len(output))
 	//os.Exit(1)
+}
+
+func (p *Page) SetPrompt(prompt string) {
+	p.prompt = prompt
+}
+
+func (p *Page) ResetPrompt() {
+	p.prompt = promptString
+}
+
+func (p *Page) BlankRow() {
+	p.Add("{{blank}}", "", "")
 }

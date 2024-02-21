@@ -172,7 +172,7 @@ func (m *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		//}
 		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
-	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
+	extraRows := (C.MaxNoItems - rowsDisplayed) + 1
 	//log.Println("Extra Rows: ", extraRows)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
@@ -270,4 +270,12 @@ func (m *Page) GetDebugRow(rowNo int) pageRow {
 // GetRows returns the number of rows in the page.
 func (m *Page) GetRows() int {
 	return m.noRows
+}
+
+func (m *Page) SetPrompt(prompt string) {
+	m.prompt = prompt
+}
+
+func (m *Page) ResetPrompt() {
+	m.prompt = promptString
 }
