@@ -69,7 +69,7 @@ func Run(crt *support.Crt) {
 			ok = true
 			return
 		default:
-			crt.InputError(page.InvalidActionError + "'" + nextAction + "'")
+			crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
 		}
 	}
 

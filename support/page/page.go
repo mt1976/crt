@@ -125,7 +125,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // as a parameter.
 func (p *Page) AddAction(validAction string) {
 	if validAction == "" {
-		log.Fatal(InvalidActionError)
+		log.Fatal(ErrInvalidAction)
 		return
 	}
 	validAction = strings.ReplaceAll(validAction, " ", "")
@@ -173,7 +173,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(InvalidActionError + "'" + nextAction + "'")
+			crt.InputError(ErrInvalidAction + "'" + nextAction + "'")
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			continue
 		}
@@ -186,7 +186,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		}
 		if !ok {
 			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
-			crt.InputError(InvalidActionError + " '" + nextAction + "'")
+			crt.InputError(ErrInvalidAction + " '" + nextAction + "'")
 
 		}
 	}
@@ -213,7 +213,7 @@ func format(crt *support.Crt, m pageRow) string {
 // If the current page is the last page, it returns an error.
 func (p *Page) NextPage(crt *support.Crt) {
 	if p.ActivePageIndex == p.noPages {
-		crt.InputError(noMorePagesError)
+		crt.InputError(errNoMorePages)
 		return
 	}
 	p.ActivePageIndex++
@@ -223,7 +223,7 @@ func (p *Page) NextPage(crt *support.Crt) {
 // If the current page is the first page, it returns an error.
 func (p *Page) PreviousPage(crt *support.Crt) {
 	if p.ActivePageIndex == 0 {
-		crt.InputError(noMorePagesError)
+		crt.InputError(errNoMorePages)
 		return
 	}
 	p.ActivePageIndex--

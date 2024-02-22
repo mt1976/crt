@@ -82,7 +82,7 @@ func (T *Crt) SetDelayInMs(delay int) {
 // `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
 	if !(width > 0 && height > 0) {
-		T.Error(TerminalSizeError, nil)
+		T.Error(errTerminalSize, nil)
 		os.Exit(1)
 	}
 	T.width = width
@@ -433,7 +433,7 @@ func (T *Crt) Header(msg string) {
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(baudRates, baud) == -1 {
-		T.Error(BaudRateError, nil)
+		T.Error(errBaudRateError, nil)
 		T.defaultBaud()
 		return
 	}

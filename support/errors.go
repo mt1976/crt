@@ -1,4 +1,7 @@
 package support
 
-var BaudRateError string = "Invalid Baud Rate"
-var TerminalSizeError string = "Invalid Terminal Size"
+const (
+	errBaudRateError    string = "Invalid Baud Rate"
+	errTerminalSize     string = "Invalid Terminal Size"
+	errDurationMismatch string = "DURATION MISMATCH "
+)

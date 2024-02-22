@@ -80,7 +80,7 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 	p.Add("---", "", "")
 	//AddColumns(true, crt, p, "Container", "Resolution", "Codec", "Aspect","FrameRate")
 	p.AddColumns(crt, "Container", "Resolution", "Codec", "Aspect", "FrameRate")
-	p.AddColumns(crt, "---------", "----------", "-----", "------", "---------")
+	p.AddColumnsRuler(crt, "Container", "Resolution", "Codec", "Aspect", "FrameRate")
 
 	for range info.Media {
 		med := info.Media[count]
