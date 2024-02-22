@@ -328,12 +328,13 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 	m.pageRowCounter++
 	mi := pageRow{}
 	mi.ID = id
-	mi.Content = rowContent
+	//mi.Content = formatOption(m.crt, mi)
 	mi.PageNumber = m.noPages
 	mi.AlternateID = altID
 	mi.Title = rowContent
 	mi.DateTime = dateTime
 
+	mi.Content = formatOption(mi)
 	m.AddActionInt(id)
 
 	m.pageRows = append(m.pageRows, mi)
@@ -342,4 +343,22 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 
 func (m *Page) AddActionInt(validAction int) {
 	m.AddAction(fmt.Sprintf("%v", validAction))
+}
+
+// The function "format" takes a pointer to a support.Crt object and a menuItem object, and returns a
+// formatted string containing the menu item's ID, title, and date.
+func formatOption(m pageRow) string {
+	miNumber := fmt.Sprintf(support.Bold("%3v"), m.ID)
+	//spew.Dump(m)
+
+	m.DateTime = support.TimeAgo(m.DateTime)
+	//add Date to end of row
+	miTitle := m.Title
+	//padd out to 70 characters
+	pad := 74 - (len(miTitle) + len(m.DateTime))
+
+	miTitle = miTitle + strings.Repeat(" ", pad)
+	miDate := m.DateTime
+	miString := fmt.Sprintf(miNumber + ") " + miTitle + " " + miDate)
+	return miString
 }

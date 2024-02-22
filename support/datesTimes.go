@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	"github.com/xeonx/timeago"
 )
 
 func HumanFromUnixDate(unixTime int64) string {
@@ -73,4 +74,15 @@ func FormatPlexDate(t string) string {
 
 func FormatPlexDuration(t int) string {
 	return FormatDuration(PlexDurationToTime(t))
+}
+
+func TimeAgo(t string) string {
+	// Example time Thu, 25 Jan 2024 09:56:00 +0000
+	// Setup a time format and parse the time
+
+	if t != "" {
+		mdt, _ := time.Parse(time.RFC1123Z, t)
+		return timeago.English.Format(mdt)
+	}
+	return ""
 }

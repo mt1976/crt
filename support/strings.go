@@ -65,3 +65,7 @@ func TrimRepeatingCharacters(s string, c string) string {
 	}
 	return result
 }
+
+func Bold(s string) string {
+	return bold + s + reset
+}
