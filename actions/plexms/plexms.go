@@ -9,6 +9,7 @@ import (
 	"github.com/mt1976/crt/actions/plexms/library/movies"
 	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
+	"github.com/mt1976/crt/actions/plexms/notations"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/page"
@@ -26,20 +27,20 @@ func Run(crt *support.Crt) {
 
 	plexConnection, err := plex.New(cfg.Configuration.PlexURI+":"+cfg.Configuration.PlexPort, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(plexInitError, err)
+		crt.Error(notations.ErrPlexInit, err)
 		os.Exit(1)
 	}
 
 	// Test your connection to your Plex server
 	result, err := plexConnection.Test()
 	if err != nil || !result {
-		crt.Error(plexTestError, err)
+		crt.Error(notations.ErrPlexConnectionTest, err)
 		os.Exit(1)
 	}
 
 	devices, err := plexConnection.GetServers()
 	if err != nil {
-		crt.Error(plexInitError, err)
+		crt.Error(notations.ErrPlexInit, err)
 		os.Exit(1)
 	}
 	//spew.Dump(devices)
@@ -56,30 +57,17 @@ func Run(crt *support.Crt) {
 
 	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(fmt.Sprintf(mvInitError, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(notations.ErrPlexConnect, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
 	mvLibraries, err := mediaVault.GetLibraries()
 	if err != nil {
-		crt.Error(fmt.Sprintf(mvLibError, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(notations.ErrLibraryResponse, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
-	//	yy := mvLibraries.MediaContainer.Directory[0]
-
-	// res, err := mediaVault.GetLibraryContent(yy.Key, "")
-	// if err != nil {
-	// 	crt.Error(fmt.Sprintf(mvLibError, mediaVaultProperties.Name), err)
-	// 	os.Exit(1)
-	// }
-
-	//spew.Dump(res)
-	//os.Exit(1)
-	//spew.Dump(libs)
-	//os.Exit(1)
-
-	p := page.New(plexTitle + " - " + mediaVaultProperties.Name)
+	p := page.New(notations.PlexTitle + " - " + mediaVaultProperties.Name)
 	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
@@ -90,28 +78,19 @@ func Run(crt *support.Crt) {
 	p.AddAction(page.Quit)
 	p.AddAction(page.Forward)
 	p.AddAction(page.Back)
-	//	ok := false
-	//	for !ok {
 
 	nextAction, _ := p.Display(crt)
 	switch {
-	// case nextAction == page.Forward:
-	// 	p.NextPage(crt)
-	// case nextAction == page.Back:
-	// 	p.PreviousPage(crt)
 	case nextAction == page.Quit:
-		//	ok = true
 		return
 	case support.IsInt(nextAction):
-		crt.Error("You selected: "+nextAction, nil)
+		crt.Error(notations.InfoYouSelected+nextAction, nil)
 		naInt, _ := strconv.Atoi(nextAction)
 		wi := mvLibraries.MediaContainer.Directory[naInt-1]
 		Action(crt, mediaVault, &wi)
-		//spew.Dump(wi)
-		//os.Exit(1)
 
 	default:
-		crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
+		crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
 	}
 	//}
 

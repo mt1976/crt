@@ -20,42 +20,34 @@ func Run(crt *support.Crt) {
 	c++
 	m.AddOption(c, serviceTransText, C.TransmissionURI, "")
 	c++
-	m.AddOption(c, serviceQTorText, serviceQTorURI, "")
+	m.AddOption(c, serviceQTorText, C.QTorrentURI, "")
 	c++
 
 	m.AddAction(page.Quit)
 
-	ok := false
-	for !ok {
-		action, nextLevel := m.Display(crt)
+	action, nextLevel := m.Display(crt)
 
-		//log.Println("Action: ", action)
-		//log.Println("Next Level: ", nextLevel)
-		//pause
-		//crt.SetDelayInMin(1)
-		//crt.DelayIt()
+	//log.Println("Action: ", action)
+	//log.Println("Next Level: ", nextLevel)
+	//pause
+	//crt.SetDelayInMin(1)
+	//crt.DelayIt()
 
-		if action == page.Quit {
-			//	crt.Println("Quitting")
-			ok = true
-			continue
-		}
+	if action == page.Quit {
+		return
+	}
 
-		if support.IsInt(action) {
-			switch action {
-			case "1":
-				Trans(crt, nextLevel.AlternateID, nextLevel.Title)
-				ok = false
-				action = ""
-			case "2":
-				//QTor(crt, nextLevel.AlternateID, nextLevel.Title)
-				ok = false
-				action = ""
-			default:
-				crt.InputError(invalidActionErrorText + "'" + action + "'")
-				ok = false
-				action = ""
-			}
+	if support.IsInt(action) {
+		switch action {
+		case "1":
+			Trans(crt, nextLevel.AlternateID, nextLevel.Title)
+			action = ""
+		case "2":
+			//QTor(crt, nextLevel.AlternateID, nextLevel.Title)
+			action = ""
+		default:
+			crt.InputError(page.ErrInvalidAction + "'" + action + "'")
+			action = ""
 		}
 	}
 }

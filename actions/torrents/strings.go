@@ -1,10 +1,12 @@
 package skynews
 
-var menuTitleText = "Bit Torrent Services"
-var serviceTransText = "Transmission"
-var serviceQTorText = "qTorrent"
+const (
+	menuTitleText    = "Bit Torrent Services"
+	serviceTransText = "Transmission"
+	serviceQTorText  = "qTorrent"
 
-var transLoadingTorrentsText = "Loading Transmission Torrents..."
-var qtorLoadingTorrentsText = "Loading qTorrent Torrents..."
-var storyLoadingText = "Loading news for story..."
-var invalidActionErrorText = "Invalid action: "
+	transLoadingTorrentsText = "Loading Transmission Torrents..."
+	qtorLoadingTorrentsText  = "Loading qTorrent Torrents..."
+	storyLoadingText         = "Loading news for story..."
+	invalidActionErrorText   = "Invalid action: "
+)

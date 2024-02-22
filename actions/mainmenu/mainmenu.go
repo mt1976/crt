@@ -20,7 +20,7 @@ func Run(crt *support.Crt) {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.AddOption(1, "Test", "", "")
+	m.AddOption(1, "", "", "")
 	m.AddOption(2, skyNewsMenuTitleText, "", "")
 	m.AddOption(3, bbcNewsMenuTitleText, "", "")
 	m.AddOption(4, weatherMenuTitleText, "", "")
@@ -59,7 +59,7 @@ func Run(crt *support.Crt) {
 		case "6":
 			plexmediaserver.Run(crt)
 		default:
-			crt.InputError(invalidActionErrorText + "'" + action + "'")
+			crt.InputError(page.ErrInvalidAction + "'" + action + "'")
 		}
 	}
 }

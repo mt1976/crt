@@ -34,7 +34,7 @@ type Page struct {
 type pageRow struct {
 	ID          int
 	Content     string
-	PageNumber  int
+	PageIndex   int
 	Title       string
 	AlternateID string
 	DateTime    string
@@ -44,7 +44,7 @@ type pageRow struct {
 func New(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > C.TitleLength {
-		title = title[:C.TitleLength] + "..."
+		title = title[:C.TitleLength] + truncate
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	m.AddAction(Quit)    // Add Quit action
@@ -68,7 +68,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if rowContent == "{{blank}}" {
+	if rowContent == blank {
 		rowContent = ""
 	}
 
@@ -166,7 +166,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	p.AddAction(Exit)
 	crt.Header(p.title)
 	for i := range p.pageRows {
-		if p.ActivePageIndex == p.pageRows[i].PageNumber {
+		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			if p.pageRows[i].Content == "" {
 				crt.Println("")
@@ -280,7 +280,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
-		crt.Error("AddColumns", nil)
+		crt.Error(ErrAddColumns, nil)
 		os.Exit(1)
 	}
 
@@ -316,12 +316,9 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	p.Add(strings.Join(output, " "), "", "")
 }
 
-// AddColumnsRuler adds a ruler to the page, separating the columns
-func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
-	if len(cols) > 10 {
-		crt.Error("AddColumns", nil)
-		os.Exit(1)
-	}
+// AddColumnsTitle adds a ruler to the page, separating the columns
+func (p *Page) AddColumnsTitle(crt *support.Crt, cols ...string) {
+	p.AddColumns(crt, cols...)
 	var output []string
 	screenWidth := crt.Width()
 	colSize := screenWidth / len(cols)
@@ -358,44 +355,43 @@ func (p *Page) ResetPrompt() {
 
 // BlankRow adds a blank row to the page
 func (p *Page) BlankRow() {
-	p.Add("{{blank}}", "", "")
+	p.Add(blank, "", "")
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (m *Page) AddOption(id int, rowContent string, altID string, dateTime string) {
-
 	// lets clean the rowContent
 	rowContent = cleanContent(rowContent)
 
 	if rowContent == "" {
 		return
 	}
+
 	if strings.Trim(rowContent, " ") == "" {
 		return
 	}
+
 	m.counter++
+
 	if m.counter >= C.MaxContentRows {
 		m.counter = 0
 		m.noPages++
 	}
+
 	if len(rowContent) > C.TerminalWidth {
 		rowContent = rowContent[:C.TerminalWidth]
-
 	}
 
 	m.pageRowCounter++
 	mi := pageRow{}
 	mi.ID = id
-	//mi.Content = formatOption(m.crt, mi)
-	mi.PageNumber = m.noPages
+	mi.PageIndex = m.noPages
 	mi.AlternateID = altID
 	mi.Title = rowContent
 	mi.DateTime = dateTime
-
 	mi.Content = formatOption(mi)
 	m.AddActionInt(id)
-
 	m.pageRows = append(m.pageRows, mi)
 	m.noRows++
 }
@@ -409,16 +405,18 @@ func (m *Page) AddActionInt(validAction int) {
 // formatted string containing the menu item's ID, title, and date.
 func formatOption(m pageRow) string {
 	miNumber := fmt.Sprintf(support.Bold("%3v"), m.ID)
-	//spew.Dump(m)
 
-	m.DateTime = support.TimeAgo(m.DateTime)
 	//add Date to end of row
 	miTitle := m.Title
 	//padd out to 70 characters
-	pad := 74 - (len(miTitle) + len(m.DateTime))
+	width := C.TerminalWidth - 7
+	pad := width - (len(miTitle) + len(m.DateTime))
+	if pad > 0 {
+		miTitle = miTitle + strings.Repeat(" ", pad)
+	} else {
+		miTitle = miTitle[:width-(len(m.DateTime)+1)] + " | " + m.DateTime
+	}
 
-	miTitle = miTitle + strings.Repeat(" ", pad)
-	miDate := m.DateTime
-	miString := fmt.Sprintf(miNumber + ") " + miTitle + " " + miDate)
+	miString := fmt.Sprintf(miNumber + ") " + miTitle)
 	return miString
 }

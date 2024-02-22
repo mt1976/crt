@@ -7,8 +7,11 @@ import (
 
 	owm "github.com/briandowns/openweathermap"
 	support "github.com/mt1976/crt/support"
+	"github.com/mt1976/crt/support/config"
 	page "github.com/mt1976/crt/support/page"
 )
+
+var C config.Config
 
 // The main function initializes and runs a terminal-based news reader application called StarTerm,
 // which fetches news headlines from an RSS feed and allows the user to navigate and open the full news
@@ -18,40 +21,40 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	p := page.New(weatherTitle + " " + sourceServiceText)
 
-	w, err := owm.NewCurrent(apiUnits, apiLang, apiKey)
+	w, err := owm.NewCurrent(C.OpenWeatherMapApiUnits, C.OpenWeatherMapApiLang, C.OpenWeatherMapApiKey)
 	if err != nil {
-		crt.Error(fmt.Sprintf(owmInitError, err), err)
+		crt.Error(fmt.Sprintf(ErrOpenWeather, err), err)
 		os.Exit(1)
 		return
 	}
 
 	w.CurrentByCoordinates(
-		&owm.Coordinates{Latitude: apiLatitude, Longitude: apiLongitude})
+		&owm.Coordinates{Latitude: C.LocationLatitude, Longitude: C.LocationLogitude})
 	if err != nil {
-		crt.Error(fmt.Sprintf(owmInitError, err), err)
+		crt.Error(fmt.Sprintf(ErrOpenWeather, err), err)
 		os.Exit(1)
 		return
 	}
 
 	c := 0
 	c++
-	p.Add(fmt.Sprintf(weatherFormat2, locationText, crt.Bold(w.Name)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat2, conditionsText, crt.Bold(w.Weather[0].Main)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat2, locationLabel, crt.Bold(w.Name)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat2, conditionsLabel, crt.Bold(w.Weather[0].Main)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, temperatureText, boldFloat(crt, w.Main.Temp)+degreeText, feelsLikeText, boldFloat(crt, w.Main.FeelsLike)+degreeText), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, minText, boldFloat(crt, w.Main.TempMin)+degreeText, maxText, boldFloat(crt, w.Main.TempMax)+degreeText), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, temperatureLabel, boldFloat(crt, w.Main.Temp)+degreeLabel, feelsLikeLabel, boldFloat(crt, w.Main.FeelsLike)+degreeLabel), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, minLabel, boldFloat(crt, w.Main.TempMin)+degreeLabel, maxLabel, boldFloat(crt, w.Main.TempMax)+degreeLabel), "", "")
 	//p.Add(hr())
 	p.Add(hr(crt), "", "")
 	// p.Add(fmt.Sprintf("Feels Like : %v", w.Main.FeelsLike))
-	p.Add(fmt.Sprintf(weatherFormat4, windSpeedText, boldFloat(crt, w.Wind.Speed), windDirectionText, boldFloat(crt, w.Wind.Deg)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat1, cloudCoverText, boldInt(crt, w.Clouds.All)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, windSpeedLabel, boldFloat(crt, w.Wind.Speed), windDirectionLabel, boldFloat(crt, w.Wind.Deg)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat1, cloudCoverLabel, boldInt(crt, w.Clouds.All)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, rain1HrText, boldFloat(crt, w.Rain.OneH), rain3HrText, boldFloat(crt, w.Rain.ThreeH)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, snow1HrText, boldFloat(crt, w.Snow.OneH), snow3HrText, boldFloat(crt, w.Snow.ThreeH)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, rain1HrLabel, boldFloat(crt, w.Rain.OneH), rain3HrLabel, boldFloat(crt, w.Rain.ThreeH)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, snow1HrLabel, boldFloat(crt, w.Snow.OneH), snow3HrLabel, boldFloat(crt, w.Snow.ThreeH)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, sunriseText, crt.Bold(outdate(w.Sys.Sunrise)), sunsetText, crt.Bold(outdate(w.Sys.Sunset))), "", "")
+	p.Add(fmt.Sprintf(weatherFormat4, sunriseLabel, crt.Bold(outdate(w.Sys.Sunrise)), sunsetLabel, crt.Bold(outdate(w.Sys.Sunset))), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat2, sourceText, crt.Bold(sourceServiceText)), "", "")
+	p.Add(fmt.Sprintf(weatherFormat2, sourceLabel, crt.Bold(sourceServiceText)), "", "")
 	// INSERT CONTENT ABOVE
 	p.AddAction(page.Quit)
 	p.AddAction(page.Forward)

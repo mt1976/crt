@@ -18,11 +18,29 @@ type Config struct {
 	Delay           float64 `mapstructure:"Delay"`
 	Baud            int     `mapstructure:"Baud"`
 	TransmissionURI string  `mapstructure:"TransmissionURI"`
-	SkyNewsURI      string  `mapstructure:"SkyNewsURI"`
+	QTorrentURI     string  `mapstructure:"QTorrentURI"`
 	MaxContentRows  int     `mapstructure:"MaxContentRows"`
 	MaxNoItems      int     `mapstructure:"MaxNoItems"`
 	TitleLength     int     `mapstructure:"TitleLength"`
 	Debug           bool    `mapstructure:"Debug"`
+
+	OpenWeatherMapApiKey   string `mapstructure:"OpenWeatherMapApiKey"`
+	OpenWeatherMapApiLang  string `mapstructure:"OpenWeatherMapApiLang"`
+	OpenWeatherMapApiUnits string `mapstructure:"OpenWeatherMapApiUnits"`
+
+	LocationLogitude float64 `mapstructure:"LocationLongitude"`
+	LocationLatitude float64 `mapstructure:"LocationLatitude"`
+
+	SkyNewsURI              string `mapstructure:"SkyNewsURI"`
+	SkyNewsHomeURI          string `mapstructure:"SkyNewsHomeURI"`
+	SkyNewsUKURI            string `mapstructure:"SkyNewsUKURI"`
+	SkyNewsWorldURI         string `mapstructure:"SkyNewsWorldURI"`
+	SkyNewsUSURI            string `mapstructure:"SkyNewsUSURI"`
+	SkyNewsBusinessURI      string `mapstructure:"SkyNewsBusinessURI"`
+	SkyNewsPoliticsURI      string `mapstructure:"SkyNewsPoliticsURI"`
+	SkyNewsTechnologyURI    string `mapstructure:"SkyNewsTechnologyURI"`
+	SkyNewsEntertainmentURI string `mapstructure:"SkyNewsEntertainmentURI"`
+	SkyNewsStrangeURI       string `mapstructure:"SkyNewsStrangeURI"`
 }
 
 var Configuration = Config{}

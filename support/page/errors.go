@@ -1,7 +1,8 @@
 package page
 
 const (
-	errMaxPageRows   = "Max page rows reached"
-	ErrInvalidAction = "Invalid action specified "
-	errNoMorePages   = "No more pages"
+	errMaxPageRows   = "max page rows reached"
+	ErrInvalidAction = "invalid action specified "
+	errNoMorePages   = "no more pages"
+	ErrAddColumns    = "too many columns 10 or less"
 )

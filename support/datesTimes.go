@@ -3,6 +3,7 @@ package support
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize"
@@ -79,10 +80,24 @@ func FormatPlexDuration(t int) string {
 func TimeAgo(t string) string {
 	// Example time Thu, 25 Jan 2024 09:56:00 +0000
 	// Setup a time format and parse the time
+	if t == "" {
+		return ""
+	}
 
 	if t != "" {
 		mdt, _ := time.Parse(time.RFC1123Z, t)
-		return timeago.English.Format(mdt)
+		rtn := timeago.English.Format(mdt)
+		rtn = strings.Replace(rtn, "one", "1", -1)
+		rtn = strings.Replace(rtn, "minutes", "mins", -1)
+		rtn = strings.Replace(rtn, "hour", "hr", -1)
+		//fix len to 10 chars
+		if len(rtn) > 10 {
+			rtn = rtn[:10]
+		}
+		if len(rtn) < 10 {
+			rtn = strings.Repeat(" ", 10-len(rtn)) + rtn
+		}
+		return rtn
 	}
 	return ""
 }

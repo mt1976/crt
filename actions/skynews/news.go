@@ -28,45 +28,33 @@ func Run(crt *support.Crt) {
 	m := page.New(menuTitleText)
 	c := 0
 	c++
-	m.AddOption(c, topicHomeText, C.SkyNewsURI+topicHomeURI, "")
+	m.AddOption(c, topicHomeLabel, C.SkyNewsURI+C.SkyNewsHomeURI, "")
 	c++
-	m.AddOption(c, topicUKText, C.SkyNewsURI+topicUKURI, "")
+	m.AddOption(c, topicUKLabel, C.SkyNewsURI+C.SkyNewsUKURI, "")
 	c++
-	m.AddOption(c, topicWorldText, C.SkyNewsURI+topicWorldURI, "")
+	m.AddOption(c, topicWorldLabel, C.SkyNewsURI+C.SkyNewsWorldURI, "")
 	c++
-	m.AddOption(c, topicUSText, C.SkyNewsURI+topicUSURI, "")
+	m.AddOption(c, topicUSLabel, C.SkyNewsURI+C.SkyNewsUSURI, "")
 	c++
-	m.AddOption(c, topicBusinessText, C.SkyNewsURI+topicBusinessURI, "")
+	m.AddOption(c, topicBusinessLabel, C.SkyNewsURI+C.SkyNewsBusinessURI, "")
 	c++
-	m.AddOption(c, topicPoliticsText, C.SkyNewsURI+topicPoliticsURI, "")
+	m.AddOption(c, topicPoliticsLabel, C.SkyNewsURI+C.SkyNewsPoliticsURI, "")
 	c++
-	m.AddOption(c, topicTechnologyText, C.SkyNewsURI+topicTechnologyURI, "")
+	m.AddOption(c, topicTechnologyLabel, C.SkyNewsURI+C.SkyNewsTechnologyURI, "")
 	c++
-	m.AddOption(c, topicEntertainmentText, C.SkyNewsURI+topicEntertainmentURI, "")
+	m.AddOption(c, topicEntertainmentLabel, C.SkyNewsURI+C.SkyNewsEntertainmentURI, "")
 	c++
-	m.AddOption(c, topicStrangeText, C.SkyNewsURI+topicStrangeURI, "")
+	m.AddOption(c, topicStrangeLabel, C.SkyNewsURI+C.SkyNewsStrangeURI, "")
 	m.AddAction(page.Quit)
 
-	ok := false
-	for !ok {
-		action, nextLevel := m.Display(crt)
+	action, nextLevel := m.Display(crt)
 
-		//log.Println("Action: ", action)
-		//log.Println("Next Level: ", nextLevel)
-		//pause
-		//crt.SetDelayInMin(1)
-		//crt.DelayIt()
-
-		if action == page.Quit {
-			//	crt.Println("Quitting")
-			ok = true
-			continue
-		}
-
-		if support.IsInt(action) {
-			Topic(crt, nextLevel.AlternateID, nextLevel.Title)
-			ok = false
-			action = ""
-		}
+	if action == page.Quit {
+		return
 	}
+	if support.IsInt(action) {
+		Topic(crt, nextLevel.AlternateID, nextLevel.Title)
+		action = ""
+	}
+
 }

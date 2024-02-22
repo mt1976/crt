@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/jrudio/go-plex-client"
+	"github.com/mt1976/crt/actions/plexms/notations"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
 	page "github.com/mt1976/crt/support/page"
@@ -13,11 +14,10 @@ import (
 var C = config.Configuration
 
 func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
-	crt.Shout("Movies-" + wi.Title)
 
 	res, err := mediaVault.GetLibraryContent(wi.Key, "")
 	if err != nil {
-		crt.Error("mvLibError", err)
+		crt.Error(notations.ErrLibraryResponse, err)
 		os.Exit(1)
 	}
 
@@ -31,37 +31,28 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 		m.AddOption(count, res.MediaContainer.Metadata[count-1].Title, "", "")
 	}
 
-	//exit := false
-	//for !exit {
-
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
 	case page.Quit:
-		//		exit = true
 		return
 	default:
 		if support.IsInt(nextAction) {
-			//	Action(crt, mediaVault, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 			Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1], mediaVault)
 		} else {
-			crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
 		}
 	}
-	//}
-
-	//spew.Dump(res)
-	//os.Exit(1)
 }
 
 func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, "Title", info.Title)
-	p.AddFieldValuePair(crt, "Year", support.ToString(info.Year))
-	p.AddFieldValuePair(crt, "Content Rating", info.ContentRating)
-	p.AddFieldValuePair(crt, "Released", support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, notations.TitleLabel, info.Title)
+	p.AddFieldValuePair(crt, notations.YearLabel, support.ToString(info.Year))
+	p.AddFieldValuePair(crt, notations.ContentLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, notations.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
 	p.BlankRow()
-	p.AddFieldValuePair(crt, "Summary", info.Summary)
+	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
 
 	p.AddAction(Seasons) //Drilldown to episodes
 	p.SetPrompt(prompt)

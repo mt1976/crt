@@ -11,15 +11,12 @@ import (
 // news item to view.
 func Topic(crt *support.Crt, topic, title string) {
 
-	//crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic
-	crt.InfoMessage(topicLoadingText + crt.Bold(title))
+	crt.InfoMessage(topicLoadingLabel + crt.Bold(title))
 	// get the news for the topic from an rss feed
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(topic)
 	crt.Clear()
-	//spew.Dump(crt, topic, title, feed)
-	//os.Exit(1)
 
 	t := page.New(feed.Title)
 	noNewsItems := len(feed.Items)
@@ -29,26 +26,19 @@ func Topic(crt *support.Crt, topic, title string) {
 
 	for i := range noNewsItems {
 		//log.Println("Adding: ", feed.Items[i].Title, i)
-		t.AddOption(i+1, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
+		dt := support.TimeAgo(feed.Items[i].Published)
+		t.AddOption(i+1, feed.Items[i].Title, feed.Items[i].Link, dt)
+		i++
 	}
-	ok := false
-	for !ok {
-		action, mi := t.Display(crt)
 
-		if action == page.Quit {
-			//crt.Println("Quitting")
-			ok = true
-			continue
-		}
-		if support.IsInt(action) {
-			Story(crt, mi.AlternateID)
-			ok = false
-			action = ""
-		}
+	action, mi := t.Display(crt)
 
-		//log.Println("Action: ", action)
-		//log.Println("Next Level: ", mi)
-
-		//spew.Dump(nextLevel)
+	if action == page.Quit {
+		//crt.Println("Quitting")
+		return
+	}
+	if support.IsInt(action) {
+		Story(crt, mi.AlternateID)
+		action = ""
 	}
 }
