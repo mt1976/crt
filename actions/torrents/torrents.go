@@ -3,7 +3,7 @@ package skynews
 import (
 	"github.com/mt1976/crt/support"
 	config "github.com/mt1976/crt/support/config"
-	"github.com/mt1976/crt/support/menu"
+	page "github.com/mt1976/crt/support/page"
 )
 
 // The Run function displays a menu of news topics and allows the user to select a topic to view the
@@ -15,15 +15,15 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := menu.New(menuTitleText)
+	m := page.New(menuTitleText)
 	c := 0
 	c++
-	m.Add(c, serviceTransText, C.TransmissionURI, "")
+	m.AddOption(c, serviceTransText, C.TransmissionURI, "")
 	c++
-	m.Add(c, serviceQTorText, serviceQTorURI, "")
+	m.AddOption(c, serviceQTorText, serviceQTorURI, "")
 	c++
 
-	m.AddAction(menu.Quit)
+	m.AddAction(page.Quit)
 
 	ok := false
 	for !ok {
@@ -35,7 +35,7 @@ func Run(crt *support.Crt) {
 		//crt.SetDelayInMin(1)
 		//crt.DelayIt()
 
-		if action == menu.Quit {
+		if action == page.Quit {
 			//	crt.Println("Quitting")
 			ok = true
 			continue

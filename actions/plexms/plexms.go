@@ -11,7 +11,7 @@ import (
 	"github.com/mt1976/crt/actions/plexms/library/shows"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
-	"github.com/mt1976/crt/support/menu"
+	"github.com/mt1976/crt/support/page"
 )
 
 // The main function initializes and runs a terminal-based news reader application called StarTerm,
@@ -79,27 +79,27 @@ func Run(crt *support.Crt) {
 	//spew.Dump(libs)
 	//os.Exit(1)
 
-	p := menu.New(plexTitle + " - " + mediaVaultProperties.Name)
+	p := page.New(plexTitle + " - " + mediaVaultProperties.Name)
 	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
 		count++
-		p.Add(count, xx.Title, "", "")
+		p.AddOption(count, xx.Title, "", "")
 	}
 
-	p.AddAction(menu.Quit)
-	p.AddAction(menu.Forward)
-	p.AddAction(menu.Back)
+	p.AddAction(page.Quit)
+	p.AddAction(page.Forward)
+	p.AddAction(page.Back)
 	ok := false
 	for !ok {
 
 		nextAction, _ := p.Display(crt)
 		switch {
-		case nextAction == menu.Forward:
+		case nextAction == page.Forward:
 			p.NextPage(crt)
-		case nextAction == menu.Back:
+		case nextAction == page.Back:
 			p.PreviousPage(crt)
-		case nextAction == menu.Quit:
+		case nextAction == page.Quit:
 			ok = true
 			return
 		case support.IsInt(nextAction):
@@ -111,7 +111,7 @@ func Run(crt *support.Crt) {
 			//os.Exit(1)
 
 		default:
-			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
+			crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
 		}
 	}
 

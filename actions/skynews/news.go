@@ -3,7 +3,7 @@ package skynews
 import (
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
-	"github.com/mt1976/crt/support/menu"
+	page "github.com/mt1976/crt/support/page"
 )
 
 var C = config.Configuration
@@ -25,27 +25,27 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := menu.New(menuTitleText)
+	m := page.New(menuTitleText)
 	c := 0
 	c++
-	m.Add(c, topicHomeText, C.SkyNewsURI+topicHomeURI, "")
+	m.AddOption(c, topicHomeText, C.SkyNewsURI+topicHomeURI, "")
 	c++
-	m.Add(c, topicUKText, C.SkyNewsURI+topicUKURI, "")
+	m.AddOption(c, topicUKText, C.SkyNewsURI+topicUKURI, "")
 	c++
-	m.Add(c, topicWorldText, C.SkyNewsURI+topicWorldURI, "")
+	m.AddOption(c, topicWorldText, C.SkyNewsURI+topicWorldURI, "")
 	c++
-	m.Add(c, topicUSText, C.SkyNewsURI+topicUSURI, "")
+	m.AddOption(c, topicUSText, C.SkyNewsURI+topicUSURI, "")
 	c++
-	m.Add(c, topicBusinessText, C.SkyNewsURI+topicBusinessURI, "")
+	m.AddOption(c, topicBusinessText, C.SkyNewsURI+topicBusinessURI, "")
 	c++
-	m.Add(c, topicPoliticsText, C.SkyNewsURI+topicPoliticsURI, "")
+	m.AddOption(c, topicPoliticsText, C.SkyNewsURI+topicPoliticsURI, "")
 	c++
-	m.Add(c, topicTechnologyText, C.SkyNewsURI+topicTechnologyURI, "")
+	m.AddOption(c, topicTechnologyText, C.SkyNewsURI+topicTechnologyURI, "")
 	c++
-	m.Add(c, topicEntertainmentText, C.SkyNewsURI+topicEntertainmentURI, "")
+	m.AddOption(c, topicEntertainmentText, C.SkyNewsURI+topicEntertainmentURI, "")
 	c++
-	m.Add(c, topicStrangeText, C.SkyNewsURI+topicStrangeURI, "")
-	m.AddAction(menu.Quit)
+	m.AddOption(c, topicStrangeText, C.SkyNewsURI+topicStrangeURI, "")
+	m.AddAction(page.Quit)
 
 	ok := false
 	for !ok {
@@ -57,7 +57,7 @@ func Run(crt *support.Crt) {
 		//crt.SetDelayInMin(1)
 		//crt.DelayIt()
 
-		if action == menu.Quit {
+		if action == page.Quit {
 			//	crt.Println("Quitting")
 			ok = true
 			continue

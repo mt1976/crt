@@ -52,9 +52,12 @@ type Page struct {
 // @property {string} Content - The "Content" property of the "pageRow" struct is a string that
 // represents the content of a page row.
 type pageRow struct {
-	ID         int
-	Content    string
-	PageNumber int
+	ID          int
+	Content     string
+	PageNumber  int
+	Title       string
+	AlternateID string
+	DateTime    string
 }
 
 // The New function creates a new page with a truncated title and initializes other properties.
@@ -76,13 +79,7 @@ func New(title string) *Page {
 func (p *Page) Add(rowContent string, altID string, dateTime string) {
 
 	//lets clean the rowContent
-	rowContent = strings.Replace(rowContent, "\n", "", -1)
-	rowContent = strings.Replace(rowContent, "\r", "", -1)
-	rowContent = strings.Replace(rowContent, "\t", "", -1)
-	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
-	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
-	//rowContent = strings.Replace(rowContent, "  ", " ", -1)
-	rowContent = strings.Replace(rowContent, "\"", " ", -1)
+	rowContent = cleanContent(rowContent)
 
 	//fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
 	if rowContent == "" {
@@ -112,13 +109,22 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
 	// }
 	p.pageRowCounter++
-	mi := pageRow{p.pageRowCounter, rowContent, p.noPages}
+	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 	if remainder != "" {
 		//m.pageRowCounter++
 		p.Add(remainder, altID, dateTime)
 	}
+}
+
+func cleanContent(rowContent string) string {
+	rowContent = strings.Replace(rowContent, "\n", "", -1)
+	rowContent = strings.Replace(rowContent, "\r", "", -1)
+	rowContent = strings.Replace(rowContent, "\t", "", -1)
+
+	rowContent = strings.Replace(rowContent, "\"", " ", -1)
+	return rowContent
 }
 
 // The `AddAction` function is used to add a valid action to the page. It takes a `validAction` string
@@ -344,4 +350,47 @@ func (p *Page) ResetPrompt() {
 
 func (p *Page) BlankRow() {
 	p.Add("{{blank}}", "", "")
+}
+
+// The `Add` function is used to add a new row of data to a page. It takes four parameters:
+// `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
+func (m *Page) AddOption(id int, rowContent string, altID string, dateTime string) {
+
+	// lets clean the rowContent
+	rowContent = cleanContent(rowContent)
+
+	if rowContent == "" {
+		return
+	}
+	if strings.Trim(rowContent, " ") == "" {
+		return
+	}
+	m.counter++
+	if m.counter >= C.MaxContentRows {
+		m.counter = 0
+		m.noPages++
+	}
+	if len(rowContent) > C.TerminalWidth {
+		rowContent = rowContent[:C.TerminalWidth]
+
+	}
+
+	m.pageRowCounter++
+	mi := pageRow{}
+	mi.ID = id
+	mi.Content = rowContent
+	mi.PageNumber = m.noPages
+	mi.AlternateID = altID
+	mi.Title = rowContent
+	mi.DateTime = dateTime
+
+	m.AddActionInt(id)
+
+	m.pageRows = append(m.pageRows, mi)
+	m.noRows++
+
+}
+
+func (m *Page) AddActionInt(validAction int) {
+	m.AddAction(fmt.Sprintf("%v", validAction))
 }

@@ -8,27 +8,27 @@ import (
 	torrents "github.com/mt1976/crt/actions/torrents"
 	"github.com/mt1976/crt/actions/weather"
 	"github.com/mt1976/crt/support"
-	menu "github.com/mt1976/crt/support/menu"
+	"github.com/mt1976/crt/support/page"
 )
 
 // The Run function displays a main menu and allows the user to navigate through different sub-menus
 // and perform various actions.
 func Run(crt *support.Crt) {
 
-	m := menu.New(mainMenuTitleText)
+	m := page.New(mainMenuTitleText)
 	//for i := range 11 {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.Add(1, "Test", "", "")
-	m.Add(2, skyNewsMenuTitleText, "", "")
-	m.Add(3, bbcNewsMenuTitleText, "", "")
-	m.Add(4, weatherMenuTitleText, "", "")
-	m.Add(5, "Torrents", "", "")
-	m.Add(6, plexmediaserversMenuTitleText, "", "")
-	m.Add(7, remoteSystemsAccessMenuTitleText, "", "")
-	m.Add(8, systemsMaintenanceMenuTitleText, "", "")
-	m.AddAction(menu.Quit)
+	m.AddOption(1, "Test", "", "")
+	m.AddOption(2, skyNewsMenuTitleText, "", "")
+	m.AddOption(3, bbcNewsMenuTitleText, "", "")
+	m.AddOption(4, weatherMenuTitleText, "", "")
+	m.AddOption(5, "Torrents", "", "")
+	m.AddOption(6, plexmediaserversMenuTitleText, "", "")
+	m.AddOption(7, remoteSystemsAccessMenuTitleText, "", "")
+	m.AddOption(8, systemsMaintenanceMenuTitleText, "", "")
+	m.AddAction(page.Quit)
 
 	// loop while ok
 	ok := false
@@ -40,14 +40,14 @@ func Run(crt *support.Crt) {
 
 		action, _ := m.Display(crt)
 		switch action {
-		case menu.Quit:
+		case page.Quit:
 			crt.InfoMessage(quittingMessageText + "\n ")
 			ok = true
 			continue
 		case "1":
-			y := menu.New(subMenuTitleText)
+			y := page.New(subMenuTitleText)
 			for i := range 14 {
-				y.Add(i, fmt.Sprintf(subMenuTitleText+" %v", action), "", "")
+				y.AddOption(i, fmt.Sprintf(subMenuTitleText+" %v", action), "", "")
 			}
 			//action, _ = y.Display(crt)
 		case "2":

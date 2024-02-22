@@ -7,7 +7,6 @@ import (
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
-	menu "github.com/mt1976/crt/support/menu"
 	page "github.com/mt1976/crt/support/page"
 )
 
@@ -24,12 +23,12 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	noItems := fmt.Sprintf("%d", res.MediaContainer.Size)
 
-	m := menu.New(res.MediaContainer.LibrarySectionTitle + " (" + noItems + ")")
+	m := page.New(res.MediaContainer.LibrarySectionTitle + " (" + noItems + ")")
 	count := 0
 
 	for range res.MediaContainer.Metadata {
 		count++
-		m.Add(count, res.MediaContainer.Metadata[count-1].Title, "", "")
+		m.AddOption(count, res.MediaContainer.Metadata[count-1].Title, "", "")
 	}
 
 	exit := false
@@ -37,19 +36,19 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 		nextAction, _ := m.Display(crt)
 		switch nextAction {
-		case menu.Quit:
+		case page.Quit:
 			exit = true
 			return
-		case menu.Forward:
+		case page.Forward:
 			m.NextPage(crt)
-		case menu.Back:
+		case page.Back:
 			m.PreviousPage(crt)
 		default:
 			if support.IsInt(nextAction) {
 				//	Action(crt, mediaVault, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 				Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1], mediaVault)
 			} else {
-				crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
+				crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
 			}
 		}
 	}
@@ -111,7 +110,7 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 		case Seasons:
 			SeasonDetails(crt, mediaVault, info)
 		default:
-			crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
+			crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
 		}
 	}
 }

@@ -2,7 +2,7 @@ package skynews
 
 import (
 	"github.com/mt1976/crt/support"
-	"github.com/mt1976/crt/support/menu"
+	page "github.com/mt1976/crt/support/page"
 )
 
 // The function "Trans" takes in a CRT object, a topic, and a title as parameters, and then retrieves
@@ -12,7 +12,7 @@ func Trans(crt *support.Crt, uri, title string) {
 	//crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic
 	crt.InfoMessage(transLoadingTorrentsText)
-	p := menu.New("Transmission")
+	p := page.New("Transmission")
 	// get the news for the topic from an rss feed
 	// endpoint, err := url.Parse(uri)
 	// if err != nil {
@@ -28,8 +28,8 @@ func Trans(crt *support.Crt, uri, title string) {
 	//os.Exit(0)
 	// torrents, _ := tbt.TorrentGetAll()
 	// noTorrents := len(torrents)
-	// if noTorrents > menu.MaxMenuItems {
-	// 	noTorrents = menu.MaxMenuItems
+	// if noTorrents > page.MaxMenuItems {
+	// 	noTorrents = page.MaxMenuItems
 	// }
 
 	// for i := range noTorrents {
@@ -40,7 +40,7 @@ func Trans(crt *support.Crt, uri, title string) {
 	for !ok {
 		action, _ := p.Display(crt)
 
-		if action == menu.Quit {
+		if action == page.Quit {
 			//crt.Println("Quitting")
 			ok = true
 			continue

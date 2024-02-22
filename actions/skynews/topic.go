@@ -3,7 +3,7 @@ package skynews
 import (
 	"github.com/mmcdole/gofeed"
 	"github.com/mt1976/crt/support"
-	"github.com/mt1976/crt/support/menu"
+	page "github.com/mt1976/crt/support/page"
 )
 
 // The function "Topic" takes in a CRT object, a topic, and a title as parameters, and then retrieves
@@ -21,7 +21,7 @@ func Topic(crt *support.Crt, topic, title string) {
 	//spew.Dump(crt, topic, title, feed)
 	//os.Exit(1)
 
-	t := menu.New(feed.Title)
+	t := page.New(feed.Title)
 	noNewsItems := len(feed.Items)
 	if noNewsItems > C.MaxContentRows {
 		noNewsItems = C.MaxContentRows
@@ -29,13 +29,13 @@ func Topic(crt *support.Crt, topic, title string) {
 
 	for i := range noNewsItems {
 		//log.Println("Adding: ", feed.Items[i].Title, i)
-		t.Add(i+1, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
+		t.AddOption(i+1, feed.Items[i].Title, feed.Items[i].Link, feed.Items[i].Published)
 	}
 	ok := false
 	for !ok {
 		action, mi := t.Display(crt)
 
-		if action == menu.Quit {
+		if action == page.Quit {
 			//crt.Println("Quitting")
 			ok = true
 			continue
