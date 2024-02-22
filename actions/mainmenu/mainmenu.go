@@ -20,7 +20,7 @@ func Run(crt *support.Crt) {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.AddOption(1, "", "", "")
+	m.AddOption(1, "-", "", "")
 	m.AddOption(2, skyNewsMenuTitleText, "", "")
 	m.AddOption(3, bbcNewsMenuTitleText, "", "")
 	m.AddOption(4, weatherMenuTitleText, "", "")
