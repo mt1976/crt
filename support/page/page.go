@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
 )
@@ -249,7 +248,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 }
 
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
-	spew.Dump(cols)
+	//spew.Dump(cols)
 	//format := "%-16s : %-16s : %-16s : %-16s\n"
 	if len(cols) > 10 {
 		crt.Error("AddColumns", nil)
@@ -258,11 +257,11 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	var output []string
 	screenWidth := crt.Width()
 	colSize := screenWidth / len(cols)
-	spew.Dump(colSize)
-	spew.Dump(screenWidth)
+	//spew.Dump(colSize)
+	//spew.Dump(screenWidth)
 	for i := 0; i < len(cols); i++ {
-		spew.Dump(i)
-		spew.Dump(cols[i])
+		//spew.Dump(i)
+		//spew.Dump(cols[i])
 		//op := crt.Underline(cols[i])
 		//if !isHeading {
 		op := cols[i]
@@ -280,13 +279,13 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 		//op = crt.Bold(op)
 		//}
 		output = append(output, op)
-		spew.Dump(op, len(op), output)
+		//spew.Dump(op, len(op), output)
 	}
 
 	// turn string array into sigle string
 	p.Add(strings.Join(output, " "), "", "")
 	//return p
-	spew.Dump(output, p, len(output))
+	//spew.Dump(output, p, len(output))
 	//os.Exit(1)
 }
 

@@ -1,9 +1,6 @@
 package skynews
 
 import (
-	"os"
-
-	"github.com/davecgh/go-spew/spew"
 	"github.com/mmcdole/gofeed"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/menu"
@@ -21,8 +18,8 @@ func Topic(crt *support.Crt, topic, title string) {
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(topic)
 	crt.Clear()
-	spew.Dump(crt, topic, title, feed)
-	os.Exit(1)
+	//spew.Dump(crt, topic, title, feed)
+	//os.Exit(1)
 
 	t := menu.New(feed.Title)
 	noNewsItems := len(feed.Items)

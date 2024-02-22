@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/support"
 	menu "github.com/mt1976/crt/support/menu"
@@ -52,14 +51,14 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 		}
 	}
 
-	spew.Dump(res)
-	os.Exit(1)
+	//spew.Dump(res)
+	//os.Exit(1)
 }
 
 func Detail(crt *support.Crt, info plex.Metadata) {
 
-	spew.Dump(info)
-	os.Exit(1)
+	//spew.Dump(info)
+	//os.Exit(1)
 	p := page.New(info.Title)
 	//p.Add("Title:"+info.Title, "", "")
 	//AddFieldValuePair(crt, p, "Title", info.Title)

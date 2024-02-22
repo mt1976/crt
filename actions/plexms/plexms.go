@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/actions/plexms/library/movies"
 	"github.com/mt1976/crt/actions/plexms/library/music"
@@ -53,7 +52,7 @@ func Run(crt *support.Crt) {
 	}
 
 	mediaVaultProperties := devices[mediaV]
-	spew.Dump(mediaVaultProperties)
+	//spew.Dump(mediaVaultProperties)
 
 	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, cfg.Configuration.PlexToken)
 	if err != nil {
@@ -67,15 +66,15 @@ func Run(crt *support.Crt) {
 		os.Exit(1)
 	}
 
-	yy := mvLibraries.MediaContainer.Directory[0]
+	//	yy := mvLibraries.MediaContainer.Directory[0]
 
-	res, err := mediaVault.GetLibraryContent(yy.Key, "")
-	if err != nil {
-		crt.Error(fmt.Sprintf(mvLibError, mediaVaultProperties.Name), err)
-		os.Exit(1)
-	}
+	// res, err := mediaVault.GetLibraryContent(yy.Key, "")
+	// if err != nil {
+	// 	crt.Error(fmt.Sprintf(mvLibError, mediaVaultProperties.Name), err)
+	// 	os.Exit(1)
+	// }
 
-	spew.Dump(res)
+	//spew.Dump(res)
 	//os.Exit(1)
 	//spew.Dump(libs)
 	//os.Exit(1)

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/support"
 	menu "github.com/mt1976/crt/support/menu"
@@ -49,8 +48,8 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 		}
 
 	}
-	spew.Dump(res)
-	os.Exit(1)
+	//spew.Dump(res)
+	//os.Exit(1)
 }
 
 func EpisodeDetail(crt *support.Crt, info plex.Metadata, seriesTitle string) {

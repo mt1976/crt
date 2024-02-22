@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/jrudio/go-plex-client"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
@@ -55,8 +54,8 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 		}
 	}
 
-	spew.Dump(res)
-	os.Exit(1)
+	//spew.Dump(res)
+	//os.Exit(1)
 }
 
 func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {

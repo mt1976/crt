@@ -1,11 +1,6 @@
 package skynews
 
 import (
-	"net/url"
-	"os"
-
-	"github.com/davecgh/go-spew/spew"
-	"github.com/hekmon/transmissionrpc"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/menu"
 )
@@ -19,18 +14,18 @@ func Trans(crt *support.Crt, uri, title string) {
 	crt.InfoMessage(transLoadingTorrentsText)
 	p := menu.New("Transmission")
 	// get the news for the topic from an rss feed
-	endpoint, err := url.Parse(uri)
-	if err != nil {
-		panic(err)
-	}
-	tbt, err := transmissionrpc.New(endpoint.Host, "admin", "admin", nil)
-	if err != nil {
-		panic(err)
-	}
+	// endpoint, err := url.Parse(uri)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	//tbt, err := transmissionrpc.New(endpoint.Host, "admin", "admin", nil)
+	//if err != nil {
+	//	panic(err)
+	//}
 	//spew.Dump(tbt)
 	//spew.Dump(tbt.RPCVersion())
-	spew.Dump(tbt.TorrentGetAll())
-	os.Exit(0)
+	//spew.Dump(tbt.TorrentGetAll())
+	//os.Exit(0)
 	// torrents, _ := tbt.TorrentGetAll()
 	// noTorrents := len(torrents)
 	// if noTorrents > menu.MaxMenuItems {
