@@ -13,38 +13,18 @@ import (
 
 var C = config.Configuration
 
-// const MaxPageRows int = support.MaxPageRows
-//const RowLength int = support.RowLength
-
-//const TitleLength int = support.TitleLength
-
-// The "Page" type represents a Page with a title, rows of data, a prompt, a list of actions, and
-// information about the number of rows and pages.
-// @property {string} title - The title property represents the title of the Page.
-// @property {[]pageRow} pageRows - The `pageRows` property is a slice of `pageRow` objects. It
-// represents the rows of content on the Page.
-// @property {int} noRows - The `noRows` property represents the number of rows in the Page. It
-// indicates how many rows of data can be displayed on a single Page.
-// @property {string} prompt - The prompt is a string that represents the message or question displayed
-// to the user to prompt them for input or action.
-// @property {[]string} actions - The "actions" property is a slice of strings that represents the
-// available actions for the Page. Each string in the slice represents an action that the user can take
-// on the Page.
-// @property {int} actionMaxLen - The property "actionMaxLen" represents the maximum length of the
-// actions in the "actions" slice.
-// @property {int} noPages - The "noPages" property represents the total number of pages in the Page
-// structure.
+// Page represents a page in a document or a user interface.
 type Page struct {
-	title           string
-	pageRows        []pageRow
-	noRows          int
-	prompt          string
-	actions         []string
-	actionMaxLen    int
-	noPages         int
-	ActivePageIndex int
-	counter         int
-	pageRowCounter  int
+	title           string    // The title of the page.
+	pageRows        []pageRow // The rows of content on the page.
+	noRows          int       // The number of rows on the page.
+	prompt          string    // The prompt displayed to the user.
+	actions         []string  // The available actions on the page.
+	actionMaxLen    int       // The maximum length of an action.
+	noPages         int       // The total number of pages.
+	ActivePageIndex int       // The index of the active page.
+	counter         int       // A counter used for tracking.
+	pageRowCounter  int       // A counter used for tracking the page rows.
 }
 
 // The type "pageRow" represents a row of data for a page, with an ID and content.
@@ -77,24 +57,27 @@ func New(title string) *Page {
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (p *Page) Add(rowContent string, altID string, dateTime string) {
-
 	//lets clean the rowContent
 	rowContent = cleanContent(rowContent)
 
 	if rowContent == "" {
 		return
 	}
+
 	if strings.Trim(rowContent, " ") == "" {
 		return
 	}
+
 	if rowContent == "{{blank}}" {
 		rowContent = ""
 	}
+
 	p.counter++
 	if p.counter >= C.MaxContentRows {
 		p.counter = 0
 		p.noPages++
 	}
+
 	remainder := ""
 	if len(rowContent) > C.TerminalWidth {
 		remainder = rowContent[C.TerminalWidth:]
@@ -110,7 +93,9 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	}
 }
 
+// cleanContent removes unwanted characters from the rowContent string
 func cleanContent(rowContent string) string {
+	// replace \n, \r, \t, and " with empty strings
 	rowContent = strings.Replace(rowContent, "\n", "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
@@ -135,6 +120,46 @@ func (p *Page) AddAction(validAction string) {
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
 func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
+	exit := false
+	for !exit {
+		nextAction, _ := p.displayIt(crt)
+		switch {
+		case nextAction == Quit:
+			exit = true
+			return Quit, pageRow{}
+		case nextAction == Forward:
+			p.NextPage(crt)
+		case nextAction == Back:
+			p.PreviousPage(crt)
+		case inActions(nextAction, p.actions):
+			// upcase the action
+			exit = true
+			if support.IsInt(nextAction) {
+				return nextAction, p.pageRows[support.ToInt(nextAction)-1]
+			}
+			return support.Upcase(nextAction), pageRow{}
+		default:
+			crt.InputError(ErrInvalidAction + "'" + nextAction + "'")
+		}
+	}
+	return "", pageRow{}
+}
+
+// inActions determines if the given action is in the list of available actions
+func inActions(action string, actions []string) bool {
+	// loop through each action in the list
+	for i := range actions {
+		// if the given action matches an action in the list, return true
+		if action == actions[i] {
+			return true
+		}
+	}
+	// if no match was found, return false
+	return false
+}
+
+// Display displays the page content to the user and handles user input.
+func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	rowsDisplayed := 0
 	p.AddAction(Quit) // Add Quit action
@@ -228,39 +253,70 @@ func (p *Page) GetRows() int {
 	return p.noRows
 }
 
+// AddFieldValuePair adds a field value pair to the page
+//
+// AddFieldValuePair takes two strings as arguments, where the first string represents the field name and the second string represents the field value. The function adds a row to the page with the field name on the left and the field value on the right, separated by a colon.
+//
+// Example:
+//
+//	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
+	// format the field value pair
 	format := "%-20s : %s\n"
 	p.Add(fmt.Sprintf(format, key, value), "", "")
-	//return p
 }
 
+// AddColumns adds columns of data to the page
+//
+// AddColumns takes a variadic number of strings as arguments, where each string represents a column of data.
+// The function calculates the optimal column width based on the terminal width, and then adds each column
+// to the page, right-aligned.
+//
+// If the number of columns specified is greater than 10, an error is returned.
+//
+// Example:
+//
+//	page.AddColumns("Column 1", "Column 2", "Column 3")
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
-
+	// Check the number of columns
 	if len(cols) > 10 {
 		crt.Error("AddColumns", nil)
 		os.Exit(1)
 	}
-	var output []string
+
+	// Get the terminal width
 	screenWidth := crt.Width()
+
+	// Calculate the column width
 	colSize := screenWidth / len(cols)
 
+	// Loop through each column
+	var output []string
 	for i := 0; i < len(cols); i++ {
-
+		// Get the current column
 		op := cols[i]
+
+		// Check if the column is longer than the column width
 		if len(op) > colSize {
+			// Truncate the column to the column width
 			op = op[0:colSize]
 		} else {
+			// Calculate the number of spaces to add
 			noToAdd := colSize - (len(op) + 1)
+
+			// Add the spaces to the column
 			op = op + strings.Repeat(" ", noToAdd)
 		}
 
+		// Add the column to the output slice
 		output = append(output, op)
 	}
 
-	// turn string array into sigle string
+	// Join the output slice into a single string and add it to the page
 	p.Add(strings.Join(output, " "), "", "")
 }
 
+// AddColumnsRuler adds a ruler to the page, separating the columns
 func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
 	if len(cols) > 10 {
 		crt.Error("AddColumns", nil)
@@ -290,14 +346,17 @@ func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
 	p.Add(strings.Join(output, " "), "", "")
 }
 
+// SetPrompt sets the prompt for the page
 func (p *Page) SetPrompt(prompt string) {
 	p.prompt = prompt
 }
 
+// ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
 	p.prompt = promptString
 }
 
+// BlankRow adds a blank row to the page
 func (p *Page) BlankRow() {
 	p.Add("{{blank}}", "", "")
 }
@@ -341,6 +400,7 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 	m.noRows++
 }
 
+// AddActionInt adds an action to the page with the given integer value
 func (m *Page) AddActionInt(validAction int) {
 	m.AddAction(fmt.Sprintf("%v", validAction))
 }

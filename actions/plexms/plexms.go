@@ -90,30 +90,30 @@ func Run(crt *support.Crt) {
 	p.AddAction(page.Quit)
 	p.AddAction(page.Forward)
 	p.AddAction(page.Back)
-	ok := false
-	for !ok {
+	//	ok := false
+	//	for !ok {
 
-		nextAction, _ := p.Display(crt)
-		switch {
-		case nextAction == page.Forward:
-			p.NextPage(crt)
-		case nextAction == page.Back:
-			p.PreviousPage(crt)
-		case nextAction == page.Quit:
-			ok = true
-			return
-		case support.IsInt(nextAction):
-			crt.Error("You selected: "+nextAction, nil)
-			naInt, _ := strconv.Atoi(nextAction)
-			wi := mvLibraries.MediaContainer.Directory[naInt-1]
-			Action(crt, mediaVault, &wi)
-			//spew.Dump(wi)
-			//os.Exit(1)
+	nextAction, _ := p.Display(crt)
+	switch {
+	// case nextAction == page.Forward:
+	// 	p.NextPage(crt)
+	// case nextAction == page.Back:
+	// 	p.PreviousPage(crt)
+	case nextAction == page.Quit:
+		//	ok = true
+		return
+	case support.IsInt(nextAction):
+		crt.Error("You selected: "+nextAction, nil)
+		naInt, _ := strconv.Atoi(nextAction)
+		wi := mvLibraries.MediaContainer.Directory[naInt-1]
+		Action(crt, mediaVault, &wi)
+		//spew.Dump(wi)
+		//os.Exit(1)
 
-		default:
-			crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
-		}
+	default:
+		crt.InputError(page.ErrInvalidAction + "'" + nextAction + "'")
 	}
+	//}
 
 }
 

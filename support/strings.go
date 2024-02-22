@@ -18,6 +18,7 @@ const reset = "\033[0m"
 const underline = "\033[4m"
 const red = "\033[31m"
 const clearline = "\033[2K"
+const milliseconds = "ms"
 
 var header []string
 var smHeader string

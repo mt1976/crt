@@ -43,7 +43,7 @@ func PlexDateToDate(date string) time.Time {
 
 func PlexDurationToTime(duration int) time.Duration {
 	//int to string
-	d := fmt.Sprintf("%dms", duration)
+	d := fmt.Sprintf("%d", duration)
 	//string to int
 	i, err := strconv.Atoi(d)
 	if err != nil {
@@ -53,7 +53,7 @@ func PlexDurationToTime(duration int) time.Duration {
 		fmt.Println(errDurationMismatch, i, " ", duration)
 	}
 	//return time.Duration(i) * time.Second
-	t, err := time.ParseDuration(d)
+	t, err := time.ParseDuration(d + milliseconds)
 	if err != nil {
 		fmt.Println(err)
 	}

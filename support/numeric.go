@@ -35,3 +35,8 @@ func ToInt(s string) int {
 	}
 	return i
 }
+
+func ToString(i int) string {
+	// This function converts an integer to a string.
+	return strconv.Itoa(i)
+}

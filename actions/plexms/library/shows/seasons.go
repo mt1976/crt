@@ -25,23 +25,19 @@ func SeasonDetails(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) 
 		p.AddOption(i+1, season.Title, "", "")
 	}
 
-	exit := false
-	for !exit {
-		na, _ := p.Display(crt)
-		switch na {
-		case page.Quit:
-			exit = true
-			return
-		case page.Forward:
-			p.NextPage(crt)
-		case page.Back:
-			p.PreviousPage(crt)
-		default:
-			if support.IsInt(na) {
-				Episodes(crt, mediaVault, info.Title, yy.MediaContainer.Metadata[support.ToInt(na)-1])
-			} else {
-				crt.InputError(page.ErrInvalidAction + "'" + na + "'")
-			}
+	//	exit := false
+	//for !exit {
+	na, _ := p.Display(crt)
+	switch na {
+	case page.Quit:
+		//			exit = true
+		return
+	default:
+		if support.IsInt(na) {
+			Episodes(crt, mediaVault, info.Title, yy.MediaContainer.Metadata[support.ToInt(na)-1])
+		} else {
+			crt.InputError(page.ErrInvalidAction + "'" + na + "'")
 		}
 	}
+	// }
 }
