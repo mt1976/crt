@@ -1,14 +1,16 @@
 package start
 
-var startingText = "Starting..."
-var startingTerminalText = "Starting Terminal..."
-var selfTestingText = "Self Testing..."
-var currentDateText = "Current Date: "
-var currentTimeText = "Current Time: "
-var pleaseWaitText = "Please Wait..."
-var baudRateText = "Baud Rate Set to %v kbps"
-var connectingText = "Connecting..."
-var dialingText = "Dialing... %v:%v"
-var connectedText = "Connected."
-var newline = "\n"
-var dialingFailedText = "Connection failed. Retrying..."
+const (
+	startingText         = "Starting..."
+	startingTerminalText = "Starting Terminal..."
+	selfTestingText      = "Self Testing..."
+	currentDateText      = "Current Date: "
+	currentTimeText      = "Current Time: "
+	pleaseWaitText       = "Please Wait..."
+	baudRateText         = "Baud Rate Set to %v kbps"
+	connectingText       = "Connecting..."
+	dialingText          = "Dialing... %v:%v"
+	connectedText        = "Connected."
+	newline              = "\n"
+	dialingFailedText    = "Connection failed. Retrying..."
+)
