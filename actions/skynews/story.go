@@ -58,7 +58,7 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 
 	// Add the story content to the page
 	for _, content := range storyContent {
-		p.AddFieldValuePair(crt, "", content)
+		p.Add(content, "", "")
 	}
 
 	return p
