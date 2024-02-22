@@ -28,6 +28,8 @@ func Run(crt *support.Crt) {
 	m.AddOption(6, plexmediaserversMenuTitleText, "", "")
 	m.AddOption(7, remoteSystemsAccessMenuTitleText, "", "")
 	m.AddOption(8, systemsMaintenanceMenuTitleText, "", "")
+	m.AddOption(9, "-", "", "")
+	m.AddOption(10, "-", "", "")
 	m.AddAction(page.Quit)
 
 	// loop while ok
