@@ -81,7 +81,6 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	//lets clean the rowContent
 	rowContent = cleanContent(rowContent)
 
-	//fmt.Println(fmt.Sprintf("%v", len(rowContent)) + "[" + rowContent + "]")
 	if rowContent == "" {
 		return
 	}
@@ -100,20 +99,13 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	if len(rowContent) > C.TerminalWidth {
 		remainder = rowContent[C.TerminalWidth:]
 		rowContent = rowContent[:C.TerminalWidth]
-
-		//m.pageRows = append(m.pageRows, pageRow{ID: m.counter, Content: rowContent, PageNumber: prn})
-		//m.noRows++
-		//m.Add(prn, "***"+remainder, altID, dateTime)
 	}
-	// if rowContent != "" {
-	// 	m.AddAction(fmt.Sprintf("%v", pageRowNumber))
-	// }
+
 	p.pageRowCounter++
 	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 	if remainder != "" {
-		//m.pageRowCounter++
 		p.Add(remainder, altID, dateTime)
 	}
 }
@@ -122,7 +114,6 @@ func cleanContent(rowContent string) string {
 	rowContent = strings.Replace(rowContent, "\n", "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
-
 	rowContent = strings.Replace(rowContent, "\"", " ", -1)
 	return rowContent
 }
@@ -144,14 +135,12 @@ func (p *Page) AddAction(validAction string) {
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
 func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
-	//spew.Dump(m)
 	crt.Clear()
 	rowsDisplayed := 0
 	p.AddAction(Quit) // Add Quit action
 	p.AddAction(Exit)
 	crt.Header(p.title)
 	for i := range p.pageRows {
-		//if i <= MaxPageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageNumber {
 			rowsDisplayed++
 			if p.pageRows[i].Content == "" {
@@ -160,27 +149,21 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 			crt.Println(format(crt, p.pageRows[i]))
 		}
-		//}
-		//m.AddAction(m.pageRows[i].Number) // Add action for each menu item
 	}
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
-	//log.Println("Extra Rows: ", extraRows)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
 			crt.Print(newline)
 		}
 	}
 	crt.Break()
-	//spew.Dump(m)
-	//spew.Dump(crt)
+
 	crt.InputPageInfo(p.ActivePageIndex+1, p.noPages+1)
-	//crt.Print(m.prompt)
 	ok := false
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
 			crt.InputError(ErrInvalidAction + "'" + nextAction + "'")
-			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			continue
 		}
 
@@ -191,7 +174,6 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 		}
 		if !ok {
-			//crt.Shout("Invalid action '" + crt.Bold(nextAction) + "'")
 			crt.InputError(ErrInvalidAction + " '" + nextAction + "'")
 
 		}
@@ -205,7 +187,6 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	if support.Upcase(nextAction) == Exit {
 		os.Exit(0)
 	}
-	//spew.Dump(m)
 	return support.Upcase(nextAction), pageRow{}
 }
 
@@ -254,8 +235,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 }
 
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
-	//spew.Dump(cols)
-	//format := "%-16s : %-16s : %-16s : %-16s\n"
+
 	if len(cols) > 10 {
 		crt.Error("AddColumns", nil)
 		os.Exit(1)
@@ -263,41 +243,25 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	var output []string
 	screenWidth := crt.Width()
 	colSize := screenWidth / len(cols)
-	//spew.Dump(colSize)
-	//spew.Dump(screenWidth)
+
 	for i := 0; i < len(cols); i++ {
-		//spew.Dump(i)
-		//spew.Dump(cols[i])
-		//op := crt.Underline(cols[i])
-		//if !isHeading {
+
 		op := cols[i]
-		//}
 		if len(op) > colSize {
 			op = op[0:colSize]
 		} else {
 			noToAdd := colSize - (len(op) + 1)
 			op = op + strings.Repeat(" ", noToAdd)
 		}
-		// append op to output
-		//if isHeading {
-		//	op = crt.Underline(op)
-		//} else {
-		//op = crt.Bold(op)
-		//}
+
 		output = append(output, op)
-		//spew.Dump(op, len(op), output)
 	}
 
 	// turn string array into sigle string
 	p.Add(strings.Join(output, " "), "", "")
-	//return p
-	//spew.Dump(output, p, len(output))
-	//os.Exit(1)
 }
 
 func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
-	//spew.Dump(cols)
-	//format := "%-16s : %-16s : %-16s : %-16s\n"
 	if len(cols) > 10 {
 		crt.Error("AddColumns", nil)
 		os.Exit(1)
@@ -305,39 +269,25 @@ func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
 	var output []string
 	screenWidth := crt.Width()
 	colSize := screenWidth / len(cols)
-	//spew.Dump(colSize)
-	//spew.Dump(screenWidth)
+
 	for i := 0; i < len(cols); i++ {
-		//spew.Dump(i)
-		//spew.Dump(cols[i])
-		//op := crt.Underline(cols[i])
-		//if !isHeading {
+
 		op := cols[i]
-		//}
 		if len(op) > colSize {
 			op = op[0:colSize]
 		} else {
 			noToAdd := colSize - (len(op) + 1)
 			op = op + strings.Repeat(" ", noToAdd)
 		}
-		// append op to output
-		//if isHeading {
-		//	op = crt.Underline(op)
-		//} else {
-		//op = crt.Bold(op)
-		//}
+
 		noChars := len(op)
 		op = strings.Repeat(support.TableCharacterUnderline, noChars)
 
 		output = append(output, op)
-		//spew.Dump(op, len(op), output)
 	}
 
 	// turn string array into sigle string
 	p.Add(strings.Join(output, " "), "", "")
-	//return p
-	//spew.Dump(output, p, len(output))
-	//os.Exit(1)
 }
 
 func (p *Page) SetPrompt(prompt string) {
@@ -388,7 +338,6 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 
 	m.pageRows = append(m.pageRows, mi)
 	m.noRows++
-
 }
 
 func (m *Page) AddActionInt(validAction int) {
