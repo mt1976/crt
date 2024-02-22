@@ -2,14 +2,15 @@ package support
 
 import "strings"
 
-const chNormal = "┃"
-const chSpecial = "┣"
-const chStart = "┏"
+const BoxCharacterNormal = "┃"
+const BoxCharacterBreak = "┣"
+const BoxCharacterStart = "┏"
 
 // const chEnd = "┛"
 // const chJunction = "┣"
 // const chEndFirst = "┓"
-const chBar = "━"
+const BoxCharacterBar = "━"
+const TableCharacterUnderline = "-"
 
 // const chClose = "┗"
 const bold = "\033[1m"

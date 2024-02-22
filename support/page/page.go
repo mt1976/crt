@@ -289,6 +289,51 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	//os.Exit(1)
 }
 
+func (p *Page) AddColumnsRuler(crt *support.Crt, cols ...string) {
+	//spew.Dump(cols)
+	//format := "%-16s : %-16s : %-16s : %-16s\n"
+	if len(cols) > 10 {
+		crt.Error("AddColumns", nil)
+		os.Exit(1)
+	}
+	var output []string
+	screenWidth := crt.Width()
+	colSize := screenWidth / len(cols)
+	//spew.Dump(colSize)
+	//spew.Dump(screenWidth)
+	for i := 0; i < len(cols); i++ {
+		//spew.Dump(i)
+		//spew.Dump(cols[i])
+		//op := crt.Underline(cols[i])
+		//if !isHeading {
+		op := cols[i]
+		//}
+		if len(op) > colSize {
+			op = op[0:colSize]
+		} else {
+			noToAdd := colSize - (len(op) + 1)
+			op = op + strings.Repeat(" ", noToAdd)
+		}
+		// append op to output
+		//if isHeading {
+		//	op = crt.Underline(op)
+		//} else {
+		//op = crt.Bold(op)
+		//}
+		noChars := len(op)
+		op = strings.Repeat(support.TableCharacterUnderline, noChars)
+
+		output = append(output, op)
+		//spew.Dump(op, len(op), output)
+	}
+
+	// turn string array into sigle string
+	p.Add(strings.Join(output, " "), "", "")
+	//return p
+	//spew.Dump(output, p, len(output))
+	//os.Exit(1)
+}
+
 func (p *Page) SetPrompt(prompt string) {
 	p.prompt = prompt
 }

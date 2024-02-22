@@ -41,7 +41,7 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 			m.PreviousPage(crt)
 		default:
 			if support.IsInt(nextAction) {
-				EpisodeDetail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1], seriesTitle)
+				EpisodeDetail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 			} else {
 				crt.InputError(menu.InvalidActionError + "'" + nextAction + "'")
 			}
@@ -52,20 +52,31 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 	//os.Exit(1)
 }
 
-func EpisodeDetail(crt *support.Crt, info plex.Metadata, seriesTitle string) {
-
-	title := seriesTitle + " " + info.ParentTitle + " " + info.Title
+func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
+	//spew.Dump(info)
+	//os.Exit(1)
+	title := info.GrandparentTitle + " " + info.ParentTitle + " " + info.Title
 	p := page.New(title)
-	p.AddFieldValuePair(crt, "Title", info.Title)
+	p.AddFieldValuePair(crt, "Show", info.GrandparentTitle)
 	p.AddFieldValuePair(crt, "Season", info.ParentTitle)
+	p.AddFieldValuePair(crt, "Episode", info.Title)
 	p.AddFieldValuePair(crt, "Summary", info.Summary)
 	p.AddFieldValuePair(crt, "Duration", support.FormatPlexDuration(info.Duration))
-	p.AddFieldValuePair(crt, "Release", support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, "Released", support.FormatPlexDate(info.OriginallyAvailableAt))
 	p.AddFieldValuePair(crt, "Rating", info.ContentRating)
+	videoCodec := info.Media[0].VideoCodec
+	videoFrameRate := info.Media[0].VideoFrameRate
+	videoResolution := info.Media[0].VideoResolution
+	videoContainer := info.Media[0].Container
+	aspectRatio := info.Media[0].AspectRatio
 
 	p.BlankRow()
+	p.AddColumns(crt, "Codec", "Frame Rate", "Resolution", "Container", "Aspect Ratio")
+	p.AddColumnsRuler(crt, "Codec", "Frame Rate", "Resolution", "Container", "Aspect Ratio")
+	p.AddColumns(crt, videoCodec, videoFrameRate, videoResolution, videoContainer, aspectRatio.String())
+	p.BlankRow()
 	p.AddColumns(crt, "Media")
-	p.AddColumns(crt, "-----")
+	p.AddColumnsRuler(crt, "Media")
 	for _, v := range info.Media {
 		//p.AddFieldValuePair(crt, "Media", v.Part[0].File)
 		p.AddColumns(crt, v.Part[0].File)

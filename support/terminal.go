@@ -55,9 +55,9 @@ type page struct {
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
 // represents a row on the terminal.
 func (T *Crt) row() string {
-	displayChar := chSpecial
+	displayChar := BoxCharacterBreak
 	if T.firstRow {
-		displayChar = chStart
+		displayChar = BoxCharacterStart
 		T.firstRow = false
 	}
 	return T.lineBreakJunction(displayChar)
@@ -176,7 +176,7 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	T.Println(T.Format(msg, chSpecial) + newline)
+	T.Println(T.Format(msg, BoxCharacterBreak) + newline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -260,13 +260,13 @@ func (T *Crt) lineBreakJunction(displayChar string) string {
 	//if T.currentRow == 0 {
 	//	endChar = chEndFirst
 	//}
-	return fmt.Sprintf("%s%s%s", displayChar, strings.Repeat(chBar, T.width+1), chBar)
+	return fmt.Sprintf("%s%s%s", displayChar, strings.Repeat(BoxCharacterBar, T.width+1), BoxCharacterBar)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
 // and `t` of type string.
 func (T *Crt) Format(in string, t string) string {
-	char := chNormal
+	char := BoxCharacterNormal
 	if t != "" {
 		char = t
 	}
