@@ -67,7 +67,7 @@ func Run(crt *support.Crt) {
 		os.Exit(1)
 	}
 
-	p := page.New(notations.PlexTitle + " - " + mediaVaultProperties.Name)
+	p := page.New(notations.PlexTitle + notations.DelimiterText + mediaVaultProperties.Name)
 	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
@@ -75,13 +75,13 @@ func Run(crt *support.Crt) {
 		p.AddOption(count, xx.Title, "", "")
 	}
 
-	p.AddAction(page.Quit)
-	p.AddAction(page.Forward)
-	p.AddAction(page.Back)
+	p.AddAction(page.QuitText)
+	p.AddAction(page.ForwardText)
+	p.AddAction(page.BackText)
 
 	nextAction, _ := p.Display(crt)
 	switch {
-	case nextAction == page.Quit:
+	case nextAction == page.QuitText:
 		return
 	case support.IsInt(nextAction):
 		crt.Error(notations.InfoYouSelected+nextAction, nil)
@@ -90,7 +90,7 @@ func Run(crt *support.Crt) {
 		Action(crt, mediaVault, &wi)
 
 	default:
-		crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
+		crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
 	}
 	//}
 

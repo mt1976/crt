@@ -44,12 +44,12 @@ type pageRow struct {
 func New(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > C.TitleLength {
-		title = title[:C.TitleLength] + truncate
+		title = title[:C.TitleLength] + truncateText
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: promptString, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(Quit)    // Add Quit action
-	m.AddAction(Forward) // Add Next action
-	m.AddAction(Back)    // Add Previous action
+	m.AddAction(QuitText)    // Add Quit action
+	m.AddAction(ForwardText) // Add Next action
+	m.AddAction(BackText)    // Add Previous action
 	m.pageRowCounter = 0
 	return &m
 }
@@ -68,7 +68,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if rowContent == blank {
+	if rowContent == blankSymbol {
 		rowContent = ""
 	}
 
@@ -124,12 +124,12 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	for !exit {
 		nextAction, _ := p.displayIt(crt)
 		switch {
-		case nextAction == Quit:
+		case nextAction == QuitText:
 			exit = true
-			return Quit, pageRow{}
-		case nextAction == Forward:
+			return QuitText, pageRow{}
+		case nextAction == ForwardText:
 			p.NextPage(crt)
-		case nextAction == Back:
+		case nextAction == BackText:
 			p.PreviousPage(crt)
 		case inActions(nextAction, p.actions):
 			// upcase the action
@@ -162,8 +162,8 @@ func inActions(action string, actions []string) bool {
 func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	rowsDisplayed := 0
-	p.AddAction(Quit) // Add Quit action
-	p.AddAction(Exit)
+	p.AddAction(QuitText) // Add Quit action
+	p.AddAction(ExitText)
 	crt.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
@@ -178,7 +178,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			crt.Print(newline)
+			crt.Print(newlineSymbol)
 		}
 	}
 	crt.Break()
@@ -209,7 +209,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 		return support.Upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if support.Upcase(nextAction) == Exit {
+	if support.Upcase(nextAction) == ExitText {
 		os.Exit(0)
 	}
 	return support.Upcase(nextAction), pageRow{}
@@ -355,7 +355,7 @@ func (p *Page) ResetPrompt() {
 
 // BlankRow adds a blank row to the page
 func (p *Page) BlankRow() {
-	p.Add(blank, "", "")
+	p.Add(blankSymbol, "", "")
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:

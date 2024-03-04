@@ -1,2 +1,0 @@
-term_width = 80
-term_height = 25

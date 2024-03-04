@@ -25,13 +25,13 @@ func SeasonDetails(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) 
 
 	na, _ := p.Display(crt)
 	switch na {
-	case page.Quit:
+	case page.QuitText:
 		return
 	default:
 		if support.IsInt(na) {
 			Episodes(crt, mediaVault, info.Title, yy.MediaContainer.Metadata[support.ToInt(na)-1])
 		} else {
-			crt.InputError(notations.ErrInvalidAction + "'" + na + "'")
+			crt.InputError(notations.ErrInvalidAction + support.SQuote(na))
 		}
 	}
 }

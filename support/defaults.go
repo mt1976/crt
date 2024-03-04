@@ -1,11 +1,20 @@
 package support
 
-const defaultErrorDelay = 3.0 // default error delay in seconds
-const defaultDateFormat = "02/01/06"
-const defaultTimeFormat = "15:04:05"
-const defaultRandomPortMin = 1
-const defaultRandomPortMax = 65535
-const defaultRandomMACMin = 0
-const defaultRandomMACMax = 255
-const defaultRandomIPMin = 1
-const defaultRandomIPMax = 255
+import "github.com/gen2brain/beeep"
+
+const (
+	defaultErrorDelay    float64 = 3.0 // default error delay in seconds
+	defaultDateFormat    string  = "02/01/06"
+	defaultTimeFormat    string  = "15:04:05"
+	defaultRandomPortMin int     = 1
+	defaultRandomPortMax int     = 65535
+	defaultRandomMACMin  int     = 0
+	defaultRandomMACMax  int     = 255
+	defaultRandomIPMin   int     = 1
+	defaultRandomIPMax   int     = 255
+	defaultBaud          int     = 0
+)
+
+var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
+var defaultBeepFrequency float64 = beeep.DefaultFreq
+var defaultBeepDuration int = beeep.DefaultDuration

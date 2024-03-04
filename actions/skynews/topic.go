@@ -33,7 +33,7 @@ func Topic(crt *support.Crt, topic, title string) {
 
 	action, mi := t.Display(crt)
 
-	if action == page.Quit {
+	if action == page.QuitText {
 		//crt.Println("Quitting")
 		return
 	}

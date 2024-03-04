@@ -7,6 +7,7 @@ const (
 	BoxCharacterBreak       string = "┣"
 	BoxCharacterStart       string = "┏"
 	BoxCharacterBar         string = "━"
+	BoxCharacterBarBreak    string = "┗"
 	TableCharacterUnderline string = "-"
 	bold                    string = "\033[1m"
 	reset                   string = "\033[0m"
@@ -17,6 +18,11 @@ const (
 	newline                 string = "\n"
 	versionText             string = "StarTerm - Utilities 1.0 %s"
 	smHeader                string = "StarTerm"
+	promptSymbol            string = "? "
+	errorSymbol             string = "ERROR : "
+	infoSymbol              string = "INFO : "
+	pagingText              string = "Page %v of %v"
+	lineSymbol              string = "%s%s%s"
 
 	// const chEnd = "┛"
 	// const chJunction = "┣"
@@ -75,4 +81,12 @@ func TrimRepeatingCharacters(s string, c string) string {
 
 func Bold(s string) string {
 	return bold + s + reset
+}
+
+func SQuote(s string) string {
+	return "'" + s + "'"
+}
+
+func PQuote(s string) string {
+	return "(" + s + ")"
 }

@@ -20,7 +20,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	noItems := fmt.Sprintf("%d", res.MediaContainer.Size)
 
-	m := page.New(res.MediaContainer.LibrarySectionTitle + " (" + noItems + ")")
+	m := page.New(res.MediaContainer.LibrarySectionTitle + " " + support.PQuote(noItems))
 	count := 0
 
 	for range res.MediaContainer.Metadata {
@@ -30,7 +30,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case page.Quit:
+	case page.QuitText:
 		return
 	default:
 		if support.IsInt(nextAction) {
@@ -38,7 +38,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 			Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 
 		} else {
-			crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
 		}
 	}
 }
@@ -62,9 +62,9 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case page.Quit:
+	case page.QuitText:
 		return
 	default:
-		crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
+		crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
 	}
 }

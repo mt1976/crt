@@ -23,7 +23,7 @@ func Run(crt *support.Crt) {
 	m.AddOption(c, serviceQTorText, C.QTorrentURI, "")
 	c++
 
-	m.AddAction(page.Quit)
+	m.AddAction(page.QuitText)
 
 	action, nextLevel := m.Display(crt)
 
@@ -33,7 +33,7 @@ func Run(crt *support.Crt) {
 	//crt.SetDelayInMin(1)
 	//crt.DelayIt()
 
-	if action == page.Quit {
+	if action == page.QuitText {
 		return
 	}
 

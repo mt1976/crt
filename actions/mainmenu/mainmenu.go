@@ -20,17 +20,17 @@ func Run(crt *support.Crt) {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.AddOption(1, "-", "", "")
+	m.AddOption(1, blankText, "", "")
 	m.AddOption(2, skyNewsMenuTitleText, "", "")
 	m.AddOption(3, bbcNewsMenuTitleText, "", "")
 	m.AddOption(4, weatherMenuTitleText, "", "")
-	m.AddOption(5, "Torrents", "", "")
+	m.AddOption(5, torrentsText, "", "")
 	m.AddOption(6, plexmediaserversMenuTitleText, "", "")
 	m.AddOption(7, remoteSystemsAccessMenuTitleText, "", "")
 	m.AddOption(8, systemsMaintenanceMenuTitleText, "", "")
-	m.AddOption(9, "-", "", "")
-	m.AddOption(10, "-", "", "")
-	m.AddAction(page.Quit)
+	m.AddOption(9, blankText, "", "")
+	m.AddOption(10, blankText, "", "")
+	m.AddAction(page.QuitText)
 
 	// loop while ok
 	ok := false
@@ -42,7 +42,7 @@ func Run(crt *support.Crt) {
 
 		action, _ := m.Display(crt)
 		switch action {
-		case page.Quit:
+		case page.QuitText:
 			crt.InfoMessage(quittingMessageText + "\n ")
 			ok = true
 			continue
@@ -61,7 +61,7 @@ func Run(crt *support.Crt) {
 		case "6":
 			plexmediaserver.Run(crt)
 		default:
-			crt.InputError(page.ErrInvalidAction + "'" + action + "'")
+			crt.InputError(page.ErrInvalidAction + support.SQuote(action))
 		}
 	}
 }

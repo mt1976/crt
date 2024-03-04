@@ -70,7 +70,7 @@ func FormatDuration(t time.Duration) string {
 }
 
 func FormatPlexDate(t string) string {
-	return humanize.Time(PlexDateToDate(t)) + " (" + FormatDate(PlexDateToDate(t)) + ")"
+	return humanize.Time(PlexDateToDate(t)) + " " + PQuote(FormatDate(PlexDateToDate(t)))
 }
 
 func FormatPlexDuration(t int) string {

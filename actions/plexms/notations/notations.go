@@ -28,4 +28,5 @@ const (
 	ShowLabel             string = "Show"
 	SeasonLabel           string = "Season"
 	EpisodeLabel          string = "Episode"
+	DelimiterText         string = " - "
 )

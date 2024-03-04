@@ -11,12 +11,6 @@ import (
 	"github.com/gen2brain/beeep"
 )
 
-var baudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
-var defaultBaud = 0
-
-var defaultBeepFrequency float64 = beeep.DefaultFreq
-var defaultBeepDuration int = beeep.DefaultDuration
-
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
 // @property {bool} isTerminal - A boolean value indicating whether the CRT (Cathode Ray Tube) is a
@@ -188,9 +182,9 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 	mesg := msg
 	//T.Format(msg, "")
 	if ops != "" {
-		mesg = (T.Format(msg, "") + " (" + T.Bold(ops) + ")")
+		mesg = (T.Format(msg, "") + PQuote(T.Bold(ops)))
 	}
-	mesg = mesg + "? "
+	mesg = mesg + promptSymbol
 	mesg = T.Format(mesg, "")
 	//T.Print(mesg)
 	gT.Print(mesg)
@@ -205,7 +199,7 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 func (T *Crt) InputError(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
-		T.Format(gT.Color(gT.Bold("ERROR : "), gT.RED)+msg, ""))
+		T.Format(gT.Color(gT.Bold(errorSymbol), gT.RED)+msg, ""))
 	//T.Print(msg + newline)
 	gT.Flush()
 	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
@@ -219,7 +213,7 @@ func (T *Crt) InputError(msg string) {
 func (T *Crt) InfoMessage(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
-		T.Format(gT.Color(gT.Bold("INFO : "), gT.CYAN)+msg, ""))
+		T.Format(gT.Color(gT.Bold(infoSymbol), gT.CYAN)+msg, ""))
 	//T.Print(msg + newline)
 	gT.Flush()
 	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
@@ -239,7 +233,7 @@ func (T *Crt) InfoMessage(msg string) {
 // Returns:
 // None.
 func (T *Crt) InputPageInfo(page, ofPages int) {
-	msg := fmt.Sprintf("Page %v of %v", page, ofPages)
+	msg := fmt.Sprintf(pagingText, page, ofPages)
 	lmsg := len(msg)
 	gT.MoveCursor(T.width-lmsg-1, 22)
 	//gT.MoveCursor(2, 23)
@@ -251,7 +245,7 @@ func (T *Crt) InputPageInfo(page, ofPages int) {
 
 // lineBreakEnd returns a string that represents a line break with the end character.
 func (T *Crt) lineBreakEnd() string {
-	return T.lineBreakJunction("┗")
+	return T.lineBreakJunction(BoxCharacterBarBreak)
 }
 
 // lineBreakJunction returns a string that represents a line break with the end character.
@@ -260,7 +254,7 @@ func (T *Crt) lineBreakJunction(displayChar string) string {
 	//if T.currentRow == 0 {
 	//	endChar = chEndFirst
 	//}
-	return fmt.Sprintf("%s%s%s", displayChar, strings.Repeat(BoxCharacterBar, T.width+1), BoxCharacterBar)
+	return fmt.Sprintf(lineSymbol, displayChar, strings.Repeat(BoxCharacterBar, T.width+1), BoxCharacterBar)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
@@ -299,7 +293,7 @@ func (T *Crt) Shout(msg string) {
 // and `err` of type error.
 func (T *Crt) Error(msg string, err error) {
 	T.Println(T.row())
-	T.Println(T.Format(T.Bold(red+"ERROR: ")+msg+fmt.Sprintf(" [%v]", err), ""))
+	T.Println(T.Format(T.Bold(red+errorSymbol)+msg+fmt.Sprintf(" [%v]", err), ""))
 	T.Println(T.row())
 }
 
@@ -344,7 +338,7 @@ func NewPage(cols, rows int) page {
 // characters (`bold` and `reset`). The `fmt.Sprintf` function is used to concatenate the escape
 // characters and the `msg` string.
 func (T *Crt) Bold(msg string) string {
-	return fmt.Sprintf("%s%s%s", bold, msg, reset)
+	return fmt.Sprintf(lineSymbol, bold, msg, reset)
 }
 
 // The `Underline` method of the `Crt` struct is used to format a string with an underline. It takes a
@@ -353,7 +347,7 @@ func (T *Crt) Bold(msg string) string {
 // concatenate the escape characters and the `msg` string. This method is used to create an underlined
 // text effect when printing to the terminal.
 func (T *Crt) Underline(msg string) string {
-	return fmt.Sprintf("%s%s%s", underline, msg, reset)
+	return fmt.Sprintf(lineSymbol, underline, msg, reset)
 }
 
 // Spool prints the contents of a byte slice to the terminal.

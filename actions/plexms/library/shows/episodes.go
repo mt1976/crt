@@ -25,13 +25,13 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case page.Quit:
+	case page.QuitText:
 		return
 	default:
 		if support.IsInt(nextAction) {
 			EpisodeDetail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 		} else {
-			crt.InputError(notations.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
 		}
 	}
 }
@@ -64,7 +64,7 @@ func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case page.Quit:
+	case page.QuitText:
 		return
 	}
 }
