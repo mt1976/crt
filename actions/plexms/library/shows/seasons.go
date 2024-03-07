@@ -25,7 +25,7 @@ func SeasonDetails(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) 
 
 	na, _ := p.Display(crt)
 	switch na {
-	case page.QuitText:
+	case page.TxtQuit:
 		return
 	default:
 		if support.IsInt(na) {

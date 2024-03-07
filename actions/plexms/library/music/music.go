@@ -30,7 +30,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case page.QuitText:
+	case page.TxtQuit:
 		return
 	default:
 		if support.IsInt(nextAction) {
@@ -62,7 +62,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case page.QuitText:
+	case page.TxtQuit:
 		return
 	default:
 		crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))

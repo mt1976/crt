@@ -13,4 +13,5 @@ const (
 	connectedText        = "Connected."
 	newline              = "\n"
 	dialingFailedText    = "Connection failed. Retrying..."
+	completeText         = "Complete"
 )

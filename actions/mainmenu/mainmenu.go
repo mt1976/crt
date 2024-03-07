@@ -30,7 +30,7 @@ func Run(crt *support.Crt) {
 	m.AddOption(8, systemsMaintenanceMenuTitleText, "", "")
 	m.AddOption(9, blankText, "", "")
 	m.AddOption(10, blankText, "", "")
-	m.AddAction(page.QuitText)
+	m.AddAction(page.TxtQuit)
 
 	// loop while ok
 	ok := false
@@ -42,7 +42,7 @@ func Run(crt *support.Crt) {
 
 		action, _ := m.Display(crt)
 		switch action {
-		case page.QuitText:
+		case page.TxtQuit:
 			crt.InfoMessage(quittingMessageText + "\n ")
 			ok = true
 			continue

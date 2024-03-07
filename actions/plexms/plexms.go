@@ -75,13 +75,13 @@ func Run(crt *support.Crt) {
 		p.AddOption(count, xx.Title, "", "")
 	}
 
-	p.AddAction(page.QuitText)
-	p.AddAction(page.ForwardText)
-	p.AddAction(page.BackText)
+	p.AddAction(page.TxtQuit)
+	p.AddAction(page.TxtForward)
+	p.AddAction(page.TxtBack)
 
 	nextAction, _ := p.Display(crt)
 	switch {
-	case nextAction == page.QuitText:
+	case nextAction == page.TxtQuit:
 		return
 	case support.IsInt(nextAction):
 		crt.Error(notations.InfoYouSelected+nextAction, nil)

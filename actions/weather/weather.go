@@ -56,19 +56,19 @@ func Run(crt *support.Crt) {
 	p.Add(hr(crt), "", "")
 	p.Add(fmt.Sprintf(weatherFormat2, sourceLabel, crt.Bold(sourceServiceText)), "", "")
 	// INSERT CONTENT ABOVE
-	p.AddAction(page.QuitText)
-	p.AddAction(page.ForwardText)
-	p.AddAction(page.BackText)
+	p.AddAction(page.TxtQuit)
+	p.AddAction(page.TxtForward)
+	p.AddAction(page.TxtBack)
 	ok := false
 	for !ok {
 
 		nextAction, _ := p.Display(crt)
 		switch nextAction {
-		case page.ForwardText:
+		case page.TxtForward:
 			p.NextPage(crt)
-		case page.BackText:
+		case page.TxtBack:
 			p.PreviousPage(crt)
-		case page.QuitText:
+		case page.TxtQuit:
 			ok = true
 			return
 		default:

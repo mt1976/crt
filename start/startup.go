@@ -36,7 +36,7 @@ func Run(crt *support.Crt) {
 	oldDelay := crt.Delay()
 	//fmt.Println("Old Delay: ", oldDelay)
 	crt.SetDelayInSec(0.25)
-	crt.Print(selfTestingText + "Complete" + newline)
+	crt.Print(selfTestingText + completeText + newline)
 	// Print the current date and time.
 	crt.SetDelayInMs(oldDelay)
 	crt.Print(currentDateText + support.DateString() + newline)

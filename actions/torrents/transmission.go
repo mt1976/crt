@@ -40,7 +40,7 @@ func Trans(crt *support.Crt, uri, title string) {
 	for !ok {
 		action, _ := p.Display(crt)
 
-		if action == page.QuitText {
+		if action == page.TxtQuit {
 			//crt.Println("Quitting")
 			ok = true
 			continue

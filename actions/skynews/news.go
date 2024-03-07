@@ -45,11 +45,11 @@ func Run(crt *support.Crt) {
 	m.AddOption(c, topicEntertainmentLabel, C.SkyNewsURI+C.SkyNewsEntertainmentURI, "")
 	c++
 	m.AddOption(c, topicStrangeLabel, C.SkyNewsURI+C.SkyNewsStrangeURI, "")
-	m.AddAction(page.QuitText)
+	m.AddAction(page.TxtQuit)
 
 	action, nextLevel := m.Display(crt)
 
-	if action == page.QuitText {
+	if action == page.TxtQuit {
 		return
 	}
 	if support.IsInt(action) {
