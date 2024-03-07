@@ -15,21 +15,21 @@ import (
 // and perform various actions.
 func Run(crt *support.Crt) {
 
-	m := page.New(mainMenuTitleText)
+	m := page.New(TxtMainMenuTitle)
 	//for i := range 11 {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.AddOption(1, blankText, "", "")
-	m.AddOption(2, skyNewsMenuTitleText, "", "")
-	m.AddOption(3, bbcNewsMenuTitleText, "", "")
-	m.AddOption(4, weatherMenuTitleText, "", "")
-	m.AddOption(5, torrentsText, "", "")
-	m.AddOption(6, plexmediaserversMenuTitleText, "", "")
-	m.AddOption(7, remoteSystemsAccessMenuTitleText, "", "")
-	m.AddOption(8, systemsMaintenanceMenuTitleText, "", "")
-	m.AddOption(9, blankText, "", "")
-	m.AddOption(10, blankText, "", "")
+	m.AddOption(1, SymBlank, "", "")
+	m.AddOption(2, TxtSkyNewsMenuTitle, "", "")
+	m.AddOption(3, TxtBBCNewsMenuTitle, "", "")
+	m.AddOption(4, TxtWeatherMenuTitle, "", "")
+	m.AddOption(5, TxtTorrentsMenuTitle, "", "")
+	m.AddOption(6, TxtPlexMediaServersMenuTitle, "", "")
+	m.AddOption(7, TxtRemoteSystemsAccessMenuTitle, "", "")
+	m.AddOption(8, TxtSystemsMaintenanceMenuTitle, "", "")
+	m.AddOption(9, SymBlank, "", "")
+	m.AddOption(10, SymBlank, "", "")
 	m.AddAction(page.TxtQuit)
 
 	// loop while ok
@@ -43,13 +43,13 @@ func Run(crt *support.Crt) {
 		action, _ := m.Display(crt)
 		switch action {
 		case page.TxtQuit:
-			crt.InfoMessage(quittingMessageText + "\n ")
+			crt.InfoMessage(TxtQuittingMessage + SymNewline)
 			ok = true
 			continue
 		case "1":
-			y := page.New(subMenuTitleText)
+			y := page.New(TxtSubMenuTitle)
 			for i := range 14 {
-				y.AddOption(i, fmt.Sprintf(subMenuTitleText+" %v", action), "", "")
+				y.AddOption(i, fmt.Sprintf(TxtSubMenuTitle+" %v", action), "", "")
 			}
 			//action, _ = y.Display(crt)
 		case "2":

@@ -1,15 +1,16 @@
 package mainmenu
 
 const (
-	mainMenuTitleText                string = "Main Menu"
-	skyNewsMenuTitleText             string = "SKY News"
-	bbcNewsMenuTitleText             string = "BBC News"
-	weatherMenuTitleText             string = "Weather"
-	remoteSystemsAccessMenuTitleText string = "Remote Systems Access"
-	systemsMaintenanceMenuTitleText  string = "Systems Maintenance"
-	plexmediaserversMenuTitleText    string = "Plex Media Server"
-	quittingMessageText              string = "Quitting"
-	subMenuTitleText                 string = "Sub Menu"
-	blankText                        string = "-"
-	torrentsText                     string = "Torrents"
+	TxtMainMenuTitle                string = "Main Menu"
+	TxtSkyNewsMenuTitle             string = "SKY News"
+	TxtBBCNewsMenuTitle             string = "BBC News"
+	TxtWeatherMenuTitle             string = "Weather"
+	TxtRemoteSystemsAccessMenuTitle string = "Remote Systems Access"
+	TxtSystemsMaintenanceMenuTitle  string = "Systems Maintenance"
+	TxtPlexMediaServersMenuTitle    string = "Plex Media Server"
+	TxtQuittingMessage              string = "Quitting"
+	TxtSubMenuTitle                 string = "Sub Menu"
+	SymBlank                        string = "-"
+	TxtTorrentsMenuTitle            string = "Torrents"
+	SymNewline                      string = "\n"
 )
