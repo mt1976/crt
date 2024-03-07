@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/jrudio/go-plex-client"
-	notations "github.com/mt1976/crt/actions/plexms/language"
+	lang "github.com/mt1976/crt/actions/plexms/language"
 	"github.com/mt1976/crt/actions/plexms/library/movies"
 	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
@@ -27,20 +27,20 @@ func Run(crt *support.Crt) {
 
 	plexConnection, err := plex.New(cfg.Configuration.PlexURI+":"+cfg.Configuration.PlexPort, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(notations.ErrPlexInit, err)
+		crt.Error(lang.ErrPlexInit, err)
 		os.Exit(1)
 	}
 
 	// Test your connection to your Plex server
 	result, err := plexConnection.Test()
 	if err != nil || !result {
-		crt.Error(notations.ErrPlexConnectionTest, err)
+		crt.Error(lang.ErrPlexConnectionTest, err)
 		os.Exit(1)
 	}
 
 	devices, err := plexConnection.GetServers()
 	if err != nil {
-		crt.Error(notations.ErrPlexInit, err)
+		crt.Error(lang.ErrPlexInit, err)
 		os.Exit(1)
 	}
 	//spew.Dump(devices)
@@ -57,17 +57,17 @@ func Run(crt *support.Crt) {
 
 	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(fmt.Sprintf(notations.ErrPlexConnect, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(lang.ErrPlexConnect, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
 	mvLibraries, err := mediaVault.GetLibraries()
 	if err != nil {
-		crt.Error(fmt.Sprintf(notations.ErrLibraryResponse, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(lang.ErrLibraryResponse, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
-	p := page.New(notations.PlexTitle + notations.DelimiterText + mediaVaultProperties.Name)
+	p := page.New(lang.PlexTitle + lang.DelimiterText + mediaVaultProperties.Name)
 	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
@@ -84,13 +84,13 @@ func Run(crt *support.Crt) {
 	case nextAction == page.TxtQuit:
 		return
 	case support.IsInt(nextAction):
-		crt.Error(notations.InfoYouSelected+nextAction, nil)
+		crt.Error(lang.InfoYouSelected+nextAction, nil)
 		naInt, _ := strconv.Atoi(nextAction)
 		wi := mvLibraries.MediaContainer.Directory[naInt-1]
 		Action(crt, mediaVault, &wi)
 
 	default:
-		crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
+		crt.InputError(lang.ErrInvalidAction + support.SQuote(nextAction))
 	}
 	//}
 
