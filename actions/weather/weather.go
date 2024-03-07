@@ -19,7 +19,7 @@ var C config.Config
 func Run(crt *support.Crt) {
 
 	crt.Clear()
-	p := page.New(weatherTitle + " " + sourceServiceText)
+	p := page.New(TxtWeatherTitle + " " + TxtSourceService)
 
 	w, err := owm.NewCurrent(C.OpenWeatherMapApiUnits, C.OpenWeatherMapApiLang, C.OpenWeatherMapApiKey)
 	if err != nil {
@@ -38,23 +38,23 @@ func Run(crt *support.Crt) {
 
 	c := 0
 	c++
-	p.Add(fmt.Sprintf(weatherFormat2, locationLabel, crt.Bold(w.Name)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat2, conditionsLabel, crt.Bold(w.Weather[0].Main)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat2, TxtLocation, crt.Bold(w.Name)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat2, TxtConditions, crt.Bold(w.Weather[0].Main)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, temperatureLabel, boldFloat(crt, w.Main.Temp)+degreeLabel, feelsLikeLabel, boldFloat(crt, w.Main.FeelsLike)+degreeLabel), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, minLabel, boldFloat(crt, w.Main.TempMin)+degreeLabel, maxLabel, boldFloat(crt, w.Main.TempMax)+degreeLabel), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtTemperature, boldFloat(crt, w.Main.Temp)+SymDegree, TxtFeelsLike, boldFloat(crt, w.Main.FeelsLike)+SymDegree), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtMin, boldFloat(crt, w.Main.TempMin)+SymDegree, TxtMax, boldFloat(crt, w.Main.TempMax)+SymDegree), "", "")
 	//p.Add(hr())
 	p.Add(hr(crt), "", "")
 	// p.Add(fmt.Sprintf("Feels Like : %v", w.Main.FeelsLike))
-	p.Add(fmt.Sprintf(weatherFormat4, windSpeedLabel, boldFloat(crt, w.Wind.Speed), windDirectionLabel, boldFloat(crt, w.Wind.Deg)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat1, cloudCoverLabel, boldInt(crt, w.Clouds.All)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtWindSpeed, boldFloat(crt, w.Wind.Speed), TxtWindDirection, boldFloat(crt, w.Wind.Deg)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat1, TxtCloudCover, boldInt(crt, w.Clouds.All)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, rain1HrLabel, boldFloat(crt, w.Rain.OneH), rain3HrLabel, boldFloat(crt, w.Rain.ThreeH)), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, snow1HrLabel, boldFloat(crt, w.Snow.OneH), snow3HrLabel, boldFloat(crt, w.Snow.ThreeH)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtRain1Hr, boldFloat(crt, w.Rain.OneH), TxtRain3Hr, boldFloat(crt, w.Rain.ThreeH)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtSnow1Hr, boldFloat(crt, w.Snow.OneH), TxtSnow3Hr, boldFloat(crt, w.Snow.ThreeH)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat4, sunriseLabel, crt.Bold(outdate(w.Sys.Sunrise)), sunsetLabel, crt.Bold(outdate(w.Sys.Sunset))), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat4, TxtSunrise, crt.Bold(outdate(w.Sys.Sunrise)), TxtSunset, crt.Bold(outdate(w.Sys.Sunset))), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(weatherFormat2, sourceLabel, crt.Bold(sourceServiceText)), "", "")
+	p.Add(fmt.Sprintf(SymWeatherFormat2, TxtSource, crt.Bold(TxtSourceService)), "", "")
 	// INSERT CONTENT ABOVE
 	p.AddAction(page.TxtQuit)
 	p.AddAction(page.TxtForward)
