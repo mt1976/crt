@@ -25,26 +25,26 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := page.New(menuTitleText)
+	m := page.New(TxtMenuTitle)
 	c := 0
 	c++
-	m.AddOption(c, topicHomeLabel, C.SkyNewsURI+C.SkyNewsHomeURI, "")
+	m.AddOption(c, TxtTopicHome, C.URISkyNews+C.URISkyNewsHome, "")
 	c++
-	m.AddOption(c, topicUKLabel, C.SkyNewsURI+C.SkyNewsUKURI, "")
+	m.AddOption(c, TxtTopicUK, C.URISkyNews+C.URISkyNewsUK, "")
 	c++
-	m.AddOption(c, topicWorldLabel, C.SkyNewsURI+C.SkyNewsWorldURI, "")
+	m.AddOption(c, TxtTopicWorld, C.URISkyNews+C.URISkyNewsWorld, "")
 	c++
-	m.AddOption(c, topicUSLabel, C.SkyNewsURI+C.SkyNewsUSURI, "")
+	m.AddOption(c, TxtTopicUS, C.URISkyNews+C.URISkyNewsUS, "")
 	c++
-	m.AddOption(c, topicBusinessLabel, C.SkyNewsURI+C.SkyNewsBusinessURI, "")
+	m.AddOption(c, TxtTopicBusiness, C.URISkyNews+C.URISkyNewsBusiness, "")
 	c++
-	m.AddOption(c, topicPoliticsLabel, C.SkyNewsURI+C.SkyNewsPoliticsURI, "")
+	m.AddOption(c, TxtTopicPolitics, C.URISkyNews+C.URISkyNewsPolitics, "")
 	c++
-	m.AddOption(c, topicTechnologyLabel, C.SkyNewsURI+C.SkyNewsTechnologyURI, "")
+	m.AddOption(c, TxtTopicTechnology, C.URISkyNews+C.URISkyNewsTechnology, "")
 	c++
-	m.AddOption(c, topicEntertainmentLabel, C.SkyNewsURI+C.SkyNewsEntertainmentURI, "")
+	m.AddOption(c, TxtTopicEntertainment, C.URISkyNews+C.URISkyNewsEntertainment, "")
 	c++
-	m.AddOption(c, topicStrangeLabel, C.SkyNewsURI+C.SkyNewsStrangeURI, "")
+	m.AddOption(c, TxtTopicStrange, C.URISkyNews+C.URISkyNewsStrange, "")
 	m.AddAction(page.TxtQuit)
 
 	action, nextLevel := m.Display(crt)

@@ -11,8 +11,8 @@ import (
 func Trans(crt *support.Crt, uri, title string) {
 	//crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic
-	crt.InfoMessage(transLoadingTorrentsText)
-	p := page.New("Transmission")
+	crt.InfoMessage(TxtLoadingTorrentsTransmission)
+	p := page.New(TxtTransmission)
 	// get the news for the topic from an rss feed
 	// endpoint, err := url.Parse(uri)
 	// if err != nil {

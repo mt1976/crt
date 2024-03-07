@@ -1,12 +1,11 @@
 package skynews
 
 const (
-	menuTitleText    = "Bit Torrent Services"
-	serviceTransText = "Transmission"
-	serviceQTorText  = "qTorrent"
-
-	transLoadingTorrentsText = "Loading Transmission Torrents..."
-	qtorLoadingTorrentsText  = "Loading qTorrent Torrents..."
-	storyLoadingText         = "Loading news for story..."
-	invalidActionErrorText   = "Invalid action: "
+	TxtMenuTitle                   = "Bit Torrent Services"
+	TxtTransmission                = "Transmission"
+	TxtQTorrent                    = "qTorrent"
+	TxtLoadingTorrentsTransmission = "Loading Transmission Torrents..."
+	TxtLoadingTorrentsQTor         = "Loading qTorrent Torrents..."
+	TxtLoadingStory                = "Loading news for story..."
+	ErrInvalidAction               = "Invalid action: "
 )

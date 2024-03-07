@@ -15,12 +15,12 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 	//crt.SetDelayInSec(0.25) // Set delay in milliseconds
 	//crt.Header("Main Menu")
-	m := page.New(menuTitleText)
+	m := page.New(TxtMenuTitle)
 	c := 0
 	c++
-	m.AddOption(c, serviceTransText, C.TransmissionURI, "")
+	m.AddOption(c, TxtTransmission, C.TransmissionURI, "")
 	c++
-	m.AddOption(c, serviceQTorText, C.QTorrentURI, "")
+	m.AddOption(c, TxtQTorrent, C.QTorrentURI, "")
 	c++
 
 	m.AddAction(page.TxtQuit)

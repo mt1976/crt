@@ -12,7 +12,7 @@ import (
 func Topic(crt *support.Crt, topic, title string) {
 
 	// Get the news for the topic
-	crt.InfoMessage(topicLoadingLabel + crt.Bold(title))
+	crt.InfoMessage(TxtLoadingTopic + crt.Bold(title))
 	// get the news for the topic from an rss feed
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(topic)

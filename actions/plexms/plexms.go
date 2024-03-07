@@ -6,10 +6,10 @@ import (
 	"strconv"
 
 	"github.com/jrudio/go-plex-client"
+	notations "github.com/mt1976/crt/actions/plexms/language"
 	"github.com/mt1976/crt/actions/plexms/library/movies"
 	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
-	"github.com/mt1976/crt/actions/plexms/notations"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/page"

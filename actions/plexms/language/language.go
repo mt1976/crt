@@ -1,4 +1,4 @@
-package notations
+package language
 
 const (
 	//	ErrLibraryResponse    string = "library fetch error"

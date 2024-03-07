@@ -10,7 +10,7 @@ import (
 // choose to quit.
 func Story(crt *support.Crt, storyLink string) {
 
-	crt.InfoMessage(storyLoadingLabel)
+	crt.InfoMessage(TxtLoadingStory)
 
 	s := buildPage(crt, storyLink)
 	s.ActivePageIndex = 0
@@ -38,7 +38,7 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	var pageTitle string
 
 	// Find and visit all links
-	c.OnHTML(titleTag, func(e *colly.HTMLElement) {
+	c.OnHTML(HTMLTagTitle, func(e *colly.HTMLElement) {
 		pageTitle = e.Text
 	})
 
@@ -46,7 +46,7 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	var storyContent []string
 
 	// Parse the story content
-	c.OnHTML(pTag, func(e *colly.HTMLElement) {
+	c.OnHTML(HTMLTagTagP, func(e *colly.HTMLElement) {
 		storyContent = append(storyContent, e.Text)
 	})
 

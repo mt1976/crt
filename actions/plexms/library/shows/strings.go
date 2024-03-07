@@ -1,6 +1,6 @@
 package shows
 
 const (
-	Seasons string = "S"
-	prompt  string = "Enter (S)easons, (F)orward, (B)ack or (Q)uit"
+	TxtSeasons string = "S"
+	TxtPrompt  string = "Enter (S)easons, (F)orward, (B)ack or (Q)uit"
 )

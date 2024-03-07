@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/jrudio/go-plex-client"
-	"github.com/mt1976/crt/actions/plexms/notations"
+	notations "github.com/mt1976/crt/actions/plexms/language"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
 	page "github.com/mt1976/crt/support/page"
@@ -54,14 +54,14 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 	p.BlankRow()
 	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
 
-	p.AddAction(Seasons) //Drilldown to episodes
-	p.SetPrompt(prompt)
+	p.AddAction(TxtSeasons) //Drilldown to episodes
+	p.SetPrompt(TxtPrompt)
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
 	case page.TxtQuit:
 		return
-	case Seasons:
+	case TxtSeasons:
 		SeasonDetails(crt, mediaVault, info)
 	}
 }

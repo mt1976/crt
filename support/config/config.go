@@ -31,16 +31,16 @@ type Config struct {
 	LocationLogitude float64 `mapstructure:"LocationLongitude"`
 	LocationLatitude float64 `mapstructure:"LocationLatitude"`
 
-	SkyNewsURI              string `mapstructure:"SkyNewsURI"`
-	SkyNewsHomeURI          string `mapstructure:"SkyNewsHomeURI"`
-	SkyNewsUKURI            string `mapstructure:"SkyNewsUKURI"`
-	SkyNewsWorldURI         string `mapstructure:"SkyNewsWorldURI"`
-	SkyNewsUSURI            string `mapstructure:"SkyNewsUSURI"`
-	SkyNewsBusinessURI      string `mapstructure:"SkyNewsBusinessURI"`
-	SkyNewsPoliticsURI      string `mapstructure:"SkyNewsPoliticsURI"`
-	SkyNewsTechnologyURI    string `mapstructure:"SkyNewsTechnologyURI"`
-	SkyNewsEntertainmentURI string `mapstructure:"SkyNewsEntertainmentURI"`
-	SkyNewsStrangeURI       string `mapstructure:"SkyNewsStrangeURI"`
+	URISkyNews              string `mapstructure:"SkyNewsURI"`
+	URISkyNewsHome          string `mapstructure:"SkyNewsHomeURI"`
+	URISkyNewsUK            string `mapstructure:"SkyNewsUKURI"`
+	URISkyNewsWorld         string `mapstructure:"SkyNewsWorldURI"`
+	URISkyNewsUS            string `mapstructure:"SkyNewsUSURI"`
+	URISkyNewsBusiness      string `mapstructure:"SkyNewsBusinessURI"`
+	URISkyNewsPolitics      string `mapstructure:"SkyNewsPoliticsURI"`
+	URISkyNewsTechnology    string `mapstructure:"SkyNewsTechnologyURI"`
+	URISkyNewsEntertainment string `mapstructure:"SkyNewsEntertainmentURI"`
+	URISkyNewsStrange       string `mapstructure:"SkyNewsStrangeURI"`
 }
 
 var Configuration = Config{}
