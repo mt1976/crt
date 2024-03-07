@@ -16,7 +16,7 @@ func Run(crt *support.Crt) {
 	crt.Clear()
 
 	// Display the banner.
-	crt.Banner(startingText)
+	crt.Banner(TxtStarting)
 
 	// Print a message with the current delay value.
 	//crt.Print(fmt.Sprintf("Delay in seconds: %v", crt.GetDelayInSec()))
@@ -25,35 +25,35 @@ func Run(crt *support.Crt) {
 	//crt.SetDelayInSec(0.5)
 
 	// Print a message.
-	crt.Print(startingTerminalText + newline)
+	crt.Print(TxtStartingTerminal + SymNewline)
 
 	// Sleep for 2 seconds.
 	// Sleep for 250 milliseconds.
 	//crt.Sleep(250)
 
 	// Print a message.
-	crt.Print(selfTestingText + newline)
+	crt.Print(TxtSelfTesting + SymNewline)
 	oldDelay := crt.Delay()
 	//fmt.Println("Old Delay: ", oldDelay)
 	crt.SetDelayInSec(0.25)
-	crt.Print(selfTestingText + completeText + newline)
+	crt.Print(TxtSelfTesting + TxtComplete + SymNewline)
 	// Print the current date and time.
 	crt.SetDelayInMs(oldDelay)
-	crt.Print(currentDateText + support.DateString() + newline)
-	crt.Print(currentTimeText + support.TimeString() + newline)
+	crt.Print(TxtCurrentDate + support.DateString() + SymNewline)
+	crt.Print(TxtCurrentTime + support.TimeString() + SymNewline)
 
 	// Sleep for 2 seconds.
 	// Sleep for 500 milliseconds.
 	//crt.Sleep(500)
 
 	// Print a message.
-	crt.Print(pleaseWaitText + newline)
+	crt.Print(TxtPleaseWait + SymNewline)
 
 	// Check if the terminal has a baud rate set.
 	if !crt.NoBaudRate() {
 		// Print a message with the current baud rate.
-		msg := fmt.Sprintf(baudRateText, crt.Baud())
-		crt.Print(msg + newline)
+		msg := fmt.Sprintf(TxtBaudRate, crt.Baud())
+		crt.Print(msg + SymNewline)
 	}
 
 	// Sleep for 2 seconds.
@@ -61,24 +61,24 @@ func Run(crt *support.Crt) {
 	//crt.Sleep(500)
 
 	// Print a message.
-	crt.Print(connectingText + newline)
+	crt.Print(TxtConnecting + SymNewline)
 
 	// Generate a random IP address and port number.
 	//ip := support.RandomIP()
 	//port := support.RandomPort()
 
 	// Print a message with the IP address and port number.
-	msg := fmt.Sprintf(dialingText, support.RandomIP(), support.RandomPort())
-	crt.Print(msg + newline)
+	msg := fmt.Sprintf(TxtDialing, support.RandomIP(), support.RandomPort())
+	crt.Print(msg + SymNewline)
 	if !C.Debug {
 		crt.SetDelayInSec(support.RandomFloat(1, 5))
 	}
 	if support.CoinToss() && !C.Debug {
-		crt.Print(dialingFailedText + newline)
+		crt.Print(TxtDialingFailed + SymNewline)
 		// Print a message with the IP address and port number.
 		crt.ResetDelay()
-		msg := fmt.Sprintf(dialingText, support.RandomIP(), support.RandomPort())
-		crt.Print(msg + newline)
+		msg := fmt.Sprintf(TxtDialing, support.RandomIP(), support.RandomPort())
+		crt.Print(msg + SymNewline)
 		crt.SetDelayInSec(support.RandomFloat(1, 5))
 	}
 	// Sleep for 2 seconds.
@@ -86,6 +86,6 @@ func Run(crt *support.Crt) {
 	//crt.DelayIt(500)
 
 	// Print a message.
-	crt.Print(connectedText + newline)
+	crt.Print(TxtConnected + SymNewline)
 	crt.SetDelayInMs(oldDelay)
 }
