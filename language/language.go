@@ -125,3 +125,10 @@ const (
 	SymTruncate      string = "..."
 	SymWildcardBlank string = "{{blank}}"
 )
+
+// Plex Seasons
+
+const (
+	SymActionSeasons     string = "S"
+	TxtPlexSeasonsPrompt string = "Enter (S)easons, (F)orward, (B)ack or (Q)uit"
+)

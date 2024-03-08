@@ -6,7 +6,7 @@ import (
 
 	"github.com/jrudio/go-plex-client"
 	e "github.com/mt1976/crt/errors"
-	notations "github.com/mt1976/crt/language"
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
 	page "github.com/mt1976/crt/support/page"
@@ -34,7 +34,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case notations.SymActionQuit:
+	case t.SymActionQuit:
 		return
 	default:
 		if support.IsInt(nextAction) {
@@ -48,21 +48,21 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, notations.TitleLabel, info.Title)
-	p.AddFieldValuePair(crt, notations.YearLabel, support.ToString(info.Year))
-	p.AddFieldValuePair(crt, notations.ContentLabel, info.ContentRating)
-	p.AddFieldValuePair(crt, notations.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, t.TitleLabel, info.Title)
+	p.AddFieldValuePair(crt, t.YearLabel, support.ToString(info.Year))
+	p.AddFieldValuePair(crt, t.ContentLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, t.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
 	p.BlankRow()
-	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, t.SummaryLabel, info.Summary)
 
-	p.AddAction(TxtSeasons) //Drilldown to episodes
-	p.SetPrompt(TxtPrompt)
+	p.AddAction(t.SymActionSeasons) //Drilldown to episodes
+	p.SetPrompt(t.TxtPlexSeasonsPrompt)
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case notations.SymActionQuit:
+	case t.SymActionQuit:
 		return
-	case TxtSeasons:
+	case t.SymActionSeasons:
 		SeasonDetails(crt, mediaVault, info)
 	}
 }
