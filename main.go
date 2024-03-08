@@ -4,6 +4,7 @@ import (
 	"time"
 
 	mainmenu "github.com/mt1976/crt/actions/mainmenu"
+	t "github.com/mt1976/crt/language"
 	startup "github.com/mt1976/crt/start"
 	terminal "github.com/mt1976/crt/support"
 	config "github.com/mt1976/crt/support/config"
@@ -36,6 +37,6 @@ func main() {
 	// stop the timer
 	elapsed := time.Since(start)
 	// output the elapsed time
-	crt.Shout(crt.Bold("DONE") + " " + elapsed.String())
+	crt.Shout(crt.Bold(t.TxtDone) + " " + elapsed.String())
 
 }
