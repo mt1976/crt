@@ -268,10 +268,7 @@ func (T *Crt) Format(in string, t string) string {
 
 // clear the terminal screen
 func (T *Crt) Clear() {
-	//goTerminal.Clean()
-	//goTerminal.CursorLineColumn(0, 0)
-	//fmt.Println("Bold")
-	//T.Println("\033[H\033[2J")
+
 	T.firstRow = true
 	T.currentRow = 0
 	gT.Clear()
@@ -415,8 +412,6 @@ func (T *Crt) Header(msg string) {
 	}
 
 	T.Print(T.Bold(headerRowString) + l.Newline)
-
-	// TODO Print Date/Time
 	T.Break()
 }
 

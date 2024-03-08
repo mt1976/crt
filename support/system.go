@@ -5,15 +5,6 @@ import (
 	"math/rand"
 )
 
-// The function roundFloatToTwo rounds a float64 number to two decimal places.
-// func roundFloatToTwo(input float64) float64 {
-// 	// round float64 to 2 decimal places
-// 	rtnVal := math.Round(input*100) / 100
-
-// 	return rtnVal
-// }
-//var c = config.Configuration
-
 // The RandomIP function generates a random IP address in IPv4 format.
 func RandomIP() string {
 	// Generate a random IP address in ipv4 format
