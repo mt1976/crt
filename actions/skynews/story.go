@@ -2,6 +2,7 @@ package skynews
 
 import (
 	"github.com/gocolly/colly"
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
 )
@@ -10,7 +11,7 @@ import (
 // choose to quit.
 func Story(crt *support.Crt, storyLink string) {
 
-	crt.InfoMessage(TxtLoadingStory)
+	crt.InfoMessage(t.TxtLoadingStory)
 
 	s := buildPage(crt, storyLink)
 	s.ActivePageIndex = 0
@@ -38,7 +39,7 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	var pageTitle string
 
 	// Find and visit all links
-	c.OnHTML(HTMLTagTitle, func(e *colly.HTMLElement) {
+	c.OnHTML(t.HTMLTagTitle, func(e *colly.HTMLElement) {
 		pageTitle = e.Text
 	})
 
@@ -46,7 +47,7 @@ func buildPage(crt *support.Crt, storyLink string) *page.Page {
 	var storyContent []string
 
 	// Parse the story content
-	c.OnHTML(HTMLTagTagP, func(e *colly.HTMLElement) {
+	c.OnHTML(t.HTMLTagTagP, func(e *colly.HTMLElement) {
 		storyContent = append(storyContent, e.Text)
 	})
 

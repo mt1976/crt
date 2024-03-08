@@ -1,6 +1,7 @@
 package skynews
 
 import (
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
 )
@@ -11,8 +12,8 @@ import (
 func Trans(crt *support.Crt, uri, title string) {
 	//crt.Println("Topic: " + topic + " - " + title)
 	// Get the news for the topic
-	crt.InfoMessage(TxtLoadingTorrentsTransmission)
-	p := page.New(TxtTransmission)
+	crt.InfoMessage(t.TxtLoadingTorrentsTransmission)
+	p := page.New(t.TxtTransmission)
 	// get the news for the topic from an rss feed
 	// endpoint, err := url.Parse(uri)
 	// if err != nil {

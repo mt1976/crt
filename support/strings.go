@@ -15,7 +15,6 @@ const (
 	red                     string = "\033[31m"
 	clearline               string = "\033[2K"
 	milliseconds            string = "ms"
-	newline                 string = "\n"
 	versionText             string = "StarTerm - Utilities 1.0 %s"
 	smHeader                string = "StarTerm"
 	promptSymbol            string = "? "
@@ -38,21 +37,6 @@ var header []string = []string{
 	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
 	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
 }
-
-// The init function initializes the header and smHeader variables with ASCII art and a string value,
-// respectively.
-// func init() {
-// 	// header = []string{
-// 	// 	"███████ ████████  █████  ██████  ████████ ███████ ██████  ███    ███ ",
-// 	// 	"██         ██    ██   ██ ██   ██    ██    ██      ██   ██ ████  ████ ",
-// 	// 	"███████    ██    ███████ ██████     ██    █████   ██████  ██ ████ ██ ",
-// 	// 	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
-// 	// 	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
-// 	// }
-
-// 	//smHeader = "StarTerm"
-
-// }
 
 // The Upcase function in Go converts a string to uppercase.
 // Upcase converts a string to uppercase.

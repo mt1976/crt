@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
 )
@@ -96,7 +97,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(rowContent string) string {
 	// replace \n, \r, \t, and " with empty strings
-	rowContent = strings.Replace(rowContent, "\n", "", -1)
+	rowContent = strings.Replace(rowContent, t.SymNewline, "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
 	rowContent = strings.Replace(rowContent, "\"", " ", -1)

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	e "github.com/mt1976/crt/errors"
 	"github.com/xeonx/timeago"
 )
 
@@ -51,7 +52,7 @@ func PlexDurationToTime(duration int) time.Duration {
 		fmt.Println(err)
 	}
 	if i != duration {
-		fmt.Println(errDurationMismatch, i, " ", duration)
+		fmt.Println(e.ErrDurationMismatch, i, " ", duration)
 	}
 	//return time.Duration(i) * time.Second
 	t, err := time.ParseDuration(d + milliseconds)

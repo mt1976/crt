@@ -9,6 +9,8 @@ import (
 
 	gT "github.com/buger/goterm"
 	"github.com/gen2brain/beeep"
+	e "github.com/mt1976/crt/errors"
+	t "github.com/mt1976/crt/language"
 )
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
@@ -76,7 +78,7 @@ func (T *Crt) SetDelayInMs(delay int) {
 // `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
 	if !(width > 0 && height > 0) {
-		T.Error(errTerminalSize, nil)
+		T.Error(e.ErrTerminalSize, nil)
 		os.Exit(1)
 	}
 	T.width = width
@@ -147,7 +149,7 @@ func (T *Crt) DelayInSec() float64 {
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (T *Crt) Blank() {
-	T.Println(T.Format("", "") + newline)
+	T.Println(T.Format("", "") + t.SymNewline)
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -155,7 +157,7 @@ func (T *Crt) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (T *Crt) Break() {
-	T.PrintIt(T.row() + newline)
+	T.PrintIt(T.row() + t.SymNewline)
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
@@ -170,7 +172,7 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	T.Println(T.Format(msg, BoxCharacterBreak) + newline)
+	T.Println(T.Format(msg, BoxCharacterBreak) + t.SymNewline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -200,7 +202,7 @@ func (T *Crt) InputError(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
 		T.Format(gT.Color(gT.Bold(errorSymbol), gT.RED)+msg, ""))
-	//T.Print(msg + newline)
+	//T.Print(msg + t.SymNewline)
 	gT.Flush()
 	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
 	oldDelay := T.Delay()
@@ -214,7 +216,7 @@ func (T *Crt) InfoMessage(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
 		T.Format(gT.Color(gT.Bold(infoSymbol), gT.CYAN)+msg, ""))
-	//T.Print(msg + newline)
+	//T.Print(msg + t.SymNewline)
 	gT.Flush()
 	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
 	//oldDelay := T.Delay()
@@ -239,7 +241,7 @@ func (T *Crt) InputPageInfo(page, ofPages int) {
 	//gT.MoveCursor(2, 23)
 	gT.Print(
 		T.Format(gT.Color(msg, gT.YELLOW), ""))
-	//T.Print(msg + newline)
+	//T.Print(msg + t.SymNewline)
 	gT.Flush()
 }
 
@@ -284,9 +286,9 @@ func (T *Crt) Clear() {
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	T.PrintIt(T.row() + newline)
-	T.PrintIt(T.Format(bold+reset+msg, "") + newline)
-	T.PrintIt(T.lineBreakEnd() + newline)
+	T.PrintIt(T.row() + t.SymNewline)
+	T.PrintIt(T.Format(bold+reset+msg, "") + t.SymNewline)
+	T.PrintIt(T.lineBreakEnd() + t.SymNewline)
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -352,7 +354,7 @@ func (T *Crt) Underline(msg string) string {
 
 // Spool prints the contents of a byte slice to the terminal.
 //
-// The byte slice is split into lines by the newline character (\n). For each line, the function
+// The byte slice is split into lines by the t.SymNewline character (\n). For each line, the function
 // determines whether the line is empty. If the line is not empty, it is prepended with "  " (two
 // spaces) and printed to the terminal.
 //
@@ -361,7 +363,7 @@ func (T *Crt) Underline(msg string) string {
 // The function also prints a blank line after all lines have been printed.
 func (T *Crt) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
-	//create an slice of strings, split by newline
+	//create an slice of strings, split by t.SymNewline
 	lines := strings.Split(string(msg), "\n")
 	// loop through the slice
 	if len(msg) == 0 {
@@ -379,20 +381,20 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	T.PrintIt(T.row() + newline)
+	T.PrintIt(T.row() + t.SymNewline)
 	for _, line := range header {
-		T.PrintIt(T.Format(line+newline, ""))
+		T.PrintIt(T.Format(line+t.SymNewline, ""))
 	}
-	T.PrintIt(T.row() + newline)
+	T.PrintIt(T.row() + t.SymNewline)
 	display := fmt.Sprintf(versionText, msg)
-	T.PrintIt(T.Format(display+newline, ""))
+	T.PrintIt(T.Format(display+t.SymNewline, ""))
 	T.Break()
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Header(msg string) {
-	T.PrintIt(T.row() + newline)
+	T.PrintIt(T.row() + t.SymNewline)
 	var line map[int]string = make(map[int]string)
 	midway := (T.width - len(msg)) / 2
 	for i := 0; i < len(smHeader); i++ {
@@ -416,7 +418,7 @@ func (T *Crt) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	T.Print(T.Bold(headerRowString) + newline)
+	T.Print(T.Bold(headerRowString) + t.SymNewline)
 
 	// TODO Print Date/Time
 	T.Break()
@@ -427,7 +429,7 @@ func (T *Crt) Header(msg string) {
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(baudRates, baud) == -1 {
-		T.Error(errBaudRateError, nil)
+		T.Error(e.ErrBaudRateError, nil)
 		T.defaultBaud()
 		return
 	}
@@ -483,7 +485,7 @@ func (T *Crt) Height() int {
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) Println(msg string) {
-	T.Print(msg + "\n")
+	T.Print(msg + t.SymNewline)
 }
 
 // Get the width of the terminal
