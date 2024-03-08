@@ -114,4 +114,6 @@ const (
 	TxtSourceService  string = "OpenWeatherMap"
 	SymDegree         string = "°"
 	SymBreak          string = " ━━ "
+	TxtOneHour        string = " (1hr)"
+	TxtThreeHour      string = " (3hr)"
 )

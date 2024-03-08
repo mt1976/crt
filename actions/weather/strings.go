@@ -3,7 +3,7 @@ package weather
 // var linkDisplay string = '\e]8;;{{URL}}\e\\{{TEXT}}\e]8;;\e\\'
 import t "github.com/mt1976/crt/language"
 
-var TxtRain1Hr string = t.TxtRain + " (1hr)"
-var TxtRain3Hr string = t.TxtRain + " (3hr)"
-var TxtSnow1Hr string = t.TxtSnow + " (1hr)"
-var TxtSnow3Hr string = t.TxtSnow + " (3hr)"
+var TxtRain1Hr string = t.TxtRain + t.TxtOneHour
+var TxtRain3Hr string = t.TxtRain + t.TxtThreeHour
+var TxtSnow1Hr string = t.TxtSnow + t.TxtOneHour
+var TxtSnow3Hr string = t.TxtSnow + t.TxtThreeHour
