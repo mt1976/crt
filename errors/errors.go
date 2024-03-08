@@ -1,12 +1,12 @@
 package support
 
 const (
-	ErrBaudRateError      string = "Invalid Baud Rate"
-	ErrTerminalSize       string = "Invalid Terminal Size"
-	ErrDurationMismatch   string = "Duration Mismatch"
-	ErrMaxPageRows        string = "Max page rows reached"
-	ErrInvalidAction      string = "Invalid action specified "
-	ErrNoMorePages        string = "No more pages"
+	ErrBaudRateError      string = "invalid baud rate"
+	ErrTerminalSize       string = "invalid terminal size"
+	ErrDurationMismatch   string = "duration mismatch"
+	ErrMaxPageRows        string = "max page rows reached"
+	ErrInvalidAction      string = "invalid action specified "
+	ErrNoMorePages        string = "no more pages"
 	ErrPlexInit           string = "unable to connect to server"
 	ErrPlexConnectionTest string = "unable to test connection to server"
 	ErrPlexConnect        string = "unable to connect to %v"

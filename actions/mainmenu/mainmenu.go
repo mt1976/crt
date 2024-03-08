@@ -7,6 +7,7 @@ import (
 	"github.com/mt1976/crt/actions/skynews"
 	torrents "github.com/mt1976/crt/actions/torrents"
 	"github.com/mt1976/crt/actions/weather"
+	e "github.com/mt1976/crt/errors"
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/page"
@@ -62,7 +63,7 @@ func Run(crt *support.Crt) {
 		case "6":
 			plexmediaserver.Run(crt)
 		default:
-			crt.InputError(page.ErrInvalidAction + support.SQuote(action))
+			crt.InputError(e.ErrInvalidAction + support.SQuote(action))
 		}
 	}
 }

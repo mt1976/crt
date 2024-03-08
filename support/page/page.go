@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	e "github.com/mt1976/crt/errors"
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	"github.com/mt1976/crt/support/config"
@@ -108,7 +109,7 @@ func cleanContent(rowContent string) string {
 // as a parameter.
 func (p *Page) AddAction(validAction string) {
 	if validAction == "" {
-		log.Fatal(ErrInvalidAction)
+		log.Fatal(e.ErrInvalidAction)
 		return
 	}
 	validAction = strings.ReplaceAll(validAction, " ", "")
@@ -140,7 +141,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 			return support.Upcase(nextAction), pageRow{}
 		default:
-			crt.InputError(ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + "'" + nextAction + "'")
 		}
 	}
 	return "", pageRow{}
@@ -189,7 +190,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + "'" + nextAction + "'")
 			continue
 		}
 
@@ -200,7 +201,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 			}
 		}
 		if !ok {
-			crt.InputError(ErrInvalidAction + " '" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + " '" + nextAction + "'")
 
 		}
 	}
@@ -226,7 +227,7 @@ func format(crt *support.Crt, m pageRow) string {
 // If the current page is the last page, it returns an error.
 func (p *Page) NextPage(crt *support.Crt) {
 	if p.ActivePageIndex == p.noPages {
-		crt.InputError(errNoMorePages)
+		crt.InputError(e.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex++
@@ -236,7 +237,7 @@ func (p *Page) NextPage(crt *support.Crt) {
 // If the current page is the first page, it returns an error.
 func (p *Page) PreviousPage(crt *support.Crt) {
 	if p.ActivePageIndex == 0 {
-		crt.InputError(errNoMorePages)
+		crt.InputError(e.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex--
@@ -281,7 +282,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
-		crt.Error(ErrAddColumns, nil)
+		crt.Error(e.ErrAddColumns, nil)
 		os.Exit(1)
 	}
 

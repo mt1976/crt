@@ -1,6 +1,7 @@
 package skynews
 
 import (
+	e "github.com/mt1976/crt/errors"
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	config "github.com/mt1976/crt/support/config"
@@ -47,7 +48,7 @@ func Run(crt *support.Crt) {
 			//QTor(crt, nextLevel.AlternateID, nextLevel.Title)
 			action = ""
 		default:
-			crt.InputError(page.ErrInvalidAction + "'" + action + "'")
+			crt.InputError(e.ErrInvalidAction + "'" + action + "'")
 			action = ""
 		}
 	}
