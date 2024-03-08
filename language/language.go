@@ -1,10 +1,11 @@
 package language
 
 // General
+// TxtPlexTitleLabel represents the label for the title of a Plex item.
 const (
 	//	ErrLibraryResponse    string = "library fetch error"
-	TxtPlexTitleLabel            string = "Title"
-	TxtPlexSummaryLabel          string = "Summary"
+	TxtPlexTitleLabel            string = "Title"   // TODO: Change to Title
+	TxtPlexSummaryLabel          string = "Summary" // TODO: Change to Summary
 	TxtPlexContainerLabel        string = "Container"
 	TxtPlexResolutionLabel       string = "Resolution"
 	TxtPlexCodecLabel            string = "Codec"

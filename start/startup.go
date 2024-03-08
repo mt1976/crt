@@ -12,6 +12,7 @@ import (
 
 var C = config.Configuration
 
+// Run initializes the terminal and runs the main loop.
 func Run(crt *support.Crt) {
 	// Clear the terminal screen.
 	crt.Clear()
