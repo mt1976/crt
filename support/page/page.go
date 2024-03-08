@@ -98,7 +98,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(rowContent string) string {
 	// replace \n, \r, \t, and " with empty strings
-	rowContent = strings.Replace(rowContent, t.SymNewline, "", -1)
+	rowContent = strings.Replace(rowContent, t.Newline, "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
 	rowContent = strings.Replace(rowContent, "\"", t.Space, -1)
@@ -180,7 +180,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			crt.Print(t.SymNewline)
+			crt.Print(t.Newline)
 		}
 	}
 	crt.Break()

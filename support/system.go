@@ -12,6 +12,7 @@ import (
 
 // 	return rtnVal
 // }
+//var c = config.Configuration
 
 // The RandomIP function generates a random IP address in IPv4 format.
 func RandomIP() string {
@@ -26,10 +27,10 @@ func RandomIP() string {
 	// 	ip := randomIP()
 	// 	fmt.Println(ip)
 	//
-	ip1 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
-	ip2 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
-	ip3 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
-	ip4 := RandomNumber(defaultRandomIPMin, defaultRandomIPMax)
+	ip1 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
+	ip2 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
+	ip3 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
+	ip4 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
 
 	return fmt.Sprintf("%v.%v.%v.%v", ip1, ip2, ip3, ip4)
 }
@@ -45,12 +46,12 @@ func RandomMAC() string {
 	// 	mac := randomMAC()
 	// 	fmt.Println(mac)
 	//
-	mac1 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
-	mac2 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
-	mac3 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
-	mac4 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
-	mac5 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
-	mac6 := fmt.Sprintf("%02x", RandomNumber(defaultRandomMACMin, defaultRandomMACMax))
+	mac1 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
+	mac2 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
+	mac3 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
+	mac4 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
+	mac5 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
+	mac6 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
 
 	return fmt.Sprintf("%v:%v:%v:%v:%v:%v", mac1, mac2, mac3, mac4, mac5, mac6)
 }
@@ -66,7 +67,7 @@ func RandomPort() int {
 	// 	port := randomPort()
 	// 	fmt.Println(port)
 	//
-	return RandomNumber(defaultRandomPortMin, defaultRandomPortMax)
+	return RandomNumber(c.DefaultRandomPortMin, c.DefaultRandomPortMax)
 }
 
 // The RandomNumber function generates a random number within a given range.

@@ -35,7 +35,7 @@ const (
 	TxtConnecting       string = "Connecting..."
 	TxtDialing          string = "Dialing... %v:%v"
 	TxtConnected        string = "Connected."
-	SymNewline          string = "\n"
+	Newline             string = "\n"
 	TxtDialingFailed    string = "Connection failed. Retrying..."
 	TxtComplete         string = "Complete"
 )
@@ -84,10 +84,8 @@ const (
 
 // Weather
 const (
-	TxtWeatherTitle string = "Weather"
-
-	TxtWeatherPrompt string = "Select (Q)uit"
-
+	TxtWeatherTitle   string = "Weather"
+	TxtWeatherPrompt  string = "Select (Q)uit"
 	SymWeatherFormat2 string = "%-25s | %-15v"
 	SymWeatherFormat4 string = "%-25s | %-15v  %-15s : %-15v"
 	SymWeatherFormat1 string = "%-25s | %v%%"
@@ -153,3 +151,11 @@ const (
 	TxtInfo               string = "INFO : "
 	TxtPaging             string = "Page %v of %v"
 )
+
+var ApplicationHeader []string = []string{
+	"███████ ████████  █████  ██████  ████████ ███████ ██████  ███    ███ ",
+	"██         ██    ██   ██ ██   ██    ██    ██      ██   ██ ████  ████ ",
+	"███████    ██    ███████ ██████     ██    █████   ██████  ██ ████ ██ ",
+	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
+	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
+}

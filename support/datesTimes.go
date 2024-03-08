@@ -9,8 +9,11 @@ import (
 	"github.com/dustin/go-humanize"
 	e "github.com/mt1976/crt/errors"
 	l "github.com/mt1976/crt/language"
+	"github.com/mt1976/crt/support/config"
 	"github.com/xeonx/timeago"
 )
+
+var c = config.Configuration
 
 func HumanFromUnixDate(unixTime int64) string {
 	// golang date from unixTime
@@ -21,14 +24,17 @@ func HumanFromUnixDate(unixTime int64) string {
 
 // The function DateString returns the current date in the format "dd/mm/yy".
 func DateString() string {
+	// spew.Dump(c.ApplicationDateFormatShort)
+	// spew.Dump(c)
+	// os.Exit(1)
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(defaultDateFormat))
+	return fmt.Sprintf("%v", now.Format(c.ApplicationDateFormatShort))
 }
 
 // The TimeString function returns the current time in the format "15:04:05".
 func TimeString() string {
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(defaultTimeFormat))
+	return fmt.Sprintf("%v", now.Format(c.ApplicationTimeFormat))
 }
 
 // The DateTimeString function returns a string that combines the time and date strings.
@@ -37,7 +43,7 @@ func DateTimeString() string {
 }
 
 func PlexDateToDate(date string) time.Time {
-	t, err := time.Parse("2006-01-02", date)
+	t, err := time.Parse(c.PlexDateFormat, date)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -64,7 +70,7 @@ func PlexDurationToTime(duration int) time.Duration {
 }
 
 func FormatDate(t time.Time) string {
-	return t.Format("02 Jan 2006")
+	return t.Format(c.ApplicationDateFormat)
 }
 
 func FormatDuration(t time.Duration) string {

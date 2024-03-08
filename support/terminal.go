@@ -149,7 +149,7 @@ func (T *Crt) DelayInSec() float64 {
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (T *Crt) Blank() {
-	T.Println(T.Format("", "") + t.SymNewline)
+	T.Println(T.Format("", "") + t.Newline)
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -157,7 +157,7 @@ func (T *Crt) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (T *Crt) Break() {
-	T.PrintIt(T.row() + t.SymNewline)
+	T.PrintIt(T.row() + t.Newline)
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
@@ -172,7 +172,7 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	T.Println(T.Format(msg, BoxCharacterBreak) + t.SymNewline)
+	T.Println(T.Format(msg, BoxCharacterBreak) + t.Newline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -204,9 +204,9 @@ func (T *Crt) InputError(msg string) {
 		T.Format(gT.Color(gT.Bold(t.TxtError), gT.RED)+msg, ""))
 	//T.Print(msg + t.SymNewline)
 	gT.Flush()
-	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
+	beeep.Beep(c.DefaultBeepFrequency, c.DefaultBeepDuration)
 	oldDelay := T.Delay()
-	T.SetDelayInSec(defaultErrorDelay)
+	T.SetDelayInSec(c.DefaultErrorDelay)
 	T.DelayIt()
 	T.SetDelayInMs(oldDelay)
 
@@ -286,9 +286,9 @@ func (T *Crt) Clear() {
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	T.PrintIt(T.row() + t.SymNewline)
-	T.PrintIt(T.Format(bold+reset+msg, "") + t.SymNewline)
-	T.PrintIt(T.lineBreakEnd() + t.SymNewline)
+	T.PrintIt(T.row() + t.Newline)
+	T.PrintIt(T.Format(bold+reset+msg, "") + t.Newline)
+	T.PrintIt(T.lineBreakEnd() + t.Newline)
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -364,7 +364,7 @@ func (T *Crt) Underline(msg string) string {
 func (T *Crt) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
 	//create an slice of strings, split by t.SymNewline
-	lines := strings.Split(string(msg), "\n")
+	lines := strings.Split(string(msg), t.Newline)
 	// loop through the slice
 	if len(msg) == 0 {
 		return
@@ -381,20 +381,20 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	T.PrintIt(T.row() + t.SymNewline)
-	for _, line := range header {
-		T.PrintIt(T.Format(line+t.SymNewline, ""))
+	T.PrintIt(T.row() + t.Newline)
+	for _, line := range t.ApplicationHeader {
+		T.PrintIt(T.Format(line+t.Newline, ""))
 	}
-	T.PrintIt(T.row() + t.SymNewline)
+	T.PrintIt(T.row() + t.Newline)
 	display := fmt.Sprintf(t.TxtApplicationVersion, msg)
-	T.PrintIt(T.Format(display+t.SymNewline, ""))
+	T.PrintIt(T.Format(display+t.Newline, ""))
 	T.Break()
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Header(msg string) {
-	T.PrintIt(T.row() + t.SymNewline)
+	T.PrintIt(T.row() + t.Newline)
 	var line map[int]string = make(map[int]string)
 	midway := (T.width - len(msg)) / 2
 	for i := 0; i < len(t.TxtApplicationName); i++ {
@@ -418,7 +418,7 @@ func (T *Crt) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	T.Print(T.Bold(headerRowString) + t.SymNewline)
+	T.Print(T.Bold(headerRowString) + t.Newline)
 
 	// TODO Print Date/Time
 	T.Break()
@@ -428,7 +428,7 @@ func (T *Crt) Header(msg string) {
 //
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
-	if sort.SearchInts(baudRates, baud) == -1 {
+	if sort.SearchInts(c.ValidBaudRates, baud) == -1 {
 		T.Error(e.ErrBaudRateError, nil)
 		T.defaultBaud()
 		return
@@ -445,7 +445,7 @@ func (T *Crt) Baud() int {
 //
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) defaultBaud() {
-	T.baud = defaultBaud
+	T.baud = c.DefaultBaud
 }
 
 // PrintIt prints a message to the terminal.
@@ -485,7 +485,7 @@ func (T *Crt) Height() int {
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) Println(msg string) {
-	T.Print(msg + t.SymNewline)
+	T.Print(msg + t.Newline)
 }
 
 // Get the width of the terminal
