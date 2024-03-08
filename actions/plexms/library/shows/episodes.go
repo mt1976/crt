@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/jrudio/go-plex-client"
-	notations "github.com/mt1976/crt/actions/plexms/language"
+	notations "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
 )
