@@ -9,6 +9,7 @@ import (
 	"github.com/mt1976/crt/actions/plexms/library/movies"
 	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
+	e "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 	t "github.com/mt1976/crt/language"
 	support "github.com/mt1976/crt/support"
@@ -28,20 +29,20 @@ func Run(crt *support.Crt) {
 
 	plexConnection, err := plex.New(cfg.Configuration.PlexURI+":"+cfg.Configuration.PlexPort, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(lang.ErrPlexInit, err)
+		crt.Error(e.ErrPlexInit, err)
 		os.Exit(1)
 	}
 
 	// Test your connection to your Plex server
 	result, err := plexConnection.Test()
 	if err != nil || !result {
-		crt.Error(lang.ErrPlexConnectionTest, err)
+		crt.Error(e.ErrPlexConnectionTest, err)
 		os.Exit(1)
 	}
 
 	devices, err := plexConnection.GetServers()
 	if err != nil {
-		crt.Error(lang.ErrPlexInit, err)
+		crt.Error(e.ErrPlexInit, err)
 		os.Exit(1)
 	}
 	//spew.Dump(devices)
@@ -58,13 +59,13 @@ func Run(crt *support.Crt) {
 
 	mediaVault, err := plex.New(mediaVaultProperties.Connection[0].URI, cfg.Configuration.PlexToken)
 	if err != nil {
-		crt.Error(fmt.Sprintf(lang.ErrPlexConnect, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(e.ErrPlexConnect, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
 	mvLibraries, err := mediaVault.GetLibraries()
 	if err != nil {
-		crt.Error(fmt.Sprintf(lang.ErrLibraryResponse, mediaVaultProperties.Name), err)
+		crt.Error(fmt.Sprintf(e.ErrLibraryResponse, mediaVaultProperties.Name), err)
 		os.Exit(1)
 	}
 
@@ -77,8 +78,8 @@ func Run(crt *support.Crt) {
 	}
 
 	p.AddAction(t.SymActionQuit)
-	p.AddAction(t.TxtForward)
-	p.AddAction(t.TxtBack)
+	p.AddAction(t.SymActionForward)
+	p.AddAction(t.SymActionBack)
 
 	nextAction, _ := p.Display(crt)
 	switch {
@@ -91,7 +92,7 @@ func Run(crt *support.Crt) {
 		Action(crt, mediaVault, &wi)
 
 	default:
-		crt.InputError(lang.ErrInvalidAction + support.SQuote(nextAction))
+		crt.InputError(e.ErrInvalidAction + support.SQuote(nextAction))
 	}
 	//}
 

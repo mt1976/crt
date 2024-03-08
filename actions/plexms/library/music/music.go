@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/jrudio/go-plex-client"
+	e "github.com/mt1976/crt/errors"
 	notations "github.com/mt1976/crt/language"
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
@@ -15,7 +16,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	res, err := mediaVault.GetLibraryContent(wi.Key, "")
 	if err != nil {
-		crt.Error(notations.ErrLibraryResponse, err)
+		crt.Error(e.ErrLibraryResponse, err)
 		os.Exit(1)
 	}
 
@@ -39,7 +40,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 			Detail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 
 		} else {
-			crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
+			crt.InputError(e.ErrInvalidAction + support.SQuote(nextAction))
 		}
 	}
 }
@@ -66,6 +67,6 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 	case t.SymActionQuit:
 		return
 	default:
-		crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
+		crt.InputError(e.ErrInvalidAction + support.SQuote(nextAction))
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/jrudio/go-plex-client"
+	e "github.com/mt1976/crt/errors"
 	notations "github.com/mt1976/crt/language"
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
@@ -13,7 +14,7 @@ import (
 func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info plex.Metadata) {
 	res, err := mediaVault.GetEpisodes(info.RatingKey)
 	if err != nil {
-		crt.Error(notations.ErrLibraryResponse, err)
+		crt.Error(e.ErrLibraryResponse, err)
 		os.Exit(1)
 	}
 	m := page.New(seriesTitle + " " + info.Title)
@@ -32,7 +33,7 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 		if support.IsInt(nextAction) {
 			EpisodeDetail(crt, res.MediaContainer.Metadata[support.ToInt(nextAction)-1])
 		} else {
-			crt.InputError(notations.ErrInvalidAction + support.SQuote(nextAction))
+			crt.InputError(e.ErrInvalidAction + support.SQuote(nextAction))
 		}
 	}
 }

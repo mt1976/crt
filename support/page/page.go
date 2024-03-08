@@ -48,9 +48,9 @@ func New(title string) *Page {
 		title = title[:C.TitleLength] + t.SymTruncate
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(t.SymActionQuit) // Add Quit action
-	m.AddAction(t.TxtForward)    // Add Next action
-	m.AddAction(t.TxtBack)       // Add Previous action
+	m.AddAction(t.SymActionQuit)    // Add Quit action
+	m.AddAction(t.SymActionForward) // Add Next action
+	m.AddAction(t.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
 	return &m
 }
@@ -128,9 +128,9 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		case nextAction == t.SymActionQuit:
 			exit = true
 			return t.SymActionQuit, pageRow{}
-		case nextAction == t.TxtForward:
+		case nextAction == t.SymActionForward:
 			p.NextPage(crt)
-		case nextAction == t.TxtBack:
+		case nextAction == t.SymActionBack:
 			p.PreviousPage(crt)
 		case inActions(nextAction, p.actions):
 			// upcase the action
@@ -164,7 +164,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	crt.Clear()
 	rowsDisplayed := 0
 	p.AddAction(t.SymActionQuit) // Add Quit action
-	p.AddAction(t.TxtExit)
+	p.AddAction(t.SymActionExit)
 	crt.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
@@ -210,7 +210,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 		return support.Upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if support.Upcase(nextAction) == t.TxtExit {
+	if support.Upcase(nextAction) == t.SymActionExit {
 		os.Exit(0)
 	}
 	return support.Upcase(nextAction), pageRow{}
