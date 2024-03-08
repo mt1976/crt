@@ -74,7 +74,7 @@ func Run(crt *support.Crt) {
 			ok = true
 			return
 		default:
-			crt.InputError(e.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
 		}
 	}
 

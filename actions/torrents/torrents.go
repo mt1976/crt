@@ -29,12 +29,6 @@ func Run(crt *support.Crt) {
 
 	action, nextLevel := m.Display(crt)
 
-	//log.Println("Action: ", action)
-	//log.Println("Next Level: ", nextLevel)
-	//pause
-	//crt.SetDelayInMin(1)
-	//crt.DelayIt()
-
 	if action == t.SymActionQuit {
 		return
 	}
@@ -48,7 +42,7 @@ func Run(crt *support.Crt) {
 			//QTor(crt, nextLevel.AlternateID, nextLevel.Title)
 			action = ""
 		default:
-			crt.InputError(e.ErrInvalidAction + "'" + action + "'")
+			crt.InputError(e.ErrInvalidAction + t.SingleQuote + action + t.SingleQuote)
 			action = ""
 		}
 	}

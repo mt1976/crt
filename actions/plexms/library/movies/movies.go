@@ -6,7 +6,7 @@ import (
 
 	"github.com/jrudio/go-plex-client"
 	e "github.com/mt1976/crt/errors"
-	notations "github.com/mt1976/crt/language"
+
 	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
@@ -46,26 +46,26 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 func Detail(crt *support.Crt, info plex.Metadata) {
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, notations.TitleLabel, info.Title)
-	p.AddFieldValuePair(crt, notations.ContentLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, t.TitleLabel, info.Title)
+	p.AddFieldValuePair(crt, t.ContentLabel, info.ContentRating)
 	dur := support.FormatPlexDuration(info.Duration)
-	p.AddFieldValuePair(crt, notations.DurationLabel, dur)
-	p.AddFieldValuePair(crt, notations.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
-	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, t.DurationLabel, dur)
+	p.AddFieldValuePair(crt, t.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, t.SummaryLabel, info.Summary)
 	//unix time to hrs mins secs
 	p.BlankRow()
 	for i := 0; i < len(info.Director); i++ {
-		poobum := info.Director[i]
-		lbl := notations.DirectorLabel
+		data := info.Director[i]
+		lbl := t.DirectorLabel
 		if i > 0 {
 			lbl = ""
 		}
-		p.AddFieldValuePair(crt, lbl, poobum.Tag)
+		p.AddFieldValuePair(crt, lbl, data.Tag)
 	}
 
 	for i := 0; i < len(info.Writer); i++ {
 		poobum := info.Writer[i]
-		lbl := notations.WriterLabel
+		lbl := t.WriterLabel
 		if i > 0 {
 			lbl = ""
 		}
@@ -74,7 +74,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	count := 0
 	p.BlankRow()
-	p.AddColumnsTitle(crt, notations.ContainerLabel, notations.ResolutionLabel, notations.CodecLabel, notations.AspectRatioLabel, notations.FrameRateLabel)
+	p.AddColumnsTitle(crt, t.ContainerLabel, t.ResolutionLabel, t.CodecLabel, t.AspectRatioLabel, t.FrameRateLabel)
 
 	for range info.Media {
 		med := info.Media[count]
@@ -84,7 +84,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	//range trhough parts
 	p.BlankRow()
-	p.AddColumnsTitle(crt, notations.MediaLabel)
+	p.AddColumnsTitle(crt, t.MediaLabel)
 	for _, v := range info.Media {
 		p.AddColumns(crt, v.Part[0].File)
 	}

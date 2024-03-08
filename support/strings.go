@@ -1,35 +1,10 @@
 package support
 
-import "strings"
+import (
+	"strings"
 
-const (
-	BoxCharacterNormal      string = "┃"
-	BoxCharacterBreak       string = "┣"
-	BoxCharacterStart       string = "┏"
-	BoxCharacterBar         string = "━"
-	BoxCharacterBarBreak    string = "┗"
-	TableCharacterUnderline string = "-"
-	bold                    string = "\033[1m"
-	reset                   string = "\033[0m"
-	underline               string = "\033[4m"
-	red                     string = "\033[31m"
-	clearline               string = "\033[2K"
-	lineSymbol              string = "%s%s%s"
-
-	// const chEnd = "┛"
-	// const chJunction = "┣"
-	// const chEndFirst = "┓"
-	// const chClose = "┗"
+	l "github.com/mt1976/crt/language"
 )
-
-// var smHeader string
-// var header []string = []string{
-// 	"███████ ████████  █████  ██████  ████████ ███████ ██████  ███    ███ ",
-// 	"██         ██    ██   ██ ██   ██    ██    ██      ██   ██ ████  ████ ",
-// 	"███████    ██    ███████ ██████     ██    █████   ██████  ██ ████ ██ ",
-// 	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
-// 	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
-// }
 
 // The Upcase function in Go converts a string to uppercase.
 // Upcase converts a string to uppercase.
@@ -57,13 +32,13 @@ func TrimRepeatingCharacters(s string, c string) string {
 }
 
 func Bold(s string) string {
-	return bold + s + reset
+	return l.TextStyleBold + s + l.ResetStyle
 }
 
 func SQuote(s string) string {
-	return "'" + s + "'"
+	return l.SingleQuote + s + l.SingleQuote
 }
 
 func PQuote(s string) string {
-	return "(" + s + ")"
+	return l.OpenBracket + s + l.CloseBracket
 }

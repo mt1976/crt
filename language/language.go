@@ -36,6 +36,12 @@ const (
 	TxtDialing          string = "Dialing... %v:%v"
 	TxtConnected        string = "Connected."
 	Newline             string = "\n"
+	CarridgeReturn      string = "\r"
+	Tab                 string = "\t"
+	DoubleQuote         string = "\""
+	SingleQuote         string = "'"
+	OpenBracket         string = "("
+	CloseBracket        string = ")"
 	TxtDialingFailed    string = "Connection failed. Retrying..."
 	TxtComplete         string = "Complete"
 )
@@ -159,3 +165,19 @@ var ApplicationHeader []string = []string{
 	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
 	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
 }
+
+// General
+const (
+	BoxCharacterNormal      string = "┃"
+	BoxCharacterBreak       string = "┣"
+	BoxCharacterStart       string = "┏"
+	BoxCharacterBar         string = "━"
+	BoxCharacterBarBreak    string = "┗"
+	TableCharacterUnderline string = "-"
+	TextStyleBold           string = "\033[1m"
+	ResetStyle              string = "\033[0m"
+	TextStyleUnderline      string = "\033[4m"
+	TextColorRed            string = "\033[31m"
+	ConsoleClearLine        string = "\033[2K"
+	TextLineConstructor     string = "%s%s%s"
+)

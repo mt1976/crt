@@ -99,9 +99,9 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 func cleanContent(rowContent string) string {
 	// replace \n, \r, \t, and " with empty strings
 	rowContent = strings.Replace(rowContent, t.Newline, "", -1)
-	rowContent = strings.Replace(rowContent, "\r", "", -1)
-	rowContent = strings.Replace(rowContent, "\t", "", -1)
-	rowContent = strings.Replace(rowContent, "\"", t.Space, -1)
+	rowContent = strings.Replace(rowContent, t.CarridgeReturn, "", -1)
+	rowContent = strings.Replace(rowContent, t.Tab, "", -1)
+	rowContent = strings.Replace(rowContent, t.DoubleQuote, t.Space, -1)
 	return rowContent
 }
 
@@ -141,7 +141,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 			return support.Upcase(nextAction), pageRow{}
 		default:
-			crt.InputError(e.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
 		}
 	}
 	return "", pageRow{}
@@ -190,7 +190,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(e.ErrInvalidAction + "'" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
 			continue
 		}
 
@@ -201,7 +201,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 			}
 		}
 		if !ok {
-			crt.InputError(e.ErrInvalidAction + " '" + nextAction + "'")
+			crt.InputError(e.ErrInvalidAction + " '" + nextAction + t.SingleQuote)
 
 		}
 	}
@@ -264,7 +264,7 @@ func (p *Page) GetRows() int {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s\n"
+	format := "%-20s : %s" + t.Newline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
 
@@ -336,7 +336,7 @@ func (p *Page) AddColumnsTitle(crt *support.Crt, cols ...string) {
 		}
 
 		noChars := len(op)
-		op = strings.Repeat(support.TableCharacterUnderline, noChars)
+		op = strings.Repeat(t.TableCharacterUnderline, noChars)
 
 		output = append(output, op)
 	}
