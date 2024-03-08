@@ -29,17 +29,14 @@ type Page struct {
 	pageRowCounter  int       // A counter used for tracking the page rows.
 }
 
-// The type "pageRow" represents a row of data for a page, with an ID and content.
-// @property {int} ID - An integer representing the unique identifier of a page row.
-// @property {string} Content - The "Content" property of the "pageRow" struct is a string that
-// represents the content of a page row.
+// pageRow represents a row of content on a page.
 type pageRow struct {
-	ID          int
-	Content     string
-	PageIndex   int
-	Title       string
-	AlternateID string
-	DateTime    string
+	ID          int    // The unique identifier of the page row.
+	Content     string // The content of the page row.
+	PageIndex   int    // The index of the page row.
+	Title       string // The title of the page row.
+	AlternateID string // The alternate identifier of the page row.
+	DateTime    string // The date and time of the page row.
 }
 
 // The New function creates a new page with a truncated title and initializes other properties.
@@ -105,8 +102,7 @@ func cleanContent(rowContent string) string {
 	return rowContent
 }
 
-// The `AddAction` function is used to add a valid action to the page. It takes a `validAction` string
-// as a parameter.
+// AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
 func (p *Page) AddAction(validAction string) {
 	if validAction == "" {
 		log.Fatal(e.ErrInvalidAction)
@@ -218,7 +214,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 }
 
 // The format function returns the first 50 characters of the content in a pageRow object.
-// format returns the first 50 characters of the content in a pageRow object.
+// format returns the first n characters of the content in a pageRow object.
 func format(crt *support.Crt, m pageRow) string {
 	return m.Content
 }
