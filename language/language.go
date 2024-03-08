@@ -132,3 +132,14 @@ const (
 	SymActionSeasons     string = "S"
 	TxtPlexSeasonsPrompt string = "Enter (S)easons, (F)orward, (B)ack or (Q)uit"
 )
+
+// Support
+
+const (
+	TxtOneWord      string = "one"
+	TxtOneNumeric   string = "1"
+	TxtMinutes      string = "minutes"
+	TxtMinutesShort string = "mins"
+	TxtHour         string = "hour"
+	TxtHourShort    string = "hr"
+)

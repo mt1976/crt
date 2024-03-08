@@ -8,6 +8,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 	e "github.com/mt1976/crt/errors"
+	l "github.com/mt1976/crt/language"
 	"github.com/xeonx/timeago"
 )
 
@@ -88,9 +89,9 @@ func TimeAgo(t string) string {
 	if t != "" {
 		mdt, _ := time.Parse(time.RFC1123Z, t)
 		rtn := timeago.English.Format(mdt)
-		rtn = strings.Replace(rtn, "one", "1", -1)
-		rtn = strings.Replace(rtn, "minutes", "mins", -1)
-		rtn = strings.Replace(rtn, "hour", "hr", -1)
+		rtn = strings.Replace(rtn, l.TxtOneWord, l.TxtOneNumeric, -1)
+		rtn = strings.Replace(rtn, l.TxtMinutes, l.TxtMinutesShort, -1)
+		rtn = strings.Replace(rtn, l.TxtHour, l.TxtHourShort, -1)
 		//fix len to 10 chars
 		if len(rtn) > 10 {
 			rtn = rtn[:10]
