@@ -5,6 +5,7 @@ import (
 
 	"github.com/jrudio/go-plex-client"
 	notations "github.com/mt1976/crt/language"
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
 )
@@ -25,7 +26,7 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case page.TxtQuit:
+	case t.SymActionQuit:
 		return
 	default:
 		if support.IsInt(nextAction) {
@@ -64,7 +65,7 @@ func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case page.TxtQuit:
+	case t.SymActionQuit:
 		return
 	}
 }

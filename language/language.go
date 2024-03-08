@@ -117,3 +117,16 @@ const (
 	TxtOneHour        string = " (1hr)"
 	TxtThreeHour      string = " (3hr)"
 )
+
+// Page - Paging
+
+const TxtPrompt = "Enter (F)orward, (B)ack or (Q)uit"
+
+const (
+	SymActionQuit    string = "Q"
+	TxtForward       string = "F"
+	TxtBack          string = "B"
+	TxtExit          string = "EX"
+	SymTruncate      string = "..."
+	SymWildcardBlank string = "{{blank}}"
+)

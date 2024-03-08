@@ -24,7 +24,7 @@ func Run(crt *support.Crt) {
 	m.AddOption(c, t.TxtQTorrent, C.QTorrentURI, "")
 	c++
 
-	m.AddAction(page.TxtQuit)
+	m.AddAction(t.SymActionQuit)
 
 	action, nextLevel := m.Display(crt)
 
@@ -34,7 +34,7 @@ func Run(crt *support.Crt) {
 	//crt.SetDelayInMin(1)
 	//crt.DelayIt()
 
-	if action == page.TxtQuit {
+	if action == t.SymActionQuit {
 		return
 	}
 

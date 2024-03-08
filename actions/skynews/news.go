@@ -46,11 +46,11 @@ func Run(crt *support.Crt) {
 	m.AddOption(c, t.TxtTopicEntertainment, C.URISkyNews+C.URISkyNewsEntertainment, "")
 	c++
 	m.AddOption(c, t.TxtTopicStrange, C.URISkyNews+C.URISkyNewsStrange, "")
-	m.AddAction(page.TxtQuit)
+	m.AddAction(t.SymActionQuit)
 
 	action, nextLevel := m.Display(crt)
 
-	if action == page.TxtQuit {
+	if action == t.SymActionQuit {
 		return
 	}
 	if support.IsInt(action) {

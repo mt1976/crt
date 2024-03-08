@@ -19,7 +19,7 @@ func Topic(crt *support.Crt, topic, title string) {
 	feed, _ := fp.ParseURL(topic)
 	crt.Clear()
 
-	t := page.New(feed.Title)
+	p := page.New(feed.Title)
 	noNewsItems := len(feed.Items)
 	if noNewsItems > C.MaxContentRows {
 		noNewsItems = C.MaxContentRows
@@ -28,13 +28,13 @@ func Topic(crt *support.Crt, topic, title string) {
 	for i := range noNewsItems {
 		//log.Println("Adding: ", feed.Items[i].Title, i)
 		dt := support.TimeAgo(feed.Items[i].Published)
-		t.AddOption(i+1, feed.Items[i].Title, feed.Items[i].Link, dt)
+		p.AddOption(i+1, feed.Items[i].Title, feed.Items[i].Link, dt)
 		i++
 	}
 
-	action, mi := t.Display(crt)
+	action, mi := p.Display(crt)
 
-	if action == page.TxtQuit {
+	if action == t.SymActionQuit {
 		//crt.Println("Quitting")
 		return
 	}

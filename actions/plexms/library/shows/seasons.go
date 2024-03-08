@@ -5,6 +5,7 @@ import (
 
 	"github.com/jrudio/go-plex-client"
 	notations "github.com/mt1976/crt/language"
+	t "github.com/mt1976/crt/language"
 	"github.com/mt1976/crt/support"
 	page "github.com/mt1976/crt/support/page"
 )
@@ -25,7 +26,7 @@ func SeasonDetails(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) 
 
 	na, _ := p.Display(crt)
 	switch na {
-	case page.TxtQuit:
+	case t.SymActionQuit:
 		return
 	default:
 		if support.IsInt(na) {

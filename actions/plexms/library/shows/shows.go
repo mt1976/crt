@@ -33,7 +33,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	nextAction, _ := m.Display(crt)
 	switch nextAction {
-	case page.TxtQuit:
+	case notations.SymActionQuit:
 		return
 	default:
 		if support.IsInt(nextAction) {
@@ -59,7 +59,7 @@ func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 
 	nextAction, _ := p.Display(crt)
 	switch nextAction {
-	case page.TxtQuit:
+	case notations.SymActionQuit:
 		return
 	case TxtSeasons:
 		SeasonDetails(crt, mediaVault, info)

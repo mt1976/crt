@@ -18,7 +18,7 @@ func Story(crt *support.Crt, storyLink string) {
 
 	x, _ := s.Display(crt)
 
-	if x == page.TxtQuit {
+	if x == t.SymActionQuit {
 		return
 	}
 

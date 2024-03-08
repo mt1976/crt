@@ -45,12 +45,12 @@ type pageRow struct {
 func New(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > C.TitleLength {
-		title = title[:C.TitleLength] + SymTruncate
+		title = title[:C.TitleLength] + t.SymTruncate
 	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: TxtPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(TxtQuit)    // Add Quit action
-	m.AddAction(TxtForward) // Add Next action
-	m.AddAction(TxtBack)    // Add Previous action
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	m.AddAction(t.SymActionQuit) // Add Quit action
+	m.AddAction(t.TxtForward)    // Add Next action
+	m.AddAction(t.TxtBack)       // Add Previous action
 	m.pageRowCounter = 0
 	return &m
 }
@@ -69,7 +69,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if rowContent == SymBlank {
+	if rowContent == t.SymBlank {
 		rowContent = ""
 	}
 
@@ -125,12 +125,12 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 	for !exit {
 		nextAction, _ := p.displayIt(crt)
 		switch {
-		case nextAction == TxtQuit:
+		case nextAction == t.SymActionQuit:
 			exit = true
-			return TxtQuit, pageRow{}
-		case nextAction == TxtForward:
+			return t.SymActionQuit, pageRow{}
+		case nextAction == t.TxtForward:
 			p.NextPage(crt)
-		case nextAction == TxtBack:
+		case nextAction == t.TxtBack:
 			p.PreviousPage(crt)
 		case inActions(nextAction, p.actions):
 			// upcase the action
@@ -163,8 +163,8 @@ func inActions(action string, actions []string) bool {
 func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	rowsDisplayed := 0
-	p.AddAction(TxtQuit) // Add Quit action
-	p.AddAction(TxtExit)
+	p.AddAction(t.SymActionQuit) // Add Quit action
+	p.AddAction(t.TxtExit)
 	crt.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
@@ -179,7 +179,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			crt.Print(SymNewline)
+			crt.Print(t.SymNewline)
 		}
 	}
 	crt.Break()
@@ -210,7 +210,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 		return support.Upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if support.Upcase(nextAction) == TxtExit {
+	if support.Upcase(nextAction) == t.TxtExit {
 		os.Exit(0)
 	}
 	return support.Upcase(nextAction), pageRow{}
@@ -351,12 +351,12 @@ func (p *Page) SetPrompt(prompt string) {
 
 // ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
-	p.prompt = TxtPrompt
+	p.prompt = t.TxtPrompt
 }
 
 // BlankRow adds a blank row to the page
 func (p *Page) BlankRow() {
-	p.Add(SymBlank, "", "")
+	p.Add(t.SymBlank, "", "")
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:

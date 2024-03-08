@@ -10,6 +10,7 @@ import (
 	"github.com/mt1976/crt/actions/plexms/library/music"
 	"github.com/mt1976/crt/actions/plexms/library/shows"
 	lang "github.com/mt1976/crt/language"
+	t "github.com/mt1976/crt/language"
 	support "github.com/mt1976/crt/support"
 	cfg "github.com/mt1976/crt/support/config"
 	"github.com/mt1976/crt/support/page"
@@ -75,13 +76,13 @@ func Run(crt *support.Crt) {
 		p.AddOption(count, xx.Title, "", "")
 	}
 
-	p.AddAction(page.TxtQuit)
-	p.AddAction(page.TxtForward)
-	p.AddAction(page.TxtBack)
+	p.AddAction(t.SymActionQuit)
+	p.AddAction(t.TxtForward)
+	p.AddAction(t.TxtBack)
 
 	nextAction, _ := p.Display(crt)
 	switch {
-	case nextAction == page.TxtQuit:
+	case nextAction == t.SymActionQuit:
 		return
 	case support.IsInt(nextAction):
 		crt.Error(lang.InfoYouSelected+nextAction, nil)
