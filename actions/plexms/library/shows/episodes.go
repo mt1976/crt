@@ -42,13 +42,13 @@ func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
 
 	title := info.GrandparentTitle + t.Space + info.ParentTitle + t.Space + info.Title
 	p := page.New(title)
-	p.AddFieldValuePair(crt, notations.ShowLabel, info.GrandparentTitle)
-	p.AddFieldValuePair(crt, notations.SeasonLabel, info.ParentTitle)
-	p.AddFieldValuePair(crt, notations.EpisodeLabel, info.Title)
-	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
-	p.AddFieldValuePair(crt, notations.DurationLabel, support.FormatPlexDuration(info.Duration))
-	p.AddFieldValuePair(crt, notations.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
-	p.AddFieldValuePair(crt, notations.ContentLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, notations.TxtPlexShow, info.GrandparentTitle)
+	p.AddFieldValuePair(crt, notations.TxtPlexSeason, info.ParentTitle)
+	p.AddFieldValuePair(crt, notations.TxtPlexEpisode, info.Title)
+	p.AddFieldValuePair(crt, notations.TxtPlexSummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, notations.TxtPlexDurationLabel, support.FormatPlexDuration(info.Duration))
+	p.AddFieldValuePair(crt, notations.TxtPlexReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, notations.TxtPlexContentRatingLabel, info.ContentRating)
 	videoCodec := info.Media[0].VideoCodec
 	videoFrameRate := info.Media[0].VideoFrameRate
 	videoResolution := info.Media[0].VideoResolution
@@ -56,10 +56,10 @@ func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
 	aspectRatio := info.Media[0].AspectRatio
 
 	p.BlankRow()
-	p.AddColumnsTitle(crt, notations.CodecLabel, notations.FrameRateLabel, notations.ResolutionLabel, notations.ContainerLabel, notations.AspectRatioLabel)
+	p.AddColumnsTitle(crt, notations.TxtPlexCodecLabel, notations.TxtPlexFrameRateLabel, notations.TxtPlexResolutionLabel, notations.TxtPlexContainerLabel, notations.TxtPlexAspectRatioLabel)
 	p.AddColumns(crt, videoCodec, videoFrameRate, videoResolution, videoContainer, aspectRatio.String())
 	p.BlankRow()
-	p.AddColumnsTitle(crt, notations.MediaLabel)
+	p.AddColumnsTitle(crt, notations.TxtPlexMediaLabel)
 	for _, v := range info.Media {
 		p.AddColumns(crt, v.Part[0].File)
 	}

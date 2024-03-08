@@ -5,16 +5,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-// PlexDateFormat        string = "2006-01-02"
-// ApplicationDateFormat string = "02 Jan 2006"
-)
-
 type Config struct {
-	// 	TermWidth  int    `pkl:"term_width"`
-	// 	TermHeight int    `pkl:"term_height"`
-	// 	Baud       int    `pkl:"baud"`
-	// 	Delay      int    `pkl:"delay"`
 	PlexURI                    string  `mapstructure:"PlexURI"`
 	PlexPort                   string  `mapstructure:"PlexPort"`
 	PlexToken                  string  `mapstructure:"PlexToken"`

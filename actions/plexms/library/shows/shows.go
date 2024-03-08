@@ -48,12 +48,12 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 func Detail(crt *support.Crt, info plex.Metadata, mediaVault *plex.Plex) {
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, t.TitleLabel, info.Title)
-	p.AddFieldValuePair(crt, t.YearLabel, support.ToString(info.Year))
-	p.AddFieldValuePair(crt, t.ContentLabel, info.ContentRating)
-	p.AddFieldValuePair(crt, t.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, t.TxtPlexTitleLabel, info.Title)
+	p.AddFieldValuePair(crt, t.TxtYear, support.ToString(info.Year))
+	p.AddFieldValuePair(crt, t.TxtPlexContentRatingLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, t.TxtPlexReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
 	p.BlankRow()
-	p.AddFieldValuePair(crt, t.SummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, t.TxtPlexSummaryLabel, info.Summary)
 
 	p.AddAction(t.SymActionSeasons) //Drilldown to episodes
 	p.SetPrompt(t.TxtPlexSeasonsPrompt)

@@ -69,7 +69,7 @@ func Run(crt *support.Crt) {
 		os.Exit(1)
 	}
 
-	p := page.New(lang.PlexTitle + lang.DelimiterText + mediaVaultProperties.Name)
+	p := page.New(lang.TxtPlexTitle + lang.SymDelimiter + mediaVaultProperties.Name)
 	count := 0
 	for mvLibrary := range mvLibraries.MediaContainer.Directory {
 		xx := mvLibraries.MediaContainer.Directory[mvLibrary]
@@ -86,7 +86,7 @@ func Run(crt *support.Crt) {
 	case nextAction == t.SymActionQuit:
 		return
 	case support.IsInt(nextAction):
-		crt.Error(lang.InfoYouSelected+nextAction, nil)
+		crt.Error(lang.TxtYouSelected+nextAction, nil)
 		naInt, _ := strconv.Atoi(nextAction)
 		wi := mvLibraries.MediaContainer.Directory[naInt-1]
 		Action(crt, mediaVault, &wi)

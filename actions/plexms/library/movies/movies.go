@@ -46,17 +46,17 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 func Detail(crt *support.Crt, info plex.Metadata) {
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, t.TitleLabel, info.Title)
-	p.AddFieldValuePair(crt, t.ContentLabel, info.ContentRating)
+	p.AddFieldValuePair(crt, t.TxtPlexTitleLabel, info.Title)
+	p.AddFieldValuePair(crt, t.TxtPlexContentRatingLabel, info.ContentRating)
 	dur := support.FormatPlexDuration(info.Duration)
-	p.AddFieldValuePair(crt, t.DurationLabel, dur)
-	p.AddFieldValuePair(crt, t.ReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
-	p.AddFieldValuePair(crt, t.SummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, t.TxtPlexDurationLabel, dur)
+	p.AddFieldValuePair(crt, t.TxtPlexReleasedLabel, support.FormatPlexDate(info.OriginallyAvailableAt))
+	p.AddFieldValuePair(crt, t.TxtPlexSummaryLabel, info.Summary)
 	//unix time to hrs mins secs
 	p.BlankRow()
 	for i := 0; i < len(info.Director); i++ {
 		data := info.Director[i]
-		lbl := t.DirectorLabel
+		lbl := t.TxtPlexDirectorLabel
 		if i > 0 {
 			lbl = ""
 		}
@@ -65,7 +65,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	for i := 0; i < len(info.Writer); i++ {
 		poobum := info.Writer[i]
-		lbl := t.WriterLabel
+		lbl := t.TxtPlexWriterLabel
 		if i > 0 {
 			lbl = ""
 		}
@@ -74,7 +74,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	count := 0
 	p.BlankRow()
-	p.AddColumnsTitle(crt, t.ContainerLabel, t.ResolutionLabel, t.CodecLabel, t.AspectRatioLabel, t.FrameRateLabel)
+	p.AddColumnsTitle(crt, t.TxtPlexContainerLabel, t.TxtPlexResolutionLabel, t.TxtPlexCodecLabel, t.TxtPlexAspectRatioLabel, t.TxtPlexFrameRateLabel)
 
 	for range info.Media {
 		med := info.Media[count]
@@ -84,7 +84,7 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	//range trhough parts
 	p.BlankRow()
-	p.AddColumnsTitle(crt, t.MediaLabel)
+	p.AddColumnsTitle(crt, t.TxtPlexMediaLabel)
 	for _, v := range info.Media {
 		p.AddColumns(crt, v.Part[0].File)
 	}

@@ -42,7 +42,7 @@ func Run(crt *support.Crt) {
 			//QTor(crt, nextLevel.AlternateID, nextLevel.Title)
 			action = ""
 		default:
-			crt.InputError(e.ErrInvalidAction + t.SingleQuote + action + t.SingleQuote)
+			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + action + t.SymSingleQuote)
 			action = ""
 		}
 	}

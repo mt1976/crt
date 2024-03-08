@@ -40,23 +40,23 @@ func Run(crt *support.Crt) {
 
 	c := 0
 	c++
-	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtLocation, crt.Bold(w.Name)), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtConditions, crt.Bold(w.Weather[0].Main)), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtLocationLabel, crt.Bold(w.Name)), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtConditionsLabel, crt.Bold(w.Weather[0].Main)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtTemperature, boldFloat(crt, w.Main.Temp)+t.SymDegree, t.TxtFeelsLike, boldFloat(crt, w.Main.FeelsLike)+t.SymDegree), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtMin, boldFloat(crt, w.Main.TempMin)+t.SymDegree, t.TxtMax, boldFloat(crt, w.Main.TempMax)+t.SymDegree), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtTemperatureLabel, boldFloat(crt, w.Main.Temp)+t.SymDegree, t.TxtFeelsLikeLabel, boldFloat(crt, w.Main.FeelsLike)+t.SymDegree), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtMinLabel, boldFloat(crt, w.Main.TempMin)+t.SymDegree, t.TxtMaxLabel, boldFloat(crt, w.Main.TempMax)+t.SymDegree), "", "")
 	//p.Add(hr())
 	p.Add(hr(crt), "", "")
 	// p.Add(fmt.Sprintf("Feels Like : %v", w.Main.FeelsLike))
-	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtWindSpeed, boldFloat(crt, w.Wind.Speed), t.TxtWindDirection, boldFloat(crt, w.Wind.Deg)), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat1, t.TxtCloudCover, boldInt(crt, w.Clouds.All)), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtWindSpeedLabel, boldFloat(crt, w.Wind.Speed), t.TxtWindDirectionLabel, boldFloat(crt, w.Wind.Deg)), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat1, t.TxtCloudCoverLabel, boldInt(crt, w.Clouds.All)), "", "")
 	p.Add(hr(crt), "", "")
 	p.Add(fmt.Sprintf(t.SymWeatherFormat4, TxtRain1Hr, boldFloat(crt, w.Rain.OneH), TxtRain3Hr, boldFloat(crt, w.Rain.ThreeH)), "", "")
 	p.Add(fmt.Sprintf(t.SymWeatherFormat4, TxtSnow1Hr, boldFloat(crt, w.Snow.OneH), TxtSnow3Hr, boldFloat(crt, w.Snow.ThreeH)), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtSunrise, crt.Bold(outdate(w.Sys.Sunrise)), t.TxtSunset, crt.Bold(outdate(w.Sys.Sunset))), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat4, t.TxtSunriseLabel, crt.Bold(outdate(w.Sys.Sunrise)), t.TxtSunsetLabel, crt.Bold(outdate(w.Sys.Sunset))), "", "")
 	p.Add(hr(crt), "", "")
-	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtSource, crt.Bold(t.TxtSourceService)), "", "")
+	p.Add(fmt.Sprintf(t.SymWeatherFormat2, t.TxtSourceLabel, crt.Bold(t.TxtSourceService)), "", "")
 	// INSERT CONTENT ABOVE
 	p.AddAction(t.SymActionQuit)
 	p.AddAction(t.SymActionForward)
@@ -74,7 +74,7 @@ func Run(crt *support.Crt) {
 			ok = true
 			return
 		default:
-			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
+			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
 		}
 	}
 

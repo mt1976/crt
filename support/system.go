@@ -3,6 +3,8 @@ package support
 import (
 	"fmt"
 	"math/rand"
+
+	t "github.com/mt1976/crt/language"
 )
 
 // The RandomIP function generates a random IP address in IPv4 format.
@@ -23,7 +25,7 @@ func RandomIP() string {
 	ip3 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
 	ip4 := RandomNumber(c.DefaultRandomIPMin, c.DefaultRandomIPMax)
 
-	return fmt.Sprintf("%v.%v.%v.%v", ip1, ip2, ip3, ip4)
+	return fmt.Sprintf(t.IPAddressConstructor, ip1, ip2, ip3, ip4)
 }
 
 // The RandomMAC function generates a random MAC address in the format of 00:00:00:00:00:00.
@@ -44,7 +46,7 @@ func RandomMAC() string {
 	mac5 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
 	mac6 := fmt.Sprintf("%02x", RandomNumber(c.DefaultRandomMACMin, c.DefaultRandomMACMax))
 
-	return fmt.Sprintf("%v:%v:%v:%v:%v:%v", mac1, mac2, mac3, mac4, mac5, mac6)
+	return fmt.Sprintf(t.MACAddressConstructor, mac1, mac2, mac3, mac4, mac5, mac6)
 }
 
 // The RandomPort function generates a random port number between 1 and 65535.

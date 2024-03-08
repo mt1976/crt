@@ -18,7 +18,7 @@ func SeasonDetails(crt *support.Crt, mediaVault *plex.Plex, info plex.Metadata) 
 		crt.Error(e.ErrLibraryResponse, err)
 		os.Exit(1)
 	}
-	p := page.New(notations.SeasonsTitle + info.Title)
+	p := page.New(notations.TxtPlexSeasons + info.Title)
 	noResps := len(yy.MediaContainer.Metadata)
 	for i := 0; i < noResps; i++ {
 		season := yy.MediaContainer.Metadata[i]

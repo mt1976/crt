@@ -149,7 +149,7 @@ func (T *Crt) DelayInSec() float64 {
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (T *Crt) Blank() {
-	T.Println(T.Format("", "") + l.Newline)
+	T.Println(T.Format("", "") + l.SymNewline)
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -157,7 +157,7 @@ func (T *Crt) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (T *Crt) Break() {
-	T.PrintIt(T.row() + l.Newline)
+	T.PrintIt(T.row() + l.SymNewline)
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
@@ -172,7 +172,7 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	T.Println(T.Format(msg, l.BoxCharacterBreak) + l.Newline)
+	T.Println(T.Format(msg, l.BoxCharacterBreak) + l.SymNewline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -279,9 +279,9 @@ func (T *Crt) Clear() {
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	T.PrintIt(T.row() + l.Newline)
-	T.PrintIt(T.Format(l.TextStyleBold+l.ResetStyle+msg, "") + l.Newline)
-	T.PrintIt(T.lineBreakEnd() + l.Newline)
+	T.PrintIt(T.row() + l.SymNewline)
+	T.PrintIt(T.Format(l.TextStyleBold+l.TextStyleReset+msg, "") + l.SymNewline)
+	T.PrintIt(T.lineBreakEnd() + l.SymNewline)
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -333,7 +333,7 @@ func NewPage(cols, rows int) page {
 // characters (`bold` and `reset`). The `fmt.Sprintf` function is used to concatenate the escape
 // characters and the `msg` string.
 func (T *Crt) Bold(msg string) string {
-	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleBold, msg, l.ResetStyle)
+	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleBold, msg, l.TextStyleReset)
 }
 
 // The `Underline` method of the `Crt` struct is used to format a string with an underline. It takes a
@@ -342,7 +342,7 @@ func (T *Crt) Bold(msg string) string {
 // concatenate the escape characters and the `msg` string. This method is used to create an underlined
 // text effect when printing to the terminal.
 func (T *Crt) Underline(msg string) string {
-	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleUnderline, msg, l.ResetStyle)
+	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleUnderline, msg, l.TextStyleReset)
 }
 
 // Spool prints the contents of a byte slice to the terminal.
@@ -357,7 +357,7 @@ func (T *Crt) Underline(msg string) string {
 func (T *Crt) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
 	//create an slice of strings, split by t.SymNewline
-	lines := strings.Split(string(msg), l.Newline)
+	lines := strings.Split(string(msg), l.SymNewline)
 	// loop through the slice
 	if len(msg) == 0 {
 		return
@@ -374,20 +374,20 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	T.PrintIt(T.row() + l.Newline)
+	T.PrintIt(T.row() + l.SymNewline)
 	for _, line := range l.ApplicationHeader {
-		T.PrintIt(T.Format(line+l.Newline, ""))
+		T.PrintIt(T.Format(line+l.SymNewline, ""))
 	}
-	T.PrintIt(T.row() + l.Newline)
+	T.PrintIt(T.row() + l.SymNewline)
 	display := fmt.Sprintf(l.TxtApplicationVersion, msg)
-	T.PrintIt(T.Format(display+l.Newline, ""))
+	T.PrintIt(T.Format(display+l.SymNewline, ""))
 	T.Break()
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Header(msg string) {
-	T.PrintIt(T.row() + l.Newline)
+	T.PrintIt(T.row() + l.SymNewline)
 	var line map[int]string = make(map[int]string)
 	midway := (T.width - len(msg)) / 2
 	for i := 0; i < len(l.TxtApplicationName); i++ {
@@ -411,7 +411,7 @@ func (T *Crt) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	T.Print(T.Bold(headerRowString) + l.Newline)
+	T.Print(T.Bold(headerRowString) + l.SymNewline)
 	T.Break()
 }
 
@@ -476,7 +476,7 @@ func (T *Crt) Height() int {
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) Println(msg string) {
-	T.Print(msg + l.Newline)
+	T.Print(msg + l.SymNewline)
 }
 
 // Get the width of the terminal

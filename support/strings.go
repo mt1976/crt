@@ -32,13 +32,13 @@ func TrimRepeatingCharacters(s string, c string) string {
 }
 
 func Bold(s string) string {
-	return l.TextStyleBold + s + l.ResetStyle
+	return l.TextStyleBold + s + l.TextStyleReset
 }
 
 func SQuote(s string) string {
-	return l.SingleQuote + s + l.SingleQuote
+	return l.SymSingleQuote + s + l.SymSingleQuote
 }
 
 func PQuote(s string) string {
-	return l.OpenBracket + s + l.CloseBracket
+	return l.SymOpenBracket + s + l.SymCloseBracket
 }

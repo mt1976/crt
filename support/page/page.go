@@ -48,7 +48,7 @@ func New(title string) *Page {
 	if len(title) > C.TitleLength {
 		title = title[:C.TitleLength] + t.SymTruncate
 	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	m.AddAction(t.SymActionQuit)    // Add Quit action
 	m.AddAction(t.SymActionForward) // Add Next action
 	m.AddAction(t.SymActionBack)    // Add Previous action
@@ -98,10 +98,10 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(rowContent string) string {
 	// replace \n, \r, \t, and " with empty strings
-	rowContent = strings.Replace(rowContent, t.Newline, "", -1)
-	rowContent = strings.Replace(rowContent, t.CarridgeReturn, "", -1)
-	rowContent = strings.Replace(rowContent, t.Tab, "", -1)
-	rowContent = strings.Replace(rowContent, t.DoubleQuote, t.Space, -1)
+	rowContent = strings.Replace(rowContent, t.SymNewline, "", -1)
+	rowContent = strings.Replace(rowContent, t.SymCarridgeReturn, "", -1)
+	rowContent = strings.Replace(rowContent, t.SymTab, "", -1)
+	rowContent = strings.Replace(rowContent, t.SymDoubleQuote, t.Space, -1)
 	return rowContent
 }
 
@@ -141,7 +141,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 			return support.Upcase(nextAction), pageRow{}
 		default:
-			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
+			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
 		}
 	}
 	return "", pageRow{}
@@ -180,7 +180,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			crt.Print(t.Newline)
+			crt.Print(t.SymNewline)
 		}
 	}
 	crt.Break()
@@ -190,7 +190,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(e.ErrInvalidAction + t.SingleQuote + nextAction + t.SingleQuote)
+			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
 			continue
 		}
 
@@ -201,7 +201,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 			}
 		}
 		if !ok {
-			crt.InputError(e.ErrInvalidAction + " '" + nextAction + t.SingleQuote)
+			crt.InputError(e.ErrInvalidAction + " '" + nextAction + t.SymSingleQuote)
 
 		}
 	}
@@ -264,7 +264,7 @@ func (p *Page) GetRows() int {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s" + t.Newline
+	format := "%-20s : %s" + t.SymNewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
 
@@ -352,7 +352,7 @@ func (p *Page) SetPrompt(prompt string) {
 
 // ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
-	p.prompt = t.TxtPrompt
+	p.prompt = t.TxtPagingPrompt
 }
 
 // BlankRow adds a blank row to the page

@@ -45,7 +45,7 @@ func Run(crt *support.Crt) {
 		action, _ := m.Display(crt)
 		switch action {
 		case t.SymActionQuit:
-			crt.InfoMessage(t.TxtQuittingMessage + t.Newline)
+			crt.InfoMessage(t.TxtQuittingMessage + t.SymNewline)
 			ok = true
 			continue
 		case "1":

@@ -49,12 +49,12 @@ func Detail(crt *support.Crt, info plex.Metadata) {
 
 	p := page.New(info.Title)
 
-	p.AddFieldValuePair(crt, notations.TitleLabel, info.Title)
-	p.AddFieldValuePair(crt, notations.SummaryLabel, info.Summary)
+	p.AddFieldValuePair(crt, notations.TxtPlexTitleLabel, info.Title)
+	p.AddFieldValuePair(crt, notations.TxtPlexSummaryLabel, info.Summary)
 
 	count := 0
 	p.BlankRow()
-	p.AddColumnsTitle(crt, notations.ContainerLabel, notations.ResolutionLabel, notations.CodecLabel, notations.AspectRatioLabel, notations.FrameRateLabel)
+	p.AddColumnsTitle(crt, notations.TxtPlexContainerLabel, notations.TxtPlexResolutionLabel, notations.TxtPlexCodecLabel, notations.TxtPlexAspectRatioLabel, notations.TxtPlexFrameRateLabel)
 
 	for range info.Media {
 		med := info.Media[count]
