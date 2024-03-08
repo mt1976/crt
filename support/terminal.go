@@ -186,7 +186,7 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 	if ops != "" {
 		mesg = (T.Format(msg, "") + PQuote(T.Bold(ops)))
 	}
-	mesg = mesg + promptSymbol
+	mesg = mesg + t.SymPromptSymbol
 	mesg = T.Format(mesg, "")
 	//T.Print(mesg)
 	gT.Print(mesg)
@@ -201,7 +201,7 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 func (T *Crt) InputError(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
-		T.Format(gT.Color(gT.Bold(errorSymbol), gT.RED)+msg, ""))
+		T.Format(gT.Color(gT.Bold(t.TxtError), gT.RED)+msg, ""))
 	//T.Print(msg + t.SymNewline)
 	gT.Flush()
 	beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
@@ -215,7 +215,7 @@ func (T *Crt) InputError(msg string) {
 func (T *Crt) InfoMessage(msg string) {
 	gT.MoveCursor(2, 23)
 	gT.Print(
-		T.Format(gT.Color(gT.Bold(infoSymbol), gT.CYAN)+msg, ""))
+		T.Format(gT.Color(gT.Bold(t.TxtInfo), gT.CYAN)+msg, ""))
 	//T.Print(msg + t.SymNewline)
 	gT.Flush()
 	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
@@ -235,7 +235,7 @@ func (T *Crt) InfoMessage(msg string) {
 // Returns:
 // None.
 func (T *Crt) InputPageInfo(page, ofPages int) {
-	msg := fmt.Sprintf(pagingText, page, ofPages)
+	msg := fmt.Sprintf(t.TxtPaging, page, ofPages)
 	lmsg := len(msg)
 	gT.MoveCursor(T.width-lmsg-1, 22)
 	//gT.MoveCursor(2, 23)
@@ -295,7 +295,7 @@ func (T *Crt) Shout(msg string) {
 // and `err` of type error.
 func (T *Crt) Error(msg string, err error) {
 	T.Println(T.row())
-	T.Println(T.Format(T.Bold(red+errorSymbol)+msg+fmt.Sprintf(" [%v]", err), ""))
+	T.Println(T.Format(T.Bold(red+t.TxtError)+msg+fmt.Sprintf(" [%v]", err), ""))
 	T.Println(T.row())
 }
 
@@ -386,7 +386,7 @@ func (T *Crt) Banner(msg string) {
 		T.PrintIt(T.Format(line+t.SymNewline, ""))
 	}
 	T.PrintIt(T.row() + t.SymNewline)
-	display := fmt.Sprintf(versionText, msg)
+	display := fmt.Sprintf(t.TxtApplicationVersion, msg)
 	T.PrintIt(T.Format(display+t.SymNewline, ""))
 	T.Break()
 }
@@ -397,8 +397,8 @@ func (T *Crt) Header(msg string) {
 	T.PrintIt(T.row() + t.SymNewline)
 	var line map[int]string = make(map[int]string)
 	midway := (T.width - len(msg)) / 2
-	for i := 0; i < len(smHeader); i++ {
-		line[i] = smHeader[i : i+1]
+	for i := 0; i < len(t.TxtApplicationName); i++ {
+		line[i] = t.TxtApplicationName[i : i+1]
 	}
 	for i := 0; i < len(msg); i++ {
 		line[midway+i] = msg[i : i+1]
@@ -413,7 +413,7 @@ func (T *Crt) Header(msg string) {
 	var headerRowString string
 	for i := 0; i < T.width; i++ {
 		if line[i] == "" {
-			line[i] = " "
+			line[i] = t.Space
 		}
 		headerRowString = headerRowString + line[i]
 	}
@@ -459,7 +459,7 @@ func (T *Crt) PrintIt(msg string) {
 	T.currentRow++
 	rowString := fmt.Sprintf("%v", T.currentRow-1)
 	if T.NoBaudRate() {
-		fmt.Print(msg + " ")
+		fmt.Print(msg + t.Space)
 		return
 	} else {
 		// print one character at a time
@@ -467,7 +467,7 @@ func (T *Crt) PrintIt(msg string) {
 			fmt.Print(string(c))
 			time.Sleep(time.Duration(1000000/T.baud) * time.Microsecond)
 		}
-		fmt.Print(" " + rowString)
+		fmt.Print(t.Space + rowString)
 		//fmt.Println("")
 	}
 }

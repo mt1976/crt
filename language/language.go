@@ -3,21 +3,20 @@ package language
 // General
 const (
 	//	ErrLibraryResponse    string = "library fetch error"
-	TitleLabel       string = "Title"
-	SummaryLabel     string = "Summary"
-	ContainerLabel   string = "Container"
-	ResolutionLabel  string = "Resolution"
-	CodecLabel       string = "Codec"
-	AspectRatioLabel string = "Aspect Ratio"
-	FrameRateLabel   string = "Frame Rate"
-	DurationLabel    string = "Duration"
-	ReleasedLabel    string = "Released"
-	DirectorLabel    string = "Director"
-	WriterLabel      string = "Writer"
-	MediaLabel       string = "Media"
-	ContentLabel     string = "Content Rating"
-	PlexTitle        string = "PMS"
-
+	TitleLabel          string = "Title"
+	SummaryLabel        string = "Summary"
+	ContainerLabel      string = "Container"
+	ResolutionLabel     string = "Resolution"
+	CodecLabel          string = "Codec"
+	AspectRatioLabel    string = "Aspect Ratio"
+	FrameRateLabel      string = "Frame Rate"
+	DurationLabel       string = "Duration"
+	ReleasedLabel       string = "Released"
+	DirectorLabel       string = "Director"
+	WriterLabel         string = "Writer"
+	MediaLabel          string = "Media"
+	ContentLabel        string = "Content Rating"
+	PlexTitle           string = "PMS"
 	InfoYouSelected     string = "you selected: "
 	YearLabel           string = "Year"
 	SeasonsTitle        string = "Seasons - "
@@ -26,19 +25,19 @@ const (
 	EpisodeLabel        string = "Episode"
 	DelimiterText       string = " - "
 	TxtDone             string = "DONE"
-	TxtStarting                = "Starting..."
-	TxtStartingTerminal        = "Starting Terminal..."
-	TxtSelfTesting             = "Self Testing..."
-	TxtCurrentDate             = "Current Date: "
-	TxtCurrentTime             = "Current Time: "
-	TxtPleaseWait              = "Please Wait..."
-	TxtBaudRate                = "Baud Rate Set to %v kbps"
-	TxtConnecting              = "Connecting..."
-	TxtDialing                 = "Dialing... %v:%v"
-	TxtConnected               = "Connected."
-	SymNewline                 = "\n"
-	TxtDialingFailed           = "Connection failed. Retrying..."
-	TxtComplete                = "Complete"
+	TxtStarting         string = "Starting..."
+	TxtStartingTerminal string = "Starting Terminal..."
+	TxtSelfTesting      string = "Self Testing..."
+	TxtCurrentDate      string = "Current Date: "
+	TxtCurrentTime      string = "Current Time: "
+	TxtPleaseWait       string = "Please Wait..."
+	TxtBaudRate         string = "Baud Rate Set to %v kbps"
+	TxtConnecting       string = "Connecting..."
+	TxtDialing          string = "Dialing... %v:%v"
+	TxtConnected        string = "Connected."
+	SymNewline          string = "\n"
+	TxtDialingFailed    string = "Connection failed. Retrying..."
+	TxtComplete         string = "Complete"
 )
 
 // Mainmenu
@@ -77,10 +76,10 @@ const (
 
 // Torrents
 const (
-	TxtTransmission                = "Transmission"
-	TxtQTorrent                    = "qTorrent"
-	TxtLoadingTorrentsTransmission = "Loading Transmission Torrents..."
-	TxtLoadingTorrentsQTor         = "Loading qTorrent Torrents..."
+	TxtTransmission                string = "Transmission"
+	TxtQTorrent                    string = "qTorrent"
+	TxtLoadingTorrentsTransmission string = "Loading Transmission Torrents..."
+	TxtLoadingTorrentsQTor         string = "Loading qTorrent Torrents..."
 )
 
 // Weather
@@ -111,11 +110,12 @@ const (
 	SymBreak          string = " ━━ "
 	TxtOneHour        string = " (1hr)"
 	TxtThreeHour      string = " (3hr)"
+	Space             string = " "
 )
 
 // Page - Paging
 
-const TxtPrompt = "Enter (F)orward, (B)ack or (Q)uit"
+const TxtPrompt string = "Enter (F)orward, (B)ack or (Q)uit"
 
 const (
 	SymActionQuit    string = "Q"
@@ -142,4 +142,14 @@ const (
 	TxtMinutesShort string = "mins"
 	TxtHour         string = "hour"
 	TxtHourShort    string = "hr"
+)
+
+const (
+	TxtMillisecondsShort  string = "ms"
+	TxtApplicationVersion string = "StarTerm - Utilities 1.0 %s"
+	TxtApplicationName    string = "StarTerm"
+	SymPromptSymbol       string = "? "
+	TxtError              string = "ERROR : "
+	TxtInfo               string = "INFO : "
+	TxtPaging             string = "Page %v of %v"
 )

@@ -66,7 +66,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if strings.Trim(rowContent, " ") == "" {
+	if strings.Trim(rowContent, t.Space) == "" {
 		return
 	}
 
@@ -101,7 +101,7 @@ func cleanContent(rowContent string) string {
 	rowContent = strings.Replace(rowContent, t.SymNewline, "", -1)
 	rowContent = strings.Replace(rowContent, "\r", "", -1)
 	rowContent = strings.Replace(rowContent, "\t", "", -1)
-	rowContent = strings.Replace(rowContent, "\"", " ", -1)
+	rowContent = strings.Replace(rowContent, "\"", t.Space, -1)
 	return rowContent
 }
 
@@ -112,7 +112,7 @@ func (p *Page) AddAction(validAction string) {
 		log.Fatal(e.ErrInvalidAction)
 		return
 	}
-	validAction = strings.ReplaceAll(validAction, " ", "")
+	validAction = strings.ReplaceAll(validAction, t.Space, "")
 	p.actions = append(p.actions, validAction)
 	if len(validAction) > p.actionMaxLen {
 		p.actionMaxLen = len(validAction)
@@ -307,7 +307,7 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 			noToAdd := colSize - (len(op) + 1)
 
 			// Add the spaces to the column
-			op = op + strings.Repeat(" ", noToAdd)
+			op = op + strings.Repeat(t.Space, noToAdd)
 		}
 
 		// Add the column to the output slice
@@ -315,7 +315,7 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	}
 
 	// Join the output slice into a single string and add it to the page
-	p.Add(strings.Join(output, " "), "", "")
+	p.Add(strings.Join(output, t.Space), "", "")
 }
 
 // AddColumnsTitle adds a ruler to the page, separating the columns
@@ -332,7 +332,7 @@ func (p *Page) AddColumnsTitle(crt *support.Crt, cols ...string) {
 			op = op[0:colSize]
 		} else {
 			noToAdd := colSize - (len(op) + 1)
-			op = op + strings.Repeat(" ", noToAdd)
+			op = op + strings.Repeat(t.Space, noToAdd)
 		}
 
 		noChars := len(op)
@@ -342,7 +342,7 @@ func (p *Page) AddColumnsTitle(crt *support.Crt, cols ...string) {
 	}
 
 	// turn string array into sigle string
-	p.Add(strings.Join(output, " "), "", "")
+	p.Add(strings.Join(output, t.Space), "", "")
 }
 
 // SetPrompt sets the prompt for the page
@@ -370,7 +370,7 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 		return
 	}
 
-	if strings.Trim(rowContent, " ") == "" {
+	if strings.Trim(rowContent, t.Space) == "" {
 		return
 	}
 
@@ -414,7 +414,7 @@ func formatOption(m pageRow) string {
 	width := C.TerminalWidth - 7
 	pad := width - (len(miTitle) + len(m.DateTime))
 	if pad > 0 {
-		miTitle = miTitle + strings.Repeat(" ", pad)
+		miTitle = miTitle + strings.Repeat(t.Space, pad)
 	} else {
 		miTitle = miTitle[:width-(len(m.DateTime)+1)] + " | " + m.DateTime
 	}

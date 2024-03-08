@@ -24,7 +24,7 @@ func Run(crt *support.Crt, mediaVault *plex.Plex, wi *plex.Directory) {
 
 	noItems := fmt.Sprintf("%d", res.MediaContainer.Size)
 
-	m := page.New(res.MediaContainer.LibrarySectionTitle + " " + support.PQuote(noItems))
+	m := page.New(res.MediaContainer.LibrarySectionTitle + t.Space + support.PQuote(noItems))
 	count := 0
 
 	for range res.MediaContainer.Metadata {

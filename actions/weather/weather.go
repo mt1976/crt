@@ -21,7 +21,7 @@ var C config.Config
 func Run(crt *support.Crt) {
 
 	crt.Clear()
-	p := page.New(t.TxtWeatherTitle + " " + t.TxtSourceService)
+	p := page.New(t.TxtWeatherTitle + t.Space + t.TxtSourceService)
 
 	w, err := owm.NewCurrent(C.OpenWeatherMapApiUnits, C.OpenWeatherMapApiLang, C.OpenWeatherMapApiKey)
 	if err != nil {

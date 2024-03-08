@@ -33,7 +33,7 @@ func TimeString() string {
 
 // The DateTimeString function returns a string that combines the time and date strings.
 func DateTimeString() string {
-	return TimeString() + " " + DateString()
+	return TimeString() + l.Space + DateString()
 }
 
 func PlexDateToDate(date string) time.Time {
@@ -53,10 +53,10 @@ func PlexDurationToTime(duration int) time.Duration {
 		fmt.Println(err)
 	}
 	if i != duration {
-		fmt.Println(e.ErrDurationMismatch, i, " ", duration)
+		fmt.Println(e.ErrDurationMismatch, i, l.Space, duration)
 	}
 	//return time.Duration(i) * time.Second
-	t, err := time.ParseDuration(d + milliseconds)
+	t, err := time.ParseDuration(d + l.TxtMillisecondsShort)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -72,7 +72,7 @@ func FormatDuration(t time.Duration) string {
 }
 
 func FormatPlexDate(t string) string {
-	return humanize.Time(PlexDateToDate(t)) + " " + PQuote(FormatDate(PlexDateToDate(t)))
+	return humanize.Time(PlexDateToDate(t)) + l.Space + PQuote(FormatDate(PlexDateToDate(t)))
 }
 
 func FormatPlexDuration(t int) string {
@@ -97,7 +97,7 @@ func TimeAgo(t string) string {
 			rtn = rtn[:10]
 		}
 		if len(rtn) < 10 {
-			rtn = strings.Repeat(" ", 10-len(rtn)) + rtn
+			rtn = strings.Repeat(l.Space, 10-len(rtn)) + rtn
 		}
 		return rtn
 	}

@@ -14,13 +14,6 @@ const (
 	underline               string = "\033[4m"
 	red                     string = "\033[31m"
 	clearline               string = "\033[2K"
-	milliseconds            string = "ms"
-	versionText             string = "StarTerm - Utilities 1.0 %s"
-	smHeader                string = "StarTerm"
-	promptSymbol            string = "? "
-	errorSymbol             string = "ERROR : "
-	infoSymbol              string = "INFO : "
-	pagingText              string = "Page %v of %v"
 	lineSymbol              string = "%s%s%s"
 
 	// const chEnd = "┛"

@@ -37,6 +37,6 @@ func main() {
 	// stop the timer
 	elapsed := time.Since(start)
 	// output the elapsed time
-	crt.Shout(crt.Bold(t.TxtDone) + " " + elapsed.String())
+	crt.Shout(crt.Bold(t.TxtDone) + t.Space + elapsed.String())
 
 }

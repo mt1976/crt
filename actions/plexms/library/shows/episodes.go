@@ -17,7 +17,7 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 		crt.Error(e.ErrLibraryResponse, err)
 		os.Exit(1)
 	}
-	m := page.New(seriesTitle + " " + info.Title)
+	m := page.New(seriesTitle + t.Space + info.Title)
 
 	noEps := len(res.MediaContainer.Metadata)
 	for i := 0; i < noEps; i++ {
@@ -40,7 +40,7 @@ func Episodes(crt *support.Crt, mediaVault *plex.Plex, seriesTitle string, info 
 
 func EpisodeDetail(crt *support.Crt, info plex.Metadata) {
 
-	title := info.GrandparentTitle + " " + info.ParentTitle + " " + info.Title
+	title := info.GrandparentTitle + t.Space + info.ParentTitle + t.Space + info.Title
 	p := page.New(title)
 	p.AddFieldValuePair(crt, notations.ShowLabel, info.GrandparentTitle)
 	p.AddFieldValuePair(crt, notations.SeasonLabel, info.ParentTitle)
