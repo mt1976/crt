@@ -118,6 +118,11 @@ const (
 	Space                 string = " "
 )
 
+var TxtRain1Hr string = TxtRainLabel + TxtOneHour
+var TxtRain3Hr string = TxtRainLabel + TxtThreeHour
+var TxtSnow1Hr string = TxtSnowLabel + TxtOneHour
+var TxtSnow3Hr string = TxtSnowLabel + TxtThreeHour
+
 // Page - Paging
 
 const TxtPagingPrompt string = "Enter (F)orward, (B)ack or (Q)uit"
