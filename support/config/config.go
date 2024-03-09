@@ -2,10 +2,8 @@ package config
 
 import (
 	"fmt"
-	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gen2brain/beeep"
 	e "github.com/mt1976/crt/errors"
 	"github.com/spf13/viper"
@@ -72,13 +70,15 @@ type Config struct {
 	DashboardURIOperationIN string `mapstructure:"DashboardURIOperation"`
 	DashboardURISuccessIN   string `mapstructure:"DashboardURISuccess"`
 
-	DashboardURIName      []string
-	DashboardURIProtocol  []string
-	DashboardURIHost      []string
-	DashboardURIPort      []string
-	DashboardURIQuery     []string
-	DashboardURIOperation []string
-	DashboardURISuccess   []string
+	DashboardURIName         []string
+	DashboardURIProtocol     []string
+	DashboardURIHost         []string
+	DashboardURIPort         []string
+	DashboardURIQuery        []string
+	DashboardURIOperation    []string
+	DashboardURISuccess      []string
+	DashboardURIValidActions []string
+	DashboardURINoEntries    int
 }
 
 var Configuration = Config{}
@@ -118,27 +118,30 @@ func init() {
 	Configuration.DashboardURIQuery = split(Configuration.DashboardURIQueryIN)
 	Configuration.DashboardURIOperation = split(Configuration.DashboardURIOperationIN)
 	Configuration.DashboardURISuccess = split(Configuration.DashboardURISuccessIN)
+	NoEntries := len(Configuration.DashboardURIHost)
+	Configuration.DashboardURINoEntries = NoEntries
 
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIProtocol) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIProtocol), len(Configuration.DashboardURIHost), "DashboardURIProtocol"))
+	if NoEntries != len(Configuration.DashboardURIProtocol) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIProtocol), NoEntries, "DashboardURIProtocol"))
 	}
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIPort) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIPort), len(Configuration.DashboardURIHost), "DashboardURIPort"))
+	if NoEntries != len(Configuration.DashboardURIPort) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIPort), NoEntries, "DashboardURIPort"))
 	}
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIQuery) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIQuery), len(Configuration.DashboardURIHost), "DashboardURIQuery"))
+	if NoEntries != len(Configuration.DashboardURIQuery) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIQuery), NoEntries, "DashboardURIQuery"))
 	}
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIName) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIName), len(Configuration.DashboardURIHost), "DashboardURIName"))
+	if NoEntries != len(Configuration.DashboardURIName) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIName), NoEntries, "DashboardURIName"))
 	}
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIOperation) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIOperation), len(Configuration.DashboardURIHost), "DashboardURIOperation"))
+	if NoEntries != len(Configuration.DashboardURIOperation) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIOperation), NoEntries, "DashboardURIOperation"))
 	}
-	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURISuccess) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURISuccess), len(Configuration.DashboardURIHost), "DashboardURISuccess"))
+	if NoEntries != len(Configuration.DashboardURISuccess) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURISuccess), NoEntries, "DashboardURISuccess"))
 	}
-	spew.Dump(Configuration)
-	os.Exit(1)
+	Configuration.DashboardURIValidActions = []string{"PING", "HTTP"}
+	//spew.Dump(Configuration)
+	//os.Exit(1)
 }
 
 func split(s string) (r []string) {

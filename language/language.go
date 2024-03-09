@@ -193,4 +193,6 @@ const (
 // Dashboard
 const (
 	TxtDashboardTitle string = "Server Dashboard"
+	TxtStatusOnline   string = "Online "
+	TxtStatusOffline  string = "Offline"
 )
