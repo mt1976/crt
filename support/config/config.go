@@ -1,7 +1,13 @@
 package config
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
+	"github.com/davecgh/go-spew/spew"
 	"github.com/gen2brain/beeep"
+	e "github.com/mt1976/crt/errors"
 	"github.com/spf13/viper"
 )
 
@@ -57,6 +63,22 @@ type Config struct {
 
 	ValidBaudRates          []int
 	ValidFileNameCharacters []string
+
+	DashboardURINameIN      string `mapstructure:"DashboardURIName"`
+	DashboardURIProtocolIN  string `mapstructure:"DashboardURIProtocol"`
+	DashboardURIHostIN      string `mapstructure:"DashboardURIHost"`
+	DashboardURIPortIN      string `mapstructure:"DashboardURIPort"`
+	DashboardURIQueryIN     string `mapstructure:"DashboardURIQuery"`
+	DashboardURIOperationIN string `mapstructure:"DashboardURIOperation"`
+	DashboardURISuccessIN   string `mapstructure:"DashboardURISuccess"`
+
+	DashboardURIName      []string
+	DashboardURIProtocol  []string
+	DashboardURIHost      []string
+	DashboardURIPort      []string
+	DashboardURIQuery     []string
+	DashboardURIOperation []string
+	DashboardURISuccess   []string
 }
 
 var Configuration = Config{}
@@ -89,4 +111,37 @@ func init() {
 	//Configuration.PlexPort = strconv.Itoa(Configuration.plexPortInt)
 	// spew.Dump(&Configuration)
 	// os.Exit(1)
+	Configuration.DashboardURIName = split(Configuration.DashboardURINameIN)
+	Configuration.DashboardURIHost = split(Configuration.DashboardURIHostIN)
+	Configuration.DashboardURIProtocol = split(Configuration.DashboardURIProtocolIN)
+	Configuration.DashboardURIPort = split(Configuration.DashboardURIPortIN)
+	Configuration.DashboardURIQuery = split(Configuration.DashboardURIQueryIN)
+	Configuration.DashboardURIOperation = split(Configuration.DashboardURIOperationIN)
+	Configuration.DashboardURISuccess = split(Configuration.DashboardURISuccessIN)
+
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIProtocol) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIProtocol), len(Configuration.DashboardURIHost), "DashboardURIProtocol"))
+	}
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIPort) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIPort), len(Configuration.DashboardURIHost), "DashboardURIPort"))
+	}
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIQuery) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIQuery), len(Configuration.DashboardURIHost), "DashboardURIQuery"))
+	}
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIName) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIName), len(Configuration.DashboardURIHost), "DashboardURIName"))
+	}
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURIOperation) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIOperation), len(Configuration.DashboardURIHost), "DashboardURIOperation"))
+	}
+	if len(Configuration.DashboardURIHost) != len(Configuration.DashboardURISuccess) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURISuccess), len(Configuration.DashboardURIHost), "DashboardURISuccess"))
+	}
+	spew.Dump(Configuration)
+	os.Exit(1)
+}
+
+func split(s string) (r []string) {
+	fmt.Printf(s)
+	return strings.Split(s, "|")
 }

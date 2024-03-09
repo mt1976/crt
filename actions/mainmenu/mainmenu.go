@@ -1,8 +1,7 @@
 package mainmenu
 
 import (
-	"fmt"
-
+	"github.com/mt1976/crt/actions/dashboard"
 	plexmediaserver "github.com/mt1976/crt/actions/plexms"
 	"github.com/mt1976/crt/actions/skynews"
 	torrents "github.com/mt1976/crt/actions/torrents"
@@ -22,7 +21,7 @@ func Run(crt *support.Crt) {
 	//	m.AddMenuItem(i, fmt.Sprintf("Menu Item %v", i))
 	//}
 
-	m.AddOption(1, t.SymBlank, "", "")
+	m.AddOption(1, t.TxtDashboardTitle, "", "")
 	m.AddOption(2, t.TxtSkyNewsMenuTitle, "", "")
 	m.AddOption(3, t.TxtBBCNewsMenuTitle, "", "")
 	m.AddOption(4, t.TxtWeatherMenuTitle, "", "")
@@ -49,10 +48,7 @@ func Run(crt *support.Crt) {
 			ok = true
 			continue
 		case "1":
-			y := page.New(t.TxtSubMenuTitle)
-			for i := range 14 {
-				y.AddOption(i, fmt.Sprintf(t.TxtSubMenuTitle+" %v", action), "", "")
-			}
+			dashboard.Run(crt)
 			//action, _ = y.Display(crt)
 		case "2":
 			skynews.Run(crt)

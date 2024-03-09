@@ -189,3 +189,8 @@ const (
 	MACAddressConstructor   string = "%v:%v:%v:%v:%v:%v"
 	IPAddressConstructor    string = "%v.%v.%v.%v"
 )
+
+// Dashboard
+const (
+	TxtDashboardTitle string = "Server Dashboard"
+)
