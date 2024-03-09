@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gen2brain/beeep"
@@ -69,6 +70,7 @@ type Config struct {
 	DashboardURIQueryIN     string `mapstructure:"DashboardURIQuery"`
 	DashboardURIOperationIN string `mapstructure:"DashboardURIOperation"`
 	DashboardURISuccessIN   string `mapstructure:"DashboardURISuccess"`
+	DashboardOrderIN        string `mapstructure:"DashboardOrder"`
 
 	DashboardURIName         []string
 	DashboardURIProtocol     []string
@@ -79,6 +81,7 @@ type Config struct {
 	DashboardURISuccess      []string
 	DashboardURIValidActions []string
 	DashboardURINoEntries    int
+	DashboardOrdering        []int
 }
 
 var Configuration = Config{}
@@ -139,12 +142,27 @@ func init() {
 	if NoEntries != len(Configuration.DashboardURISuccess) {
 		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURISuccess), NoEntries, "DashboardURISuccess"))
 	}
+
 	Configuration.DashboardURIValidActions = []string{"PING", "HTTP"}
+	Configuration.DashboardOrdering = buildOrder(Configuration.DashboardOrderIN)
+	if NoEntries != len(Configuration.DashboardOrdering) {
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardOrdering), NoEntries, "DashboardOrdering"))
+	}
 	//spew.Dump(Configuration)
 	//os.Exit(1)
 }
 
 func split(s string) (r []string) {
-	fmt.Printf(s)
 	return strings.Split(s, "|")
+}
+
+func buildOrder(in string) (r []int) {
+	s := strings.Split(in, "|")
+	r = make([]int, len(s))
+	for i := 0; i < len(s); i++ {
+		r[i], _ = strconv.Atoi(string(s[i]))
+	}
+	//	spew.Dump(r)
+	//	os.Exit(1)
+	return
 }
