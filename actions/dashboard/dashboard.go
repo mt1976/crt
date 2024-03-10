@@ -56,7 +56,6 @@ func Run(crt *support.Crt) {
 			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
 		}
 	}
-
 }
 
 func CheckService(i int) string {
