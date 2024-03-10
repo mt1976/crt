@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"strconv"
 
 	e "github.com/mt1976/crt/errors"
 	t "github.com/mt1976/crt/language"
@@ -22,7 +23,8 @@ var C = config.Configuration
 // articles.
 func Run(crt *support.Crt) {
 
-	crt.Clear()
+	// crt.Clear()
+	crt.InfoMessage(t.TxtDashboardChecking)
 	p := page.New(t.TxtDashboardTitle)
 
 	c := 0
@@ -30,6 +32,7 @@ func Run(crt *support.Crt) {
 	//p.Add("Testing Server/Service Dashboard", "", time.Now().Format("2006-01-02"))
 	for i := 0; i < C.DashboardURINoEntries; i++ {
 		//p.Add(C.DashboardURIName[i], "", "")
+		crt.InfoMessage(fmt.Sprintf(t.TxtDashboardCheckingService, C.DashboardURIName[i]))
 		result := CheckService(i)
 		p.AddFieldValuePair(crt, C.DashboardURIName[i], result)
 	}
@@ -60,7 +63,16 @@ func CheckService(i int) string {
 
 	protocol := C.DashboardURIProtocol[i]
 	host := C.DashboardURIHost[i]
+	if host == "" {
+		host = C.DashboardDefaultHost
+	}
+	if host == "" {
+		panic(e.ErrDashboardNoHost)
+	}
 	port := C.DashboardURIPort[i]
+	if port == "" {
+		port = C.DashboardDefaultPort
+	}
 	query := C.DashboardURIQuery[i]
 	operation := C.DashboardURIOperation[i]
 	success := C.DashboardURISuccess[i]
@@ -97,14 +109,14 @@ func CheckService(i int) string {
 
 		//fmt.Println(u)
 
-		return StatusCode(u.String(), "")
+		return StatusCode(u.String(), "", success)
 	}
 
 	xx := fmt.Sprintf("%v://%v:%v%v - %v %v", protocol, host, port, query, operation, success)
 	return xx
 }
 
-func StatusCode(PAGE string, AUTH string) (r string) {
+func StatusCode(PAGE string, AUTH string, SUCCESS string) (r string) {
 	// Setup the request.
 	req, err := http.NewRequest("GET", PAGE, nil)
 	if err != nil {
@@ -115,17 +127,23 @@ func StatusCode(PAGE string, AUTH string) (r string) {
 	// Execute the request.
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return t.TxtStatusOffline + t.Space + support.PQuote("No response from server")
+		return t.TxtStatusOffline + t.Space + support.PQuote(t.TxtNoResponseFromServer)
 	}
 
 	// Close response body as required.
 	defer resp.Body.Close()
 
-	fmt.Println("HTTP Response Status:", resp.StatusCode, http.StatusText(resp.StatusCode))
+	//fmt.Println("HTTP Response Status:", resp.StatusCode, http.StatusText(resp.StatusCode))
 
 	if resp.StatusCode == 200 {
 		return t.TxtStatusOnline + t.Space + support.PQuote(resp.Status)
 	}
+	//resp.StatusCode to string
+	scString := strconv.Itoa(resp.StatusCode)
+	if scString == SUCCESS {
+		return t.TxtStatusOnline + t.Space + support.PQuote(resp.Status)
+	}
+
 	return t.TxtStatusOffline + t.Space + support.PQuote(resp.Status)
 	// or fmt.Sprintf("%d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
 }

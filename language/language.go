@@ -192,7 +192,10 @@ const (
 
 // Dashboard
 const (
-	TxtDashboardTitle string = "Server Dashboard"
-	TxtStatusOnline   string = "Online "
-	TxtStatusOffline  string = "Offline"
+	TxtDashboardTitle           string = "Server Dashboard"
+	TxtStatusOnline             string = "Online "
+	TxtStatusOffline            string = "Offline"
+	TxtDashboardChecking        string = "Please wait... Checking Services"
+	TxtDashboardCheckingService string = "Checking %v..."
+	TxtNoResponseFromServer     string = "No response from server"
 )

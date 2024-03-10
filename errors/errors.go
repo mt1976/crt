@@ -13,6 +13,7 @@ const (
 	ErrLibraryResponse             string = "unable to get libraries from %v"
 	ErrAddColumns                  string = "too many columns 10 or less"
 	ErrConfigurationColumnMismatch string = "column mismatch in configuration got %v wanted %v in %s"
+	ErrDashboardNoHost             string = "dashboard: No default host set"
 )
 
 // Weather

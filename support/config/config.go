@@ -71,6 +71,8 @@ type Config struct {
 	DashboardURIOperationIN string `mapstructure:"DashboardURIOperation"`
 	DashboardURISuccessIN   string `mapstructure:"DashboardURISuccess"`
 	DashboardOrderIN        string `mapstructure:"DashboardOrder"`
+	DashboardDefaultHost    string `mapstructure:"DashboardDefaultHost"`
+	DashboardDefaultPort    string
 
 	DashboardURIName         []string
 	DashboardURIProtocol     []string
@@ -148,6 +150,7 @@ func init() {
 	if NoEntries != len(Configuration.DashboardOrdering) {
 		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardOrdering), NoEntries, "DashboardOrdering"))
 	}
+	Configuration.DashboardDefaultPort = "80"
 	//spew.Dump(Configuration)
 	//os.Exit(1)
 }
