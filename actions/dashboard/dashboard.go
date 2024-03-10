@@ -58,8 +58,9 @@ func Run(crt *support.Crt) {
 	}
 }
 
+// CheckService checks the status of a service
 func CheckService(i int) string {
-
+	// Extract the configuration values for the service
 	protocol := C.DashboardURIProtocol[i]
 	host := C.DashboardURIHost[i]
 	if host == "" {
@@ -76,13 +77,13 @@ func CheckService(i int) string {
 	operation := C.DashboardURIOperation[i]
 	success := C.DashboardURISuccess[i]
 
-	//Check Operation is a valid operation by checking if operation is in C.DashboardURIValidActions
+	// Check if the operation is a valid operation
 	if !slices.Contains(C.DashboardURIValidActions, support.Upcase(operation)) {
 		return e.ErrInvalidAction
 	}
 
+	// Ping the service
 	if support.Upcase(operation) == "PING" {
-
 		pinger, err := probing.NewPinger(host)
 		if err != nil {
 			return t.TxtStatusOffline + t.Space + support.PQuote(err.Error())
@@ -98,6 +99,7 @@ func CheckService(i int) string {
 		return t.TxtStatusOnline + t.Space + support.PQuote(fmt.Sprintf("%v", avgRtt))
 	}
 
+	// Perform an HTTP request to the service
 	if support.Upcase(operation) == "HTTP" {
 		//fmt.Printf("GET %v://%v:%v%v - %v %v\n", protocol, host, port, query, operation, success)
 		var u url.URL
@@ -111,10 +113,22 @@ func CheckService(i int) string {
 		return StatusCode(u.String(), "", success)
 	}
 
-	xx := fmt.Sprintf("%v://%v:%v%v - %v %v", protocol, host, port, query, operation, success)
-	return xx
+	// Return the operation and success values
+	return fmt.Sprintf("%v://%v:%v%v - %v %v", protocol, host, port, query, operation, success)
 }
 
+// StatusCode performs an HTTP request to the specified page and returns the status code and status message.
+// The status code is compared to the specified success code, and if they match, the status message for
+// online is returned. If the status code does not match the success code, the status message for offline
+// is returned.
+//
+// The function takes the following parameters:
+//
+//	PAGE: The URL of the page to request.
+//	AUTH: The authorization header value to use for the request.
+//	SUCCESS: The expected status code for a successful response.
+//
+// The function returns the status message for the specified status code.
 func StatusCode(PAGE string, AUTH string, SUCCESS string) (r string) {
 	// Setup the request.
 	req, err := http.NewRequest("GET", PAGE, nil)
