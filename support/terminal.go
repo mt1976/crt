@@ -214,6 +214,10 @@ func (T *Crt) InputError(msg string) {
 
 func (T *Crt) InfoMessage(msg string) {
 	gT.MoveCursor(2, 23)
+	//Print a line that clears the entire line
+	blanks := strings.Repeat(l.Space, T.width)
+	gT.Print(T.Format(blanks, ""))
+	gT.MoveCursor(2, 23)
 	gT.Print(
 		T.Format(gT.Color(gT.Bold(l.TxtInfo), gT.CYAN)+msg, ""))
 	//T.Print(msg + t.SymNewline)
