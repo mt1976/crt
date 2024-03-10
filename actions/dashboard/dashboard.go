@@ -34,7 +34,7 @@ func Run(crt *support.Crt) {
 		//p.Add(C.DashboardURIName[i], "", "")
 		crt.InfoMessage(fmt.Sprintf(t.TxtDashboardCheckingService, C.DashboardURIName[i]))
 		result := CheckService(i)
-		p.AddFieldValuePair(crt, C.DashboardURIName[i], result)
+		p.AddFieldValuePair(crt, C.DashboardURIName[i], crt.Bold(result))
 	}
 
 	p.AddAction(t.SymActionQuit)
