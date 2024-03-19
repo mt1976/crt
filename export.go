@@ -4,7 +4,7 @@ import (
 	errs "github.com/mt1976/crt/errors"
 )
 
-// Errors
+// Errors for exported functions
 var (
 	ErrInvalidAction = errs.ErrInvalidAction
 )
