@@ -137,7 +137,7 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 			}
 			return support.Upcase(nextAction), pageRow{}
 		default:
-			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
+			crt.InputError(e.ErrInvalidAction, nextAction)
 		}
 	}
 	return "", pageRow{}
@@ -186,7 +186,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(e.ErrInvalidAction + t.SymSingleQuote + nextAction + t.SymSingleQuote)
+			crt.InputError(e.ErrInvalidAction, nextAction)
 			continue
 		}
 
@@ -197,7 +197,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 			}
 		}
 		if !ok {
-			crt.InputError(e.ErrInvalidAction + " '" + nextAction + t.SymSingleQuote)
+			crt.InputError(e.ErrInvalidAction, nextAction)
 
 		}
 	}
@@ -278,7 +278,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
-		crt.Error(e.ErrAddColumns, nil)
+		crt.Error(e.ErrAddColumns, "")
 		os.Exit(1)
 	}
 

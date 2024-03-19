@@ -127,28 +127,28 @@ func init() {
 	Configuration.DashboardURINoEntries = NoEntries
 
 	if NoEntries != len(Configuration.DashboardURIProtocol) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIProtocol), NoEntries, "DashboardURIProtocol"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURIProtocol), NoEntries, "DashboardURIProtocol"))
 	}
 	if NoEntries != len(Configuration.DashboardURIPort) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIPort), NoEntries, "DashboardURIPort"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURIPort), NoEntries, "DashboardURIPort"))
 	}
 	if NoEntries != len(Configuration.DashboardURIQuery) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIQuery), NoEntries, "DashboardURIQuery"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURIQuery), NoEntries, "DashboardURIQuery"))
 	}
 	if NoEntries != len(Configuration.DashboardURIName) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIName), NoEntries, "DashboardURIName"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURIName), NoEntries, "DashboardURIName"))
 	}
 	if NoEntries != len(Configuration.DashboardURIOperation) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURIOperation), NoEntries, "DashboardURIOperation"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURIOperation), NoEntries, "DashboardURIOperation"))
 	}
 	if NoEntries != len(Configuration.DashboardURISuccess) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardURISuccess), NoEntries, "DashboardURISuccess"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardURISuccess), NoEntries, "DashboardURISuccess"))
 	}
 
 	Configuration.DashboardURIValidActions = []string{"PING", "HTTP"}
 	Configuration.DashboardOrdering = buildOrder(Configuration.DashboardOrderIN)
 	if NoEntries != len(Configuration.DashboardOrdering) {
-		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch, len(Configuration.DashboardOrdering), NoEntries, "DashboardOrdering"))
+		panic(fmt.Sprintf(e.ErrConfigurationColumnMismatch.Error(), len(Configuration.DashboardOrdering), NoEntries, "DashboardOrdering"))
 	}
 	Configuration.DashboardDefaultPort = "80"
 	//spew.Dump(Configuration)

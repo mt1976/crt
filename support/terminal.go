@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -78,7 +79,7 @@ func (T *Crt) SetDelayInMs(delay int) {
 // `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
 	if !(width > 0 && height > 0) {
-		T.Error(e.ErrTerminalSize, nil)
+		T.Error(e.ErrTerminalSize, strconv.Itoa(width), strconv.Itoa(height))
 		os.Exit(1)
 	}
 	T.width = width
@@ -198,11 +199,10 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 }
 
 // The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
-func (T *Crt) InputError(msg string) {
+func (T *Crt) InputError(err error, msg ...string) {
 	gT.MoveCursor(2, 23)
-	gT.Print(
-		T.Format(gT.Color(gT.Bold(l.TxtError), gT.RED)+msg, ""))
-	//T.Print(msg + t.SymNewline)
+	pp := T.SError(err, msg...)
+	gT.Print(T.Format(gT.Color(gT.Bold(l.TxtError), gT.RED), pp))
 	gT.Flush()
 	beeep.Beep(c.DefaultBeepFrequency, c.DefaultBeepDuration)
 	oldDelay := T.Delay()
@@ -290,13 +290,16 @@ func (T *Crt) Shout(msg string) {
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
 // and `err` of type error.
-func (T *Crt) Error(msg string, err error) {
-	if msg == "" {
-		msg = err.Error()
-	}
+func (T *Crt) Error(err error, msg ...string) {
 	T.Println(T.row())
-	T.Println(T.Format(T.Bold(l.TextColorRed+l.TxtError)+msg+fmt.Sprintf(" [%v]", err), ""))
+	T.Println(T.SError(err, msg...))
 	T.Println(T.row())
+}
+
+func (T *Crt) SError(err error, msg ...string) string {
+	pp := err.Error()
+	pp = fmt.Sprintf(pp, msg)
+	return T.Format(T.Bold(l.TextColorRed+l.TxtError), pp)
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -427,7 +430,7 @@ func (T *Crt) Header(msg string) {
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(c.ValidBaudRates, baud) == -1 {
-		T.Error("", e.ErrBaudRateError)
+		T.Error(e.ErrBaudRateError, strconv.Itoa(baud))
 		T.defaultBaud()
 		return
 	}
