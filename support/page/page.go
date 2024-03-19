@@ -278,7 +278,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
-		crt.Error(e.ErrAddColumns, "")
+		crt.Error(e.ErrAddColumns)
 		os.Exit(1)
 	}
 
