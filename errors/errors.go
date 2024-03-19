@@ -1,7 +1,8 @@
 package support
 
+import "errors"
+
 const (
-	ErrBaudRateError               string = "invalid baud rate"
 	ErrTerminalSize                string = "invalid terminal size"
 	ErrDurationMismatch            string = "duration mismatch"
 	ErrMaxPageRows                 string = "max page rows reached"
@@ -20,4 +21,8 @@ const (
 
 const (
 	ErrOpenWeather string = "failed to initialize OpenWeatherMap: %v"
+)
+
+var (
+	ErrBaudRateError = errors.New("invalid baud rate")
 )

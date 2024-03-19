@@ -1,6 +1,8 @@
 package mainmenu
 
 import (
+	"os"
+
 	"github.com/mt1976/crt/actions/dashboard"
 	plexmediaserver "github.com/mt1976/crt/actions/plexms"
 	"github.com/mt1976/crt/actions/skynews"
@@ -32,6 +34,8 @@ func Run(crt *support.Crt) {
 	m.AddOption(9, t.SymBlank, "", "")
 	m.AddOption(10, t.SymBlank, "", "")
 	m.AddAction(t.SymActionQuit)
+
+	os.Exit(0)
 
 	// loop while ok
 	ok := false

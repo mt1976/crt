@@ -31,6 +31,8 @@ func main() {
 	crt.SetDelayInSec(C.Delay)
 	startup.Run(&crt)
 	crt.ResetDelay()
+	//godump.Dump(crt)
+	//os.Exit(0)
 	// run the main menu
 	mainmenu.Run(&crt)
 

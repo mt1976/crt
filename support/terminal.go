@@ -291,6 +291,9 @@ func (T *Crt) Shout(msg string) {
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
 // and `err` of type error.
 func (T *Crt) Error(msg string, err error) {
+	if msg == "" {
+		msg = err.Error()
+	}
 	T.Println(T.row())
 	T.Println(T.Format(T.Bold(l.TextColorRed+l.TxtError)+msg+fmt.Sprintf(" [%v]", err), ""))
 	T.Println(T.row())
@@ -424,7 +427,7 @@ func (T *Crt) Header(msg string) {
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(c.ValidBaudRates, baud) == -1 {
-		T.Error(e.ErrBaudRateError, nil)
+		T.Error("", e.ErrBaudRateError)
 		T.defaultBaud()
 		return
 	}
