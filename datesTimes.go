@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	"github.com/mt1976/crt/config"
-	l "github.com/mt1976/crt/language"
+	conf "github.com/mt1976/crt/config"
+	lang "github.com/mt1976/crt/language"
 	"github.com/xeonx/timeago"
 )
 
-var c = config.Configuration
+var c = conf.Configuration
 
 func HumanFromUnixDate(unixTime int64) string {
 	// golang date from unixTime
@@ -37,7 +37,7 @@ func TimeString() string {
 
 // The DateTimeString function returns a string that combines the time and date strings.
 func DateTimeString() string {
-	return TimeString() + l.Space + DateString()
+	return TimeString() + lang.Space + DateString()
 }
 
 func FormatDate(t time.Time) string {
@@ -58,15 +58,15 @@ func TimeAgo(t string) string {
 	if t != "" {
 		mdt, _ := time.Parse(time.RFC1123Z, t)
 		rtn := timeago.English.Format(mdt)
-		rtn = strings.Replace(rtn, l.TxtOneWord, l.TxtOneNumeric, -1)
-		rtn = strings.Replace(rtn, l.TxtMinutes, l.TxtMinutesShort, -1)
-		rtn = strings.Replace(rtn, l.TxtHour, l.TxtHourShort, -1)
+		rtn = strings.Replace(rtn, lang.TxtOneWord, lang.TxtOneNumeric, -1)
+		rtn = strings.Replace(rtn, lang.TxtMinutes, lang.TxtMinutesShort, -1)
+		rtn = strings.Replace(rtn, lang.TxtHour, lang.TxtHourShort, -1)
 		//fix len to 10 chars
 		if len(rtn) > 10 {
 			rtn = rtn[:10]
 		}
 		if len(rtn) < 10 {
-			rtn = strings.Repeat(l.Space, 10-len(rtn)) + rtn
+			rtn = strings.Repeat(lang.Space, 10-len(rtn)) + rtn
 		}
 		return rtn
 	}

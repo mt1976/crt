@@ -3,7 +3,7 @@ package crt
 import (
 	"strings"
 
-	l "github.com/mt1976/crt/language"
+	lang "github.com/mt1976/crt/language"
 )
 
 // The Upcase function in Go converts a string to uppercase.
@@ -32,13 +32,13 @@ func TrimRepeatingCharacters(s string, c string) string {
 }
 
 func Bold(s string) string {
-	return l.TextStyleBold + s + l.TextStyleReset
+	return lang.TextStyleBold + s + lang.TextStyleReset
 }
 
 func SQuote(s string) string {
-	return l.SymSingleQuote + s + l.SymSingleQuote
+	return lang.SymSingleQuote + s + lang.SymSingleQuote
 }
 
 func PQuote(s string) string {
-	return l.SymOpenBracket + s + l.SymCloseBracket
+	return lang.SymOpenBracket + s + lang.SymCloseBracket
 }

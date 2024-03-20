@@ -8,11 +8,10 @@ import (
 	"strings"
 	"time"
 
-	gT "github.com/buger/goterm"
-	"github.com/gen2brain/beeep"
-	e "github.com/mt1976/crt/errors"
-	l "github.com/mt1976/crt/language"
-	t "github.com/mt1976/crt/language"
+	gtrm "github.com/buger/goterm"
+	beep "github.com/gen2brain/beeep"
+	errs "github.com/mt1976/crt/errors"
+	lang "github.com/mt1976/crt/language"
 )
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
@@ -41,9 +40,9 @@ type Crt struct {
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
 // represents a row on the terminal.
 func (T *Crt) row() string {
-	displayChar := l.BoxCharacterBreak
+	displayChar := lang.BoxCharacterBreak
 	if T.firstRow {
-		displayChar = l.BoxCharacterStart
+		displayChar = lang.BoxCharacterStart
 		T.firstRow = false
 	}
 	return T.lineBreakJunction(displayChar)
@@ -68,7 +67,7 @@ func (T *Crt) SetDelayInMs(delay int) {
 // `height`, which represent the desired width and height of the terminal screen.
 func (T *Crt) SetTerminalSize(width, height int) {
 	if !(width > 0 && height > 0) {
-		T.Error(e.ErrTerminalSize, strconv.Itoa(width), strconv.Itoa(height))
+		T.Error(errs.ErrTerminalSize, strconv.Itoa(width), strconv.Itoa(height))
 		os.Exit(1)
 	}
 	T.width = width
@@ -139,7 +138,7 @@ func (T *Crt) DelayInSec() float64 {
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (T *Crt) Blank() {
-	T.Println(T.Format("", "") + l.SymNewline)
+	T.Println(T.Format("", "") + lang.SymNewline)
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -147,7 +146,7 @@ func (T *Crt) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (T *Crt) Break() {
-	T.PrintIt(T.row() + l.SymNewline)
+	T.PrintIt(T.row() + lang.SymNewline)
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
@@ -162,25 +161,25 @@ func (T *Crt) Print(msg string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (T *Crt) Special(msg string) {
-	T.Println(T.Format(msg, l.BoxCharacterBreak) + l.SymNewline)
+	T.Println(T.Format(msg, lang.BoxCharacterBreak) + lang.SymNewline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (T *Crt) Input(msg string, ops string) (output string) {
-	gT.MoveCursor(2, 21)
-	gT.Print(T.row())
-	gT.MoveCursor(2, 22)
+	gtrm.MoveCursor(2, 21)
+	gtrm.Print(T.row())
+	gtrm.MoveCursor(2, 22)
 	mesg := msg
 	//T.Format(msg, "")
 	if ops != "" {
 		mesg = (T.Format(msg, "") + PQuote(T.Bold(ops)))
 	}
-	mesg = mesg + l.SymPromptSymbol
+	mesg = mesg + lang.SymPromptSymbol
 	mesg = T.Format(mesg, "")
 	//T.Print(mesg)
-	gT.Print(mesg)
-	gT.Flush()
+	gtrm.Print(mesg)
+	gtrm.Flush()
 	var out string
 	fmt.Scan(&out)
 	output = out
@@ -189,11 +188,11 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 
 // The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
 func (T *Crt) InputError(err error, msg ...string) {
-	gT.MoveCursor(2, 23)
+	gtrm.MoveCursor(2, 23)
 	pp := T.SError(err, msg...)
-	gT.Print(T.Format(gT.Color(gT.Bold(l.TxtError), gT.RED), pp))
-	gT.Flush()
-	beeep.Beep(c.DefaultBeepFrequency, c.DefaultBeepDuration)
+	gtrm.Print(T.Format(gtrm.Color(gtrm.Bold(lang.TxtError), gtrm.RED), pp))
+	gtrm.Flush()
+	beep.Beep(c.DefaultBeepFrequency, c.DefaultBeepDuration)
 	oldDelay := T.Delay()
 	T.SetDelayInSec(c.DefaultErrorDelay)
 	T.DelayIt()
@@ -202,15 +201,15 @@ func (T *Crt) InputError(err error, msg ...string) {
 }
 
 func (T *Crt) InfoMessage(msg string) {
-	gT.MoveCursor(2, 23)
+	gtrm.MoveCursor(2, 23)
 	//Print a line that clears the entire line
-	blanks := strings.Repeat(l.Space, T.width)
-	gT.Print(T.Format(blanks, ""))
-	gT.MoveCursor(2, 23)
-	gT.Print(
-		T.Format(gT.Color(gT.Bold(l.TxtInfo), gT.CYAN)+msg, ""))
+	blanks := strings.Repeat(lang.Space, T.width)
+	gtrm.Print(T.Format(blanks, ""))
+	gtrm.MoveCursor(2, 23)
+	gtrm.Print(
+		T.Format(gtrm.Color(gtrm.Bold(lang.TxtInfo), gtrm.CYAN)+msg, ""))
 	//T.Print(msg + t.SymNewline)
-	gT.Flush()
+	gtrm.Flush()
 	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
 	//oldDelay := T.Delay()
 	//T.SetDelayInSec(errorDelay)
@@ -228,30 +227,30 @@ func (T *Crt) InfoMessage(msg string) {
 // Returns:
 // None.
 func (T *Crt) InputPageInfo(page, ofPages int) {
-	msg := fmt.Sprintf(l.TxtPaging, page, ofPages)
+	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
 	lmsg := len(msg)
-	gT.MoveCursor(T.width-lmsg-1, 22)
+	gtrm.MoveCursor(T.width-lmsg-1, 22)
 	//gT.MoveCursor(2, 23)
-	gT.Print(
-		T.Format(gT.Color(msg, gT.YELLOW), ""))
+	gtrm.Print(
+		T.Format(gtrm.Color(msg, gtrm.YELLOW), ""))
 	//T.Print(msg + t.SymNewline)
-	gT.Flush()
+	gtrm.Flush()
 }
 
 // lineBreakEnd returns a string that represents a line break with the end character.
 func (T *Crt) lineBreakEnd() string {
-	return T.lineBreakJunction(l.BoxCharacterBarBreak)
+	return T.lineBreakJunction(lang.BoxCharacterBarBreak)
 }
 
 // lineBreakJunction returns a string that represents a line break with the end character.
 func (T *Crt) lineBreakJunction(displayChar string) string {
-	return fmt.Sprintf(l.TextLineConstructor, displayChar, strings.Repeat(l.BoxCharacterBar, T.width+1), l.BoxCharacterBar)
+	return fmt.Sprintf(lang.TextLineConstructor, displayChar, strings.Repeat(lang.BoxCharacterBar, T.width+1), lang.BoxCharacterBar)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
 // and `t` of type string.
 func (T *Crt) Format(in string, t string) string {
-	char := l.BoxCharacterNormal
+	char := lang.BoxCharacterNormal
 	if t != "" {
 		char = t
 	}
@@ -264,17 +263,17 @@ func (T *Crt) Clear() {
 
 	T.firstRow = true
 	T.currentRow = 0
-	gT.Clear()
-	gT.MoveCursor(2, 1)
-	gT.Flush()
+	gtrm.Clear()
+	gtrm.MoveCursor(2, 1)
+	gtrm.Flush()
 }
 
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (T *Crt) Shout(msg string) {
-	T.PrintIt(T.row() + l.SymNewline)
-	T.PrintIt(T.Format(l.TextStyleBold+l.TextStyleReset+msg, "") + l.SymNewline)
-	T.PrintIt(T.lineBreakEnd() + l.SymNewline)
+	T.PrintIt(T.row() + lang.SymNewline)
+	T.PrintIt(T.Format(lang.TextStyleBold+lang.TextStyleReset+msg, "") + lang.SymNewline)
+	T.PrintIt(T.lineBreakEnd() + lang.SymNewline)
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -288,7 +287,7 @@ func (T *Crt) Error(err error, msg ...string) {
 func (T *Crt) SError(err error, msg ...string) string {
 	pp := err.Error()
 	pp = fmt.Sprintf(pp, msg)
-	return T.Format(T.Bold(l.TextColorRed+l.TxtError), pp)
+	return T.Format(T.Bold(lang.TextColorRed+lang.TxtError), pp)
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -323,7 +322,7 @@ func NewWithSize(width, height int) Crt {
 // characters (`bold` and `reset`). The `fmt.Sprintf` function is used to concatenate the escape
 // characters and the `msg` string.
 func (T *Crt) Bold(msg string) string {
-	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleBold, msg, l.TextStyleReset)
+	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleBold, msg, lang.TextStyleReset)
 }
 
 // The `Underline` method of the `Crt` struct is used to format a string with an underline. It takes a
@@ -332,7 +331,7 @@ func (T *Crt) Bold(msg string) string {
 // concatenate the escape characters and the `msg` string. This method is used to create an underlined
 // text effect when printing to the terminal.
 func (T *Crt) Underline(msg string) string {
-	return fmt.Sprintf(l.TextLineConstructor, l.TextStyleUnderline, msg, l.TextStyleReset)
+	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleUnderline, msg, lang.TextStyleReset)
 }
 
 // Spool prints the contents of a byte slice to the terminal.
@@ -347,7 +346,7 @@ func (T *Crt) Underline(msg string) string {
 func (T *Crt) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
 	//create an slice of strings, split by t.SymNewline
-	lines := strings.Split(string(msg), l.SymNewline)
+	lines := strings.Split(string(msg), lang.SymNewline)
 	// loop through the slice
 	if len(msg) == 0 {
 		return
@@ -364,24 +363,24 @@ func (T *Crt) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Banner(msg string) {
-	T.PrintIt(T.row() + l.SymNewline)
-	for _, line := range l.ApplicationHeader {
-		T.PrintIt(T.Format(line+l.SymNewline, ""))
+	T.PrintIt(T.row() + lang.SymNewline)
+	for _, line := range lang.ApplicationHeader {
+		T.PrintIt(T.Format(line+lang.SymNewline, ""))
 	}
-	T.PrintIt(T.row() + l.SymNewline)
-	display := fmt.Sprintf(l.TxtApplicationVersion, msg)
-	T.PrintIt(T.Format(display+l.SymNewline, ""))
+	T.PrintIt(T.row() + lang.SymNewline)
+	display := fmt.Sprintf(lang.TxtApplicationVersion, msg)
+	T.PrintIt(T.Format(display+lang.SymNewline, ""))
 	T.Break()
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (T *Crt) Header(msg string) {
-	T.PrintIt(T.row() + l.SymNewline)
+	T.PrintIt(T.row() + lang.SymNewline)
 	var line map[int]string = make(map[int]string)
 	midway := (T.width - len(msg)) / 2
-	for i := 0; i < len(l.TxtApplicationName); i++ {
-		line[i] = l.TxtApplicationName[i : i+1]
+	for i := 0; i < len(lang.TxtApplicationName); i++ {
+		line[i] = lang.TxtApplicationName[i : i+1]
 	}
 	for i := 0; i < len(msg); i++ {
 		line[midway+i] = msg[i : i+1]
@@ -396,12 +395,12 @@ func (T *Crt) Header(msg string) {
 	var headerRowString string
 	for i := 0; i < T.width; i++ {
 		if line[i] == "" {
-			line[i] = l.Space
+			line[i] = lang.Space
 		}
 		headerRowString = headerRowString + line[i]
 	}
 
-	T.Print(T.Bold(headerRowString) + l.SymNewline)
+	T.Print(T.Bold(headerRowString) + lang.SymNewline)
 	T.Break()
 }
 
@@ -410,7 +409,7 @@ func (T *Crt) Header(msg string) {
 // If the specified baud rate is not supported, an error is returned and the CRT's baud rate is reset to the default value.
 func (T *Crt) SetBaud(baud int) {
 	if sort.SearchInts(c.ValidBaudRates, baud) == -1 {
-		T.Error(e.ErrBaudRateError, strconv.Itoa(baud))
+		T.Error(errs.ErrBaudRateError, strconv.Itoa(baud))
 		T.defaultBaud()
 		return
 	}
@@ -440,7 +439,7 @@ func (T *Crt) PrintIt(msg string) {
 	T.currentRow++
 	rowString := fmt.Sprintf("%v", T.currentRow-1)
 	if T.NoBaudRate() {
-		fmt.Print(msg + l.Space)
+		fmt.Print(msg + lang.Space)
 		return
 	} else {
 		// print one character at a time
@@ -448,7 +447,7 @@ func (T *Crt) PrintIt(msg string) {
 			fmt.Print(string(c))
 			time.Sleep(time.Duration(1000000/T.baud) * time.Microsecond)
 		}
-		fmt.Print(l.Space + rowString)
+		fmt.Print(lang.Space + rowString)
 		//fmt.Println("")
 	}
 }
@@ -466,7 +465,7 @@ func (T *Crt) Height() int {
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (T *Crt) Println(msg string) {
-	T.Print(msg + l.SymNewline)
+	T.Print(msg + lang.SymNewline)
 }
 
 // Get the width of the terminal
@@ -486,19 +485,19 @@ func (T *Crt) NoBaudRate() bool {
 
 // ClearCurrentLine clears the current line in the terminal
 func (T *Crt) ClearCurrentLine() {
-	fmt.Print(l.ConsoleClearLine)
+	fmt.Print(lang.ConsoleClearLine)
 }
 
 // The NewTitledPage function creates a new page with a truncated title and initializes other properties.
 func (c *Crt) NewTitledPage(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > C.TitleLength {
-		title = title[:C.TitleLength] + l.SymTruncate
+		title = title[:C.TitleLength] + lang.SymTruncate
 	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(l.SymActionQuit)    // Add Quit action
-	m.AddAction(l.SymActionForward) // Add Next action
-	m.AddAction(l.SymActionBack)    // Add Previous action
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	m.AddAction(lang.SymActionQuit)    // Add Quit action
+	m.AddAction(lang.SymActionForward) // Add Next action
+	m.AddAction(lang.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
 	return &m
 }

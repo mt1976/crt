@@ -7,13 +7,12 @@ import (
 	"strconv"
 	"strings"
 
-	e "github.com/mt1976/crt/errors"
-	t "github.com/mt1976/crt/language"
-
-	"github.com/mt1976/crt/config"
+	conf "github.com/mt1976/crt/config"
+	errs "github.com/mt1976/crt/errors"
+	lang "github.com/mt1976/crt/language"
 )
 
-var C = config.Configuration
+var C = conf.Configuration
 
 // Page represents a page in a document or a user interface.
 type Page struct {
@@ -49,11 +48,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if strings.Trim(rowContent, t.Space) == "" {
+	if strings.Trim(rowContent, lang.Space) == "" {
 		return
 	}
 
-	if rowContent == t.SymBlank {
+	if rowContent == lang.SymBlank {
 		rowContent = ""
 	}
 
@@ -81,20 +80,20 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(rowContent string) string {
 	// replace \n, \r, \t, and " with empty strings
-	rowContent = strings.Replace(rowContent, t.SymNewline, "", -1)
-	rowContent = strings.Replace(rowContent, t.SymCarridgeReturn, "", -1)
-	rowContent = strings.Replace(rowContent, t.SymTab, "", -1)
-	rowContent = strings.Replace(rowContent, t.SymDoubleQuote, t.Space, -1)
+	rowContent = strings.Replace(rowContent, lang.SymNewline, "", -1)
+	rowContent = strings.Replace(rowContent, lang.SymCarridgeReturn, "", -1)
+	rowContent = strings.Replace(rowContent, lang.SymTab, "", -1)
+	rowContent = strings.Replace(rowContent, lang.SymDoubleQuote, lang.Space, -1)
 	return rowContent
 }
 
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
 func (p *Page) AddAction(validAction string) {
 	if validAction == "" {
-		log.Fatal(e.ErrInvalidAction)
+		log.Fatal(errs.ErrInvalidAction)
 		return
 	}
-	validAction = strings.ReplaceAll(validAction, t.Space, "")
+	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 	p.actions = append(p.actions, validAction)
 	if len(validAction) > p.actionMaxLen {
 		p.actionMaxLen = len(validAction)
@@ -108,12 +107,12 @@ func (p *Page) Display(crt *Crt) (nextAction string, selected pageRow) {
 	for !exit {
 		nextAction, _ := p.displayIt(crt)
 		switch {
-		case nextAction == t.SymActionQuit:
+		case nextAction == lang.SymActionQuit:
 			exit = true
-			return t.SymActionQuit, pageRow{}
-		case nextAction == t.SymActionForward:
+			return lang.SymActionQuit, pageRow{}
+		case nextAction == lang.SymActionForward:
 			p.NextPage(crt)
-		case nextAction == t.SymActionBack:
+		case nextAction == lang.SymActionBack:
 			p.PreviousPage(crt)
 		case inActions(nextAction, p.actions):
 			// upcase the action
@@ -123,7 +122,7 @@ func (p *Page) Display(crt *Crt) (nextAction string, selected pageRow) {
 			}
 			return Upcase(nextAction), pageRow{}
 		default:
-			crt.InputError(e.ErrInvalidAction, nextAction)
+			crt.InputError(errs.ErrInvalidAction, nextAction)
 		}
 	}
 	return "", pageRow{}
@@ -146,8 +145,8 @@ func inActions(action string, actions []string) bool {
 func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	rowsDisplayed := 0
-	p.AddAction(t.SymActionQuit) // Add Quit action
-	p.AddAction(t.SymActionExit)
+	p.AddAction(lang.SymActionQuit) // Add Quit action
+	p.AddAction(lang.SymActionExit)
 	crt.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
@@ -162,7 +161,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 	extraRows := (C.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			crt.Print(t.SymNewline)
+			crt.Print(lang.SymNewline)
 		}
 	}
 	crt.Break()
@@ -172,7 +171,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 	for !ok {
 		nextAction = crt.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			crt.InputError(e.ErrInvalidAction, nextAction)
+			crt.InputError(errs.ErrInvalidAction, nextAction)
 			continue
 		}
 
@@ -183,7 +182,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 			}
 		}
 		if !ok {
-			crt.InputError(e.ErrInvalidAction, nextAction)
+			crt.InputError(errs.ErrInvalidAction, nextAction)
 
 		}
 	}
@@ -193,7 +192,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 		return Upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if Upcase(nextAction) == t.SymActionExit {
+	if Upcase(nextAction) == lang.SymActionExit {
 		os.Exit(0)
 	}
 	return Upcase(nextAction), pageRow{}
@@ -209,7 +208,7 @@ func format(crt *Crt, m pageRow) string {
 // If the current page is the last page, it returns an error.
 func (p *Page) NextPage(crt *Crt) {
 	if p.ActivePageIndex == p.noPages {
-		crt.InputError(e.ErrNoMorePages)
+		crt.InputError(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex++
@@ -219,7 +218,7 @@ func (p *Page) NextPage(crt *Crt) {
 // If the current page is the first page, it returns an error.
 func (p *Page) PreviousPage(crt *Crt) {
 	if p.ActivePageIndex == 0 {
-		crt.InputError(e.ErrNoMorePages)
+		crt.InputError(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex--
@@ -246,7 +245,7 @@ func (p *Page) GetRows() int {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(crt *Crt, key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s" + t.SymNewline
+	format := "%-20s : %s" + lang.SymNewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
 
@@ -264,7 +263,7 @@ func (p *Page) AddFieldValuePair(crt *Crt, key string, value string) {
 func (p *Page) AddColumns(crt *Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
-		crt.Error(e.ErrAddColumns)
+		crt.Error(errs.ErrAddColumns)
 		os.Exit(1)
 	}
 
@@ -289,7 +288,7 @@ func (p *Page) AddColumns(crt *Crt, cols ...string) {
 			noToAdd := colSize - (len(op) + 1)
 
 			// Add the spaces to the column
-			op = op + strings.Repeat(t.Space, noToAdd)
+			op = op + strings.Repeat(lang.Space, noToAdd)
 		}
 
 		// Add the column to the output slice
@@ -297,7 +296,7 @@ func (p *Page) AddColumns(crt *Crt, cols ...string) {
 	}
 
 	// Join the output slice into a single string and add it to the page
-	p.Add(strings.Join(output, t.Space), "", "")
+	p.Add(strings.Join(output, lang.Space), "", "")
 }
 
 // AddColumnsTitle adds a ruler to the page, separating the columns
@@ -314,17 +313,17 @@ func (p *Page) AddColumnsTitle(crt *Crt, cols ...string) {
 			op = op[0:colSize]
 		} else {
 			noToAdd := colSize - (len(op) + 1)
-			op = op + strings.Repeat(t.Space, noToAdd)
+			op = op + strings.Repeat(lang.Space, noToAdd)
 		}
 
 		noChars := len(op)
-		op = strings.Repeat(t.TableCharacterUnderline, noChars)
+		op = strings.Repeat(lang.TableCharacterUnderline, noChars)
 
 		output = append(output, op)
 	}
 
 	// turn string array into sigle string
-	p.Add(strings.Join(output, t.Space), "", "")
+	p.Add(strings.Join(output, lang.Space), "", "")
 }
 
 // SetPrompt sets the prompt for the page
@@ -334,12 +333,12 @@ func (p *Page) SetPrompt(prompt string) {
 
 // ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
-	p.prompt = t.TxtPagingPrompt
+	p.prompt = lang.TxtPagingPrompt
 }
 
 // BlankRow adds a blank row to the page
 func (p *Page) BlankRow() {
-	p.Add(t.SymBlank, "", "")
+	p.Add(lang.SymBlank, "", "")
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
@@ -352,7 +351,7 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 		return
 	}
 
-	if strings.Trim(rowContent, t.Space) == "" {
+	if strings.Trim(rowContent, lang.Space) == "" {
 		return
 	}
 
@@ -396,7 +395,7 @@ func formatOption(m pageRow) string {
 	width := C.TerminalWidth - 7
 	pad := width - (len(miTitle) + len(m.DateTime))
 	if pad > 0 {
-		miTitle = miTitle + strings.Repeat(t.Space, pad)
+		miTitle = miTitle + strings.Repeat(lang.Space, pad)
 	} else {
 		miTitle = miTitle[:width-(len(m.DateTime)+1)] + " | " + m.DateTime
 	}

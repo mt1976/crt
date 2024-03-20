@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gen2brain/beeep"
-	"github.com/spf13/viper"
+	beep "github.com/gen2brain/beeep"
+	viper "github.com/spf13/viper"
 )
 
 type Config struct {
@@ -55,8 +55,8 @@ func init() {
 		panic(err)
 	}
 
-	Configuration.DefaultBeepDuration = beeep.DefaultDuration
-	Configuration.DefaultBeepFrequency = beeep.DefaultFreq
+	Configuration.DefaultBeepDuration = beep.DefaultDuration
+	Configuration.DefaultBeepFrequency = beep.DefaultFreq
 	Configuration.ValidBaudRates = []int{0, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
 	Configuration.ValidFileNameCharacters = []string{" ", "-", "_", ".", "(", ")", "[", "]", "!", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "a", "b",
 		"c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
