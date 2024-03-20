@@ -6,12 +6,9 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
-	conf "github.com/mt1976/crt/config"
 	lang "github.com/mt1976/crt/language"
 	"github.com/xeonx/timeago"
 )
-
-var c = conf.Configuration
 
 func unixDateToHuman(unixTime int64) string {
 	// golang date from unixTime
@@ -26,13 +23,13 @@ func dateString() string {
 	// spew.Dump(c)
 	// os.Exit(1)
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(c.ApplicationDateFormatShort))
+	return fmt.Sprintf("%v", now.Format(config.ApplicationDateFormatShort))
 }
 
 // The timeString function returns the current time in the format "15:04:05".
 func timeString() string {
 	now := time.Now()
-	return fmt.Sprintf("%v", now.Format(c.ApplicationTimeFormat))
+	return fmt.Sprintf("%v", now.Format(config.ApplicationTimeFormat))
 }
 
 // The dateTimeString function returns a string that combines the time and date strings.
@@ -40,8 +37,9 @@ func dateTimeString() string {
 	return timeString() + lang.Space + dateString()
 }
 
+// formatDate returns a formatted date string based on the given time.Time value.
 func formatDate(t time.Time) string {
-	return t.Format(c.ApplicationDateFormat)
+	return t.Format(config.ApplicationDateFormat)
 }
 
 func formatDuration(t time.Duration) string {

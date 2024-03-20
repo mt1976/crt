@@ -20,21 +20,18 @@ type Config struct {
 	MaxNoItems                 int     `mapstructure:"MaxNoItems"`
 	TitleLength                int     `mapstructure:"TitleLength"`
 	Debug                      bool    `mapstructure:"Debug"`
-
-	DefaultErrorDelay    float64 `mapstructure:"DefaultErrorDelay"`
-	DefaultRandomPortMin int     `mapstructure:"DefaultRandomPortMin"`
-	DefaultRandomPortMax int     `mapstructure:"DefaultRandomPortMax"`
-	DefaultRandomMACMin  int     `mapstructure:"DefaultRandomMACMin"`
-	DefaultRandomMACMax  int     `mapstructure:"DefaultRandomMACMax"`
-	DefaultRandomIPMin   int     `mapstructure:"DefaultRandomIPMin"`
-	DefaultRandomIPMax   int     `mapstructure:"DefaultRandomIPMax"`
-	DefaultBaud          int     `mapstructure:"DefaultBaud"`
-
-	DefaultBeepDuration  int
-	DefaultBeepFrequency float64
-
-	ValidBaudRates          []int
-	ValidFileNameCharacters []string
+	DefaultErrorDelay          float64 `mapstructure:"DefaultErrorDelay"`
+	DefaultRandomPortMin       int     `mapstructure:"DefaultRandomPortMin"`
+	DefaultRandomPortMax       int     `mapstructure:"DefaultRandomPortMax"`
+	DefaultRandomMACMin        int     `mapstructure:"DefaultRandomMACMin"`
+	DefaultRandomMACMax        int     `mapstructure:"DefaultRandomMACMax"`
+	DefaultRandomIPMin         int     `mapstructure:"DefaultRandomIPMin"`
+	DefaultRandomIPMax         int     `mapstructure:"DefaultRandomIPMax"`
+	DefaultBaud                int     `mapstructure:"DefaultBaud"`
+	DefaultBeepDuration        int
+	DefaultBeepFrequency       float64
+	ValidBaudRates             []int
+	ValidFileNameCharacters    []string
 }
 
 var Configuration = Config{}
@@ -70,8 +67,8 @@ func init() {
 
 }
 
-func split(s string) (r []string) {
-	return strings.Split(s, "|")
+func split(in string) (r []string) {
+	return strings.Split(in, "|")
 }
 
 func buildOrder(in string) (r []int) {

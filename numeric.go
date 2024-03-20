@@ -8,8 +8,8 @@ import (
 
 // The isInt function checks if a given string consists only of digits.
 // isInt checks if a given string consists only of digits.
-func isInt(s string) bool {
-	for _, c := range s {
+func isInt(in string) bool {
+	for _, c := range in {
 		if !unicode.IsDigit(c) {
 			return false
 		}
@@ -23,16 +23,16 @@ func coinToss() bool {
 	return rand.Intn(coinSides) != 0
 }
 
-func toInt(s string) int {
+func toInt(in string) int {
 	// This function converts a string to an integer.
-	i, err := strconv.Atoi(s)
+	i, err := strconv.Atoi(in)
 	if err != nil {
 		return 0
 	}
 	return i
 }
 
-func toString(i int) string {
+func toString(in int) string {
 	// This function converts an integer to a string.
-	return strconv.Itoa(i)
+	return strconv.Itoa(in)
 }
