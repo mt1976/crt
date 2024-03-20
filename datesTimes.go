@@ -13,7 +13,7 @@ import (
 
 var c = conf.Configuration
 
-func humanFromUnixDate(unixTime int64) string {
+func unixDateToHuman(unixTime int64) string {
 	// golang date from unixTime
 	t := time.Unix(unixTime, 0)
 	h := humanize.Time(t)
@@ -29,26 +29,26 @@ func dateString() string {
 	return fmt.Sprintf("%v", now.Format(c.ApplicationDateFormatShort))
 }
 
-// The TimeString function returns the current time in the format "15:04:05".
-func TimeString() string {
+// The timeString function returns the current time in the format "15:04:05".
+func timeString() string {
 	now := time.Now()
 	return fmt.Sprintf("%v", now.Format(c.ApplicationTimeFormat))
 }
 
-// The DateTimeString function returns a string that combines the time and date strings.
-func DateTimeString() string {
-	return TimeString() + lang.Space + dateString()
+// The dateTimeString function returns a string that combines the time and date strings.
+func dateTimeString() string {
+	return timeString() + lang.Space + dateString()
 }
 
-func FormatDate(t time.Time) string {
+func formatDate(t time.Time) string {
 	return t.Format(c.ApplicationDateFormat)
 }
 
-func FormatDuration(t time.Duration) string {
+func formatDuration(t time.Duration) string {
 	return t.String()
 }
 
-func TimeAgo(t string) string {
+func timeAgo(t string) string {
 	// Example time Thu, 25 Jan 2024 09:56:00 +0000
 	// Setup a time format and parse the time
 	if t == "" {

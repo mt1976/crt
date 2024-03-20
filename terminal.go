@@ -390,8 +390,8 @@ func (T *Crt) Header(msg string) {
 	}
 
 	// Add DateTimeStamp to end of string
-	for i := 0; i < len(DateTimeString()); i++ {
-		line[T.width-len(DateTimeString())+i] = DateTimeString()[i : i+1]
+	for i := 0; i < len(dateTimeString()); i++ {
+		line[T.width-len(dateTimeString())+i] = dateTimeString()[i : i+1]
 	}
 
 	//map to string

@@ -117,7 +117,7 @@ func (p *Page) Display(crt *Crt) (nextAction string, selected pageRow) {
 		case inActions(nextAction, p.actions):
 			// upcase the action
 			exit = true
-			if IsInt(nextAction) {
+			if isInt(nextAction) {
 				return nextAction, p.pageRows[toInt(nextAction)-1]
 			}
 			return upcase(nextAction), pageRow{}
@@ -187,7 +187,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if IsInt(nextAction) {
+	if isInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
 		return upcase(nextAction), p.pageRows[pos-1]
 	}
