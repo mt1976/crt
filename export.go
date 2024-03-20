@@ -1,4 +1,4 @@
-package main
+package crt
 
 import (
 	errs "github.com/mt1976/crt/errors"
