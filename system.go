@@ -7,8 +7,8 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-// The RandomIP function generates a random IP address in IPv4 format.
-func RandomIP() string {
+// The randomIP function generates a random IP address in IPv4 format.
+func randomIP() string {
 	// Generate a random IP address in ipv4 format
 	//
 	// Example: 123.456.789.012
@@ -28,8 +28,8 @@ func RandomIP() string {
 	return fmt.Sprintf(lang.IPAddressConstructor, ip1, ip2, ip3, ip4)
 }
 
-// The RandomMAC function generates a random MAC address in the format of 00:00:00:00:00:00.
-func RandomMAC() string {
+// The randomMAC function generates a random MAC address in the format of 00:00:00:00:00:00.
+func randomMAC() string {
 	// Generate a random MAC address in the format of 00:00:00:00:00:00
 	//
 	// Returns:
@@ -49,8 +49,8 @@ func RandomMAC() string {
 	return fmt.Sprintf(lang.MACAddressConstructor, mac1, mac2, mac3, mac4, mac5, mac6)
 }
 
-// The RandomPort function generates a random port number between 1 and 65535.
-func RandomPort() int {
+// The randomPort function generates a random port number between 1 and 65535.
+func randomPort() int {
 	// Generate a random port number between 1 and 65535
 	//
 	// Returns:

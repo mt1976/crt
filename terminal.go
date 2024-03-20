@@ -36,6 +36,7 @@ type Crt struct {
 	currentCol int
 	scr        *pageContent
 	Helpers    *Helpers
+	Formatters *Formatters
 }
 
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
@@ -174,7 +175,7 @@ func (T *Crt) Input(msg string, ops string) (output string) {
 	mesg := msg
 	//T.Format(msg, "")
 	if ops != "" {
-		mesg = (T.Format(msg, "") + PQuote(T.Bold(ops)))
+		mesg = (T.Format(msg, "") + pQuote(bold(ops)))
 	}
 	mesg = mesg + lang.SymPromptSymbol
 	mesg = T.Format(mesg, "")
@@ -288,7 +289,7 @@ func (T *Crt) Error(err error, msg ...string) {
 func (T *Crt) SError(err error, msg ...string) string {
 	pp := err.Error()
 	pp = fmt.Sprintf(pp, msg)
-	return T.Format(T.Bold(lang.TextColorRed+lang.TxtError), pp)
+	return T.Format(bold(lang.TextColorRed+lang.TxtError), pp)
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -309,6 +310,7 @@ func New() Crt {
 
 	x.newPageDefinition(x.width, x.height)
 	x.Helpers = initHelpers()
+	x.Formatters = initFormatters()
 	return x
 }
 
@@ -318,13 +320,13 @@ func NewWithSize(width, height int) Crt {
 	return xx
 }
 
-// The `Bold` method of the `Crt` struct is used to format a string with bold text. It takes a `msg`
+// The `bold` method of the `Crt` struct is used to format a string with bold text. It takes a `msg`
 // parameter of type string and returns a formatted string with the `msg` surrounded by the bold escape
 // characters (`bold` and `reset`). The `fmt.Sprintf` function is used to concatenate the escape
 // characters and the `msg` string.
-func (T *Crt) Bold(msg string) string {
-	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleBold, msg, lang.TextStyleReset)
-}
+// func (T *Crt) bold(msg string) string {
+// 	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleBold, msg, lang.TextStyleReset)
+// }
 
 // The `Underline` method of the `Crt` struct is used to format a string with an underline. It takes a
 // `msg` parameter of type string and returns a formatted string with the `msg` surrounded by the
@@ -401,7 +403,7 @@ func (T *Crt) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	T.Print(T.Bold(headerRowString) + lang.SymNewline)
+	T.Print(bold(headerRowString) + lang.SymNewline)
 	T.Break()
 }
 

@@ -118,9 +118,9 @@ func (p *Page) Display(crt *Crt) (nextAction string, selected pageRow) {
 			// upcase the action
 			exit = true
 			if IsInt(nextAction) {
-				return nextAction, p.pageRows[ToInt(nextAction)-1]
+				return nextAction, p.pageRows[toInt(nextAction)-1]
 			}
-			return Upcase(nextAction), pageRow{}
+			return upcase(nextAction), pageRow{}
 		default:
 			crt.InputError(errs.ErrInvalidAction, nextAction)
 		}
@@ -176,7 +176,7 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 		}
 
 		for i := range p.actions {
-			if Upcase(nextAction) == Upcase(p.actions[i]) {
+			if upcase(nextAction) == upcase(p.actions[i]) {
 				ok = true
 				break
 			}
@@ -189,13 +189,13 @@ func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 	// if nextAction is a numnber, find the menu item
 	if IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return Upcase(nextAction), p.pageRows[pos-1]
+		return upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if Upcase(nextAction) == lang.SymActionExit {
+	if upcase(nextAction) == lang.SymActionExit {
 		os.Exit(0)
 	}
-	return Upcase(nextAction), pageRow{}
+	return upcase(nextAction), pageRow{}
 }
 
 // The format function returns the first 50 characters of the content in a pageRow object.
@@ -387,7 +387,7 @@ func (m *Page) AddActionInt(validAction int) {
 // The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.
 func formatOption(m pageRow) string {
-	miNumber := fmt.Sprintf(Bold("%3v"), m.ID)
+	miNumber := fmt.Sprintf(bold("%3v"), m.ID)
 
 	//add Date to end of row
 	miTitle := m.Title

@@ -6,15 +6,19 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-// The Upcase function in Go converts a string to uppercase.
-// Upcase converts a string to uppercase.
-func Upcase(s string) string {
+// The upcase function in Go converts a string to uppercase.
+// upcase converts a string to uppercase.
+func upcase(s string) string {
 	return strings.ToUpper(s)
 }
 
-// The function `TrimRepeatingCharacters` takes a string `s` and a character `c` as input, and returns
+func downcase(s string) string {
+	return strings.ToLower(s)
+}
+
+// The function `trimRepeatingCharacters` takes a string `s` and a character `c` as input, and returns
 // a new string with all consecutive occurrences of `c` trimmed down to a single occurrence.
-func TrimRepeatingCharacters(s string, c string) string {
+func trimRepeatingCharacters(s string, c string) string {
 
 	result := ""
 	lenS := len(s)
@@ -31,14 +35,22 @@ func TrimRepeatingCharacters(s string, c string) string {
 	return result
 }
 
-func Bold(s string) string {
+func bold(s string) string {
 	return lang.TextStyleBold + s + lang.TextStyleReset
 }
 
-func SQuote(s string) string {
+func sQuote(s string) string {
 	return lang.SymSingleQuote + s + lang.SymSingleQuote
 }
 
-func PQuote(s string) string {
+func pQuote(s string) string {
 	return lang.SymOpenBracket + s + lang.SymCloseBracket
+}
+
+func dQuote(s string) string {
+	return lang.SymDoubleQuote + s + lang.SymDoubleQuote
+}
+
+func qQuote(s string) string {
+	return lang.SymSquareQuoteOpen + s + lang.SymSquareQuoteClose
 }

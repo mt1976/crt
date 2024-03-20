@@ -13,15 +13,15 @@ import (
 
 var c = conf.Configuration
 
-func HumanFromUnixDate(unixTime int64) string {
+func humanFromUnixDate(unixTime int64) string {
 	// golang date from unixTime
 	t := time.Unix(unixTime, 0)
 	h := humanize.Time(t)
 	return h
 }
 
-// The function DateString returns the current date in the format "dd/mm/yy".
-func DateString() string {
+// The function dateString returns the current date in the format "dd/mm/yy".
+func dateString() string {
 	// spew.Dump(c.ApplicationDateFormatShort)
 	// spew.Dump(c)
 	// os.Exit(1)
@@ -37,7 +37,7 @@ func TimeString() string {
 
 // The DateTimeString function returns a string that combines the time and date strings.
 func DateTimeString() string {
-	return TimeString() + lang.Space + DateString()
+	return TimeString() + lang.Space + dateString()
 }
 
 func FormatDate(t time.Time) string {

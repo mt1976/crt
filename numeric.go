@@ -17,13 +17,13 @@ func IsInt(s string) bool {
 	return true
 }
 
-func CoinToss() bool {
+func coinToss() bool {
 	// This function simulates a coin toss.
 	var coinSides = 2
 	return rand.Intn(coinSides) != 0
 }
 
-func ToInt(s string) int {
+func toInt(s string) int {
 	// This function converts a string to an integer.
 	i, err := strconv.Atoi(s)
 	if err != nil {
@@ -32,7 +32,7 @@ func ToInt(s string) int {
 	return i
 }
 
-func ToString(i int) string {
+func toString(i int) string {
 	// This function converts an integer to a string.
 	return strconv.Itoa(i)
 }

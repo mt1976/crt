@@ -45,6 +45,8 @@ const (
 	SymSingleQuote               string = "'"
 	SymOpenBracket               string = "("
 	SymCloseBracket              string = ")"
+	SymSquareQuoteOpen           string = "["
+	SymSquareQuoteClose          string = "]"
 )
 
 // Mainmenu
