@@ -3,14 +3,18 @@ package crt
 import "time"
 
 type Helpers struct {
-	RandomIP    func() string
-	RandomMAC   func() string
-	RandomPort  func() int
-	RandomFloat func(min int, max int) float64
-	ToInt       func(s string) int
-	ToString    func(i int) string
-	CoinToss    func() bool
-	IsInt       func(i string) bool
+	RandomIP           func() string
+	RandomMAC          func() string
+	RandomPort         func() int
+	RandomFloat        func(min int, max int) float64
+	ToInt              func(s string) int
+	ToString           func(i int) string
+	CoinToss           func() bool
+	IsInt              func(i string) bool
+	GetHostName        func() string
+	GetUsername        func() string
+	GetSytemInfo       func() string
+	RoundFloatToTwoDPS func(f float64) float64
 }
 
 type Formatters struct {
@@ -22,6 +26,8 @@ type Formatters struct {
 	Upcase                  func(s string) string
 	Downcase                func(s string) string
 	HumanFromUnixDate       func(unixTime int64) string
+	HumanDiskSize           func(size uint64) string
+	Human                   func(a any) string
 	DateString              func() string
 	TimeString              func() string
 	TrimRepeatingCharacters func(s string, c string) string
@@ -33,14 +39,18 @@ type Formatters struct {
 
 func initHelpers() *Helpers {
 	help := Helpers{
-		RandomIP:    randomIP,
-		RandomMAC:   randomMAC,
-		RandomPort:  randomPort,
-		ToInt:       toInt,
-		ToString:    toString,
-		CoinToss:    coinToss,
-		IsInt:       isInt,
-		RandomFloat: randomFloat,
+		RandomIP:           randomIP,
+		RandomMAC:          randomMAC,
+		RandomPort:         randomPort,
+		ToInt:              toInt,
+		ToString:           toString,
+		CoinToss:           coinToss,
+		IsInt:              isInt,
+		RandomFloat:        randomFloat,
+		GetHostName:        getHostName,
+		GetUsername:        getUsername,
+		GetSytemInfo:       getSystemInfo,
+		RoundFloatToTwoDPS: roundFloatToTwoDPS,
 	}
 	return &help
 }
@@ -48,6 +58,8 @@ func initHelpers() *Helpers {
 func initFormatters() *Formatters {
 	fmts := Formatters{
 		HumanFromUnixDate:       unixDateToHuman,
+		HumanDiskSize:           humanDiskSize,
+		Human:                   human,
 		DateString:              dateString,
 		TimeString:              timeString,
 		Upcase:                  upcase,

@@ -12,4 +12,7 @@ var (
 	ErrAddColumns                  = errors.New("too many columns 10 or less")
 	ErrConfigurationColumnMismatch = errors.New("column mismatch in configuration got %v wanted %v in %s")
 	ErrDashboardNoHost             = errors.New("dashboard: No default host set")
+	ErrHostName                    = errors.New("unable to get hostname")
+	ErrUserName                    = errors.New("unable to get username")
+	ErrSystemInfo                  = errors.New("unable to get machine name")
 )
