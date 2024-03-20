@@ -35,6 +35,7 @@ type Crt struct {
 	currentRow int
 	currentCol int
 	scr        *pageContent
+	Helpers    *Helpers
 }
 
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
@@ -307,7 +308,7 @@ func New() Crt {
 	x.defaultBaud()  // set baud to 9600
 
 	x.newPageDefinition(x.width, x.height)
-
+	x.Helpers = initHelpers()
 	return x
 }
 
