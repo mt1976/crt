@@ -314,7 +314,7 @@ func (p *Page) BlankRow() {
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
-func (m *Page) AddOption(id int, rowContent string, altID string, dateTime string) {
+func (p *Page) AddOption(id int, rowContent string, altID string, dateTime string) {
 	// lets clean the rowContent
 	rowContent = cleanContent(rowContent)
 
@@ -326,31 +326,31 @@ func (m *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 		return
 	}
 
-	m.counter++
+	p.counter++
 
-	if m.counter >= conf.Configuration.MaxContentRows {
-		m.counter = 0
-		m.noPages++
+	if p.counter >= conf.Configuration.MaxContentRows {
+		p.counter = 0
+		p.noPages++
 	}
 
 	if len(rowContent) > config.TerminalWidth {
 		rowContent = rowContent[:config.TerminalWidth]
 	}
 
-	m.pageRowCounter++
+	p.pageRowCounter++
 	mi := pageRow{}
 	mi.ID = id
-	mi.PageIndex = m.noPages
+	mi.PageIndex = p.noPages
 	mi.AlternateID = altID
 	mi.Title = rowContent
 	mi.DateTime = dateTime
 	mi.Content = formatOption(mi)
-	m.AddActionInt(id)
-	m.pageRows = append(m.pageRows, mi)
-	m.noRows++
+	p.AddActionInt(id)
+	p.pageRows = append(p.pageRows, mi)
+	p.noRows++
 }
 
 // AddActionInt adds an action to the page with the given integer value
-func (m *Page) AddActionInt(validAction int) {
-	m.AddAction(fmt.Sprintf("%v", validAction))
+func (p *Page) AddActionInt(validAction int) {
+	p.AddAction(fmt.Sprintf("%v", validAction))
 }
