@@ -3,13 +3,14 @@ package crt
 import "time"
 
 type Helpers struct {
-	RandomIP   func() string
-	RandomMAC  func() string
-	RandomPort func() int
-	ToInt      func(s string) int
-	ToString   func(i int) string
-	CoinToss   func() bool
-	IsInt      func(i string) bool
+	RandomIP    func() string
+	RandomMAC   func() string
+	RandomPort  func() int
+	RandomFloat func(min int, max int) float64
+	ToInt       func(s string) int
+	ToString    func(i int) string
+	CoinToss    func() bool
+	IsInt       func(i string) bool
 }
 
 type Formatters struct {
@@ -32,19 +33,20 @@ type Formatters struct {
 
 func initHelpers() *Helpers {
 	help := Helpers{
-		RandomIP:   randomIP,
-		RandomMAC:  randomMAC,
-		RandomPort: randomPort,
-		ToInt:      toInt,
-		ToString:   toString,
-		CoinToss:   coinToss,
-		IsInt:      isInt,
+		RandomIP:    randomIP,
+		RandomMAC:   randomMAC,
+		RandomPort:  randomPort,
+		ToInt:       toInt,
+		ToString:    toString,
+		CoinToss:    coinToss,
+		IsInt:       isInt,
+		RandomFloat: randomFloat,
 	}
 	return &help
 }
 
 func initFormatters() *Formatters {
-	help := Formatters{
+	fmts := Formatters{
 		HumanFromUnixDate:       unixDateToHuman,
 		DateString:              dateString,
 		TimeString:              timeString,
@@ -61,5 +63,5 @@ func initFormatters() *Formatters {
 		FormatDate:              formatDate,
 		FormatDuration:          formatDuration,
 	}
-	return &help
+	return &fmts
 }
