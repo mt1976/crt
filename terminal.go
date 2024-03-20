@@ -12,6 +12,7 @@ import (
 	"github.com/gen2brain/beeep"
 	e "github.com/mt1976/crt/errors"
 	l "github.com/mt1976/crt/language"
+	t "github.com/mt1976/crt/language"
 )
 
 // The Crt type represents a terminal screen with properties such as whether it is a terminal, its
@@ -35,18 +36,6 @@ type Crt struct {
 	currentRow int
 	currentCol int
 	scr        *pageContent
-}
-
-// The "pageContent" type represents a pageContent with a map of rows and columns.
-// @property row - The "row" property is a map that stores the values of each row in the pageContent. The keys
-// of the map are integers representing the row numbers, and the values are strings representing the
-// content of each row.
-// @property {int} cols - The "cols" property represents the number of columns in the pageContent.
-// @property {int} rows - The "rows" property represents the number of rows in the pageContent.
-type pageContent struct {
-	row  map[int]string
-	cols int
-	rows int
 }
 
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
@@ -318,7 +307,7 @@ func New() Crt {
 	x.defaultDelay() // set delay to 0
 	x.defaultBaud()  // set baud to 9600
 
-	x.scr = NewPageContentDefinition(x.width, x.height)
+	x.newPageDefinition(x.width, x.height)
 
 	return x
 }
@@ -498,4 +487,18 @@ func (T *Crt) NoBaudRate() bool {
 // ClearCurrentLine clears the current line in the terminal
 func (T *Crt) ClearCurrentLine() {
 	fmt.Print(l.ConsoleClearLine)
+}
+
+// The NewTitledPage function creates a new page with a truncated title and initializes other properties.
+func (c *Crt) NewTitledPage(title string) *Page {
+	// truncate title to 25 characters
+	if len(title) > C.TitleLength {
+		title = title[:C.TitleLength] + l.SymTruncate
+	}
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	m.AddAction(l.SymActionQuit)    // Add Quit action
+	m.AddAction(l.SymActionForward) // Add Next action
+	m.AddAction(l.SymActionBack)    // Add Previous action
+	m.pageRowCounter = 0
+	return &m
 }

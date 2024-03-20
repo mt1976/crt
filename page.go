@@ -39,29 +39,6 @@ type pageRow struct {
 	DateTime    string // The date and time of the page row.
 }
 
-// The New function creates a new page with a truncated title and initializes other properties.
-func NewPageWithName(title string) *Page {
-	// truncate title to 25 characters
-	if len(title) > C.TitleLength {
-		title = title[:C.TitleLength] + t.SymTruncate
-	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: t.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(t.SymActionQuit)    // Add Quit action
-	m.AddAction(t.SymActionForward) // Add Next action
-	m.AddAction(t.SymActionBack)    // Add Previous action
-	m.pageRowCounter = 0
-	return &m
-}
-
-// NewPageContentDefinition initializes a new page with the specified number of columns and rows.
-func NewPageContentDefinition(cols, rows int) *pageContent {
-	p := pageContent{}
-	p.cols = cols
-	p.rows = rows
-	p.row = make(map[int]string)
-	return &p
-}
-
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (p *Page) Add(rowContent string, altID string, dateTime string) {
