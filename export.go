@@ -1,4 +1,4 @@
-package support
+package main
 
 import (
 	errs "github.com/mt1976/crt/errors"

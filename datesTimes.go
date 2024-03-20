@@ -1,15 +1,13 @@
-package support
+package main
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dustin/go-humanize"
-	e "github.com/mt1976/crt/errors"
+	"github.com/mt1976/crt/config"
 	l "github.com/mt1976/crt/language"
-	"github.com/mt1976/crt/support/config"
 	"github.com/xeonx/timeago"
 )
 
@@ -42,47 +40,12 @@ func DateTimeString() string {
 	return TimeString() + l.Space + DateString()
 }
 
-func PlexDateToDate(date string) time.Time {
-	t, err := time.Parse(c.PlexDateFormat, date)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return t
-}
-
-func PlexDurationToTime(duration int) time.Duration {
-	//int to string
-	d := fmt.Sprintf("%d", duration)
-	//string to int
-	i, err := strconv.Atoi(d)
-	if err != nil {
-		fmt.Println(err)
-	}
-	if i != duration {
-		fmt.Println(e.ErrDurationMismatch, i, l.Space, duration)
-	}
-	//return time.Duration(i) * time.Second
-	t, err := time.ParseDuration(d + l.TxtMillisecondsShort)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return t
-}
-
 func FormatDate(t time.Time) string {
 	return t.Format(c.ApplicationDateFormat)
 }
 
 func FormatDuration(t time.Duration) string {
 	return t.String()
-}
-
-func FormatPlexDate(t string) string {
-	return humanize.Time(PlexDateToDate(t)) + l.Space + PQuote(FormatDate(PlexDateToDate(t)))
-}
-
-func FormatPlexDuration(t int) string {
-	return FormatDuration(PlexDurationToTime(t))
 }
 
 func TimeAgo(t string) string {

@@ -1,4 +1,4 @@
-package support
+package main
 
 import (
 	"fmt"
@@ -34,16 +34,16 @@ type Crt struct {
 	baud       int
 	currentRow int
 	currentCol int
-	scr        page
+	scr        *pageContent
 }
 
-// The "page" type represents a page with a map of rows and columns.
-// @property row - The "row" property is a map that stores the values of each row in the page. The keys
+// The "pageContent" type represents a pageContent with a map of rows and columns.
+// @property row - The "row" property is a map that stores the values of each row in the pageContent. The keys
 // of the map are integers representing the row numbers, and the values are strings representing the
 // content of each row.
-// @property {int} cols - The "cols" property represents the number of columns in the page.
-// @property {int} rows - The "rows" property represents the number of rows in the page.
-type page struct {
+// @property {int} cols - The "cols" property represents the number of columns in the pageContent.
+// @property {int} rows - The "rows" property represents the number of rows in the pageContent.
+type pageContent struct {
 	row  map[int]string
 	cols int
 	rows int
@@ -318,7 +318,7 @@ func New() Crt {
 	x.defaultDelay() // set delay to 0
 	x.defaultBaud()  // set baud to 9600
 
-	x.scr = NewPage(x.width, x.height)
+	x.scr = NewPageContentDefinition(x.width, x.height)
 
 	return x
 }
@@ -327,15 +327,6 @@ func NewWithSize(width, height int) Crt {
 	xx := New()
 	xx.SetTerminalSize(width, height)
 	return xx
-}
-
-// NewPage initializes a new page with the specified number of columns and rows.
-func NewPage(cols, rows int) page {
-	p := page{}
-	p.cols = cols
-	p.rows = rows
-	p.row = make(map[int]string)
-	return p
 }
 
 // The `Bold` method of the `Crt` struct is used to format a string with bold text. It takes a `msg`

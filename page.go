@@ -1,4 +1,4 @@
-package page
+package main
 
 import (
 	"fmt"
@@ -9,8 +9,8 @@ import (
 
 	e "github.com/mt1976/crt/errors"
 	t "github.com/mt1976/crt/language"
-	"github.com/mt1976/crt/support"
-	"github.com/mt1976/crt/support/config"
+
+	"github.com/mt1976/crt/config"
 )
 
 var C = config.Configuration
@@ -40,7 +40,7 @@ type pageRow struct {
 }
 
 // The New function creates a new page with a truncated title and initializes other properties.
-func New(title string) *Page {
+func NewPageWithName(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > C.TitleLength {
 		title = title[:C.TitleLength] + t.SymTruncate
@@ -51,6 +51,15 @@ func New(title string) *Page {
 	m.AddAction(t.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
 	return &m
+}
+
+// NewPageContentDefinition initializes a new page with the specified number of columns and rows.
+func NewPageContentDefinition(cols, rows int) *pageContent {
+	p := pageContent{}
+	p.cols = cols
+	p.rows = rows
+	p.row = make(map[int]string)
+	return &p
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
@@ -117,7 +126,7 @@ func (p *Page) AddAction(validAction string) {
 
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
-func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
+func (p *Page) Display(crt *Crt) (nextAction string, selected pageRow) {
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt(crt)
@@ -132,10 +141,10 @@ func (p *Page) Display(crt *support.Crt) (nextAction string, selected pageRow) {
 		case inActions(nextAction, p.actions):
 			// upcase the action
 			exit = true
-			if support.IsInt(nextAction) {
-				return nextAction, p.pageRows[support.ToInt(nextAction)-1]
+			if IsInt(nextAction) {
+				return nextAction, p.pageRows[ToInt(nextAction)-1]
 			}
-			return support.Upcase(nextAction), pageRow{}
+			return Upcase(nextAction), pageRow{}
 		default:
 			crt.InputError(e.ErrInvalidAction, nextAction)
 		}
@@ -157,7 +166,7 @@ func inActions(action string, actions []string) bool {
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow) {
+func (p *Page) displayIt(crt *Crt) (nextAction string, selected pageRow) {
 	crt.Clear()
 	rowsDisplayed := 0
 	p.AddAction(t.SymActionQuit) // Add Quit action
@@ -191,7 +200,7 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 		}
 
 		for i := range p.actions {
-			if support.Upcase(nextAction) == support.Upcase(p.actions[i]) {
+			if Upcase(nextAction) == Upcase(p.actions[i]) {
 				ok = true
 				break
 			}
@@ -202,26 +211,26 @@ func (p *Page) displayIt(crt *support.Crt) (nextAction string, selected pageRow)
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if support.IsInt(nextAction) {
+	if IsInt(nextAction) {
 		pos, _ := strconv.Atoi(nextAction)
-		return support.Upcase(nextAction), p.pageRows[pos-1]
+		return Upcase(nextAction), p.pageRows[pos-1]
 	}
 
-	if support.Upcase(nextAction) == t.SymActionExit {
+	if Upcase(nextAction) == t.SymActionExit {
 		os.Exit(0)
 	}
-	return support.Upcase(nextAction), pageRow{}
+	return Upcase(nextAction), pageRow{}
 }
 
 // The format function returns the first 50 characters of the content in a pageRow object.
 // format returns the first n characters of the content in a pageRow object.
-func format(crt *support.Crt, m pageRow) string {
+func format(crt *Crt, m pageRow) string {
 	return m.Content
 }
 
 // NextPage moves to the next page.
 // If the current page is the last page, it returns an error.
-func (p *Page) NextPage(crt *support.Crt) {
+func (p *Page) NextPage(crt *Crt) {
 	if p.ActivePageIndex == p.noPages {
 		crt.InputError(e.ErrNoMorePages)
 		return
@@ -231,7 +240,7 @@ func (p *Page) NextPage(crt *support.Crt) {
 
 // PreviousPage moves to the previous page.
 // If the current page is the first page, it returns an error.
-func (p *Page) PreviousPage(crt *support.Crt) {
+func (p *Page) PreviousPage(crt *Crt) {
 	if p.ActivePageIndex == 0 {
 		crt.InputError(e.ErrNoMorePages)
 		return
@@ -258,7 +267,7 @@ func (p *Page) GetRows() int {
 // Example:
 //
 //	page.AddFieldValuePair("Field Name", "Field Value")
-func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
+func (p *Page) AddFieldValuePair(crt *Crt, key string, value string) {
 	// format the field value pair
 	format := "%-20s : %s" + t.SymNewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
@@ -275,7 +284,7 @@ func (p *Page) AddFieldValuePair(crt *support.Crt, key string, value string) {
 // Example:
 //
 //	page.AddColumns("Column 1", "Column 2", "Column 3")
-func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
+func (p *Page) AddColumns(crt *Crt, cols ...string) {
 	// Check the number of columns
 	if len(cols) > 10 {
 		crt.Error(e.ErrAddColumns)
@@ -315,7 +324,7 @@ func (p *Page) AddColumns(crt *support.Crt, cols ...string) {
 }
 
 // AddColumnsTitle adds a ruler to the page, separating the columns
-func (p *Page) AddColumnsTitle(crt *support.Crt, cols ...string) {
+func (p *Page) AddColumnsTitle(crt *Crt, cols ...string) {
 	p.AddColumns(crt, cols...)
 	var output []string
 	screenWidth := crt.Width()
@@ -399,10 +408,10 @@ func (m *Page) AddActionInt(validAction int) {
 	m.AddAction(fmt.Sprintf("%v", validAction))
 }
 
-// The function "format" takes a pointer to a support.Crt object and a menuItem object, and returns a
+// The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.
 func formatOption(m pageRow) string {
-	miNumber := fmt.Sprintf(support.Bold("%3v"), m.ID)
+	miNumber := fmt.Sprintf(Bold("%3v"), m.ID)
 
 	//add Date to end of row
 	miTitle := m.Title
