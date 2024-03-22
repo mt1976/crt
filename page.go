@@ -354,3 +354,12 @@ func (p *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 func (p *Page) AddActionInt(validAction int) {
 	p.AddAction(fmt.Sprintf("%v", validAction))
 }
+
+func (p *Page) Paragraph(msg []string) {
+	// make sure the lines are no longer than the screen width and wrap them if they are.
+
+	for _, s := range msg {
+		s = trimRepeatingCharacters(s, lang.Space)
+		p.Add(s, "", "")
+	}
+}
