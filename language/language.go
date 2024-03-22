@@ -4,8 +4,8 @@ package language
 // TxtPlexTitleLabel represents the label for the title of a Plex item.
 const (
 	//	ErrLibraryResponse    string = "library fetch error"
-	TxtPlexTitleLabel            string = "Title"   // TODO: Change to Title
-	TxtPlexSummaryLabel          string = "Summary" // TODO: Change to Summary
+	TxtPlexTitleLabel            string = "Title"
+	TxtPlexSummaryLabel          string = "Summary"
 	TxtPlexContainerLabel        string = "Container"
 	TxtPlexResolutionLabel       string = "Resolution"
 	TxtPlexCodecLabel            string = "Codec"
@@ -127,7 +127,7 @@ var TxtSnow3Hr string = TxtSnowLabel + TxtThreeHour
 
 // Page - Paging
 
-const TxtPagingPrompt string = "Enter (F)orward, (B)ack or (Q)uit"
+const TxtPagingPrompt string = "Choose (F)orward, (B)ack or (Q)uit"
 
 const (
 	SymActionQuit    string = "Q"
@@ -142,7 +142,7 @@ const (
 
 const (
 	SymActionSeasons     string = "S"
-	TxtPlexSeasonsPrompt string = "Enter (S)easons, (F)orward, (B)ack or (Q)uit"
+	TxtPlexSeasonsPrompt string = "Choose (S)easons, (F)orward, (B)ack or (Q)uit"
 )
 
 // Support
