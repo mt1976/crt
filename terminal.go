@@ -184,6 +184,26 @@ func (t *Crt) Print(msg string) {
 	t.PrintIt(t.Format(msg, ""))
 }
 
+// Paragraph formats a list of strings as paragraphs, wrapping lines as needed to fit within the
+// terminal width.
+func (t *Crt) Paragraph(msg []string) {
+	// make sure the lines are no longer than the screen width and wrap them if they are.
+	out := []string{}
+	for _, s := range msg {
+		s = t.Formatters.TrimRepeatingCharacters(s, lang.Space)
+		if len(s) > t.Width() {
+			out = append(out, s[:t.Width()])
+			out = append(out, s[t.Width():])
+		} else {
+			out = append(out, s)
+		}
+	}
+
+	for _, s := range out {
+		t.Println(t.Format(s, ""))
+	}
+}
+
 // The `Special` function is a method of the `Crt` struct. It takes a `msg` parameter of type string
 // and prints it to the terminal using the `fmt.Println()` function. The message is formatted with the
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
