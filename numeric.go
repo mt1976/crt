@@ -9,6 +9,9 @@ import (
 // The isInt function checks if a given string consists only of digits.
 // isInt checks if a given string consists only of digits.
 func isInt(in string) bool {
+	if in == "" {
+		return false
+	}
 	for _, c := range in {
 		if !unicode.IsDigit(c) {
 			return false
