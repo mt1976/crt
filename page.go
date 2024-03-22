@@ -357,7 +357,6 @@ func (p *Page) AddActionInt(validAction int) {
 
 func (p *Page) Paragraph(msg []string) {
 	// make sure the lines are no longer than the screen width and wrap them if they are.
-
 	for _, s := range msg {
 		s = trimRepeatingCharacters(s, lang.Space)
 		p.Add(s, "", "")
