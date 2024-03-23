@@ -75,6 +75,10 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
+	if p.noRows > config.MaxContentRows {
+		p.AddAction(lang.SymActionForward) // Add Next action
+		p.AddAction(lang.SymActionBack)    // Add Previous action
+	}
 	if remainder != "" {
 		p.Add(remainder, altID, dateTime)
 	}
@@ -198,6 +202,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	p.viewPort.Break()
 
 	p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	p.Hint("Valid actions are %v", strings.Join(p.actions, ", "))
 	ok := false
 	for !ok {
 		nextAction = p.viewPort.Input(p.prompt, "")

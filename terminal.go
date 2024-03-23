@@ -535,9 +535,9 @@ func (t *Crt) NewTitledPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(lang.SymActionQuit)    // Add Quit action
-	m.AddAction(lang.SymActionForward) // Add Next action
-	m.AddAction(lang.SymActionBack)    // Add Previous action
+	m.AddAction(lang.SymActionQuit) // Add Quit action
+	//m.AddAction(lang.SymActionForward) // Add Next action
+	//m.AddAction(lang.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
 	m.viewPort = t
 	return &m
