@@ -245,7 +245,6 @@ func (t *Crt) InputError(err error, msg ...string) {
 	t.SetDelayInSec(config.DefaultErrorDelay)
 	t.DelayIt()
 	t.SetDelayInMs(oldDelay)
-
 }
 
 func (t *Crt) InfoMessage(msg string) {
@@ -333,9 +332,18 @@ func (t *Crt) Error(err error, msg ...string) {
 }
 
 func (t *Crt) SError(err error, msg ...string) string {
-	pp := err.Error()
-	pp = fmt.Sprintf(pp, msg)
-	return t.Format(bold(lang.TextColorRed+lang.TxtError), pp)
+	errText := err.Error()
+	if len(msg) > 0 {
+		// check for enough %v strings in the error
+		// if not enough then add them on the end
+		noVars := strings.Count(errText, "%v")
+		if noVars < len(msg) {
+			errText = errText + strings.Repeat(" %v", len(msg)-noVars)
+		}
+		//	return t.Format(bold(lang.TextColorRed+lang.TxtError), pp)
+	}
+	errText = bold(lang.TextColorRed+lang.TxtError) + fmt.Sprintf(errText, msg)
+	return errText
 }
 
 // The `bold` method of the `Crt` struct is used to format a string with bold text. It takes a `msg`
