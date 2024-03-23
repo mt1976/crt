@@ -93,11 +93,11 @@ func (p *Page) AddAction(validAction string) {
 	}
 }
 
-func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) {
+func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 
 	exit := false
 	for !exit {
-		nextAction, _ := p.displayIt(t)
+		nextAction, _ := p.displayIt()
 		switch {
 		case nextAction == lang.SymActionQuit:
 			exit = true
@@ -131,7 +131,7 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 				p.viewPort.Println("")
 				continue
 			}
-			p.viewPort.Println(format(p.viewPort, p.pageRows[i]))
+			p.viewPort.Println(p.pageRows[i].Content)
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
@@ -173,36 +173,36 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
-	t.Clear()
+func (p *Page) displayIt() (nextAction string, selected pageRow) {
+	p.viewPort.Clear()
 	rowsDisplayed := 0
 	p.AddAction(lang.SymActionQuit) // Add Quit action
 	p.AddAction(lang.SymActionExit)
-	t.Header(p.title)
+	p.viewPort.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			if p.pageRows[i].Content == "" {
-				t.Println("")
+				p.viewPort.Println("")
 				continue
 			}
-			t.Println(format(t, p.pageRows[i]))
+			p.viewPort.Println(p.pageRows[i].Content)
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			t.Print(lang.SymNewline)
+			p.viewPort.Print(lang.SymNewline)
 		}
 	}
-	t.Break()
+	p.viewPort.Break()
 
-	t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	ok := false
 	for !ok {
-		nextAction = t.Input(p.prompt, "")
+		nextAction = p.viewPort.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			t.InputError(errs.ErrInvalidAction, nextAction)
+			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
 			continue
 		}
 
@@ -213,7 +213,7 @@ func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
 			}
 		}
 		if !ok {
-			t.InputError(errs.ErrInvalidAction, nextAction)
+			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
 
 		}
 	}
@@ -268,7 +268,7 @@ func (p *Page) GetRows() int {
 // Example:
 //
 //	page.AddFieldValuePair("Field Name", "Field Value")
-func (p *Page) AddFieldValuePair(t *Crt, key string, value string) {
+func (p *Page) AddFieldValuePair(key string, value string) {
 	// format the field value pair
 	format := "%-20s : %s" + lang.SymNewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
@@ -285,15 +285,15 @@ func (p *Page) AddFieldValuePair(t *Crt, key string, value string) {
 // Example:
 //
 //	page.AddColumns("Column 1", "Column 2", "Column 3")
-func (p *Page) AddColumns(t *Crt, columns ...string) {
+func (p *Page) AddColumns(columns ...string) {
 	// Check the number of columns
 	if len(columns) > 10 {
-		t.Error(errs.ErrAddColumns)
+		p.viewPort.Error(errs.ErrAddColumns)
 		os.Exit(1)
 	}
 
 	// Get the terminal width
-	screenWidth := t.Width()
+	screenWidth := p.viewPort.Width()
 
 	// Calculate the column width
 	colSize := screenWidth / len(columns)
@@ -325,10 +325,10 @@ func (p *Page) AddColumns(t *Crt, columns ...string) {
 }
 
 // AddColumnsTitle adds a ruler to the page, separating the columns
-func (p *Page) AddColumnsTitle(t *Crt, columns ...string) {
-	p.AddColumns(t, columns...)
+func (p *Page) AddColumnsTitle(columns ...string) {
+	p.AddColumns(columns...)
 	var output []string
-	screenWidth := t.Width()
+	screenWidth := p.viewPort.Width()
 	colSize := screenWidth / len(columns)
 
 	for i := 0; i < len(columns); i++ {
@@ -417,27 +417,27 @@ func (p *Page) Paragraph(msg []string) {
 	}
 }
 
-func (p *Page) Error(t *Crt, err error, msg ...string) {
+func (p *Page) Error(err error, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	//pp := t.SError(err, msg...)
-	pp := t.SENotice(err.Error(), lang.TxtError, lang.TextColorRed, msg...)
+	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, lang.TextColorRed, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
-	oldDelay := t.Delay()
-	t.SetDelayInSec(config.DefaultErrorDelay)
-	t.DelayIt()
-	t.SetDelayInMs(oldDelay)
+	oldDelay := p.viewPort.Delay()
+	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
+	p.viewPort.DelayIt()
+	p.viewPort.SetDelayInMs(oldDelay)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
 }
 
-func (p *Page) Info(t *Crt, info string, msg ...string) {
+func (p *Page) Info(info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
-	pp := t.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
+	pp := p.viewPort.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
@@ -454,27 +454,27 @@ func (p *Page) Hint(info string, msg ...string) {
 	gtrm.Flush()
 }
 
-func (p *Page) Warning(t *Crt, warning string, msg ...string) {
+func (p *Page) Warning(warning string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
-	pp := t.SENotice(warning, lang.TxtWarning, lang.TextColorCyan, msg...)
+	pp := p.viewPort.SENotice(warning, lang.TxtWarning, lang.TextColorCyan, msg...)
 	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
-	oldDelay := t.Delay()
-	t.SetDelayInSec(config.DefaultErrorDelay)
-	t.DelayIt()
-	t.SetDelayInMs(oldDelay)
+	oldDelay := p.viewPort.Delay()
+	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
+	p.viewPort.DelayIt()
+	p.viewPort.SetDelayInMs(oldDelay)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
 }
 
-func (p *Page) PageSuccess(t *Crt, message string, msg ...string) {
+func (p *Page) PageSuccess(message string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
-	pp := t.SENotice(message, lang.TxtSuccess, lang.TextColorCyan, msg...)
+	pp := p.viewPort.SENotice(message, lang.TxtSuccess, lang.TextColorCyan, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(lang.ConsoleClearLine)

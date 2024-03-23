@@ -53,9 +53,9 @@ func isInList(value string, list []string) bool {
 
 // The format function returns the first 50 characters of the content in a pageRow object.
 // format returns the first n characters of the content in a pageRow object.
-func format(t *Crt, m pageRow) string {
-	return m.Content
-}
+// func format(t *Crt, m pageRow) string {
+// 	return m.Content
+// }
 
 // The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.
