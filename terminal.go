@@ -338,16 +338,21 @@ func (t *Crt) SError(err error, msg ...string) string {
 }
 
 func (t *Crt) SENotice(errText, promptTxt, colour string, msg ...string) string {
+
 	if len(msg) > 0 {
 		// check for enough %v strings in the error
 		// if not enough then add them on the end
 		noVars := strings.Count(errText, "%v")
+
 		if noVars < len(msg) {
 			errText = errText + strings.Repeat(" %v", len(msg)-noVars)
 		}
-		//	return t.Format(bold(lang.TextColorRed+lang.TxtError), pp)
 	}
-	errText = (colour + promptTxt + lang.TextStyleReset) + fmt.Sprintf(errText, msg)
+	qq := errText
+	for i := range msg {
+		qq = strings.Replace(qq, "%v", fmt.Sprintf("%v", msg[i]), 1)
+	}
+	errText = (colour + promptTxt + lang.TextStyleReset) + qq
 	errText = t.Format(errText, "")
 	return errText
 }
