@@ -204,23 +204,32 @@ func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, s
 	}
 	t.Break()
 	for {
+
 		if minLen > 0 || maxLen > 0 {
 			p.PageInfo(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
 		}
+
 		t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 		out := t.Input("", "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
 		}
+
 		if isActionIn(out, lang.SymActionExit) {
 			os.Exit(0)
 		}
+
 		if minLen > 0 && len(out) < minLen {
 			t.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
 		}
+
 		if maxLen > 0 && len(out) > maxLen {
 			t.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
+		}
+
+		if len(out) >= minLen && len(out) <= maxLen {
+			return out, pageRow{}
 		}
 	}
 }
