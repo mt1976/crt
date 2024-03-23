@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	gtrm "github.com/buger/goterm"
+	beep "github.com/gen2brain/beeep"
 	conf "github.com/mt1976/crt/config"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
@@ -362,4 +364,20 @@ func (p *Page) Paragraph(msg []string) {
 		s = trimRepeatingCharacters(s, lang.Space)
 		p.Add(s, "", "")
 	}
+}
+
+func (p *Page) PageError(t *Crt, err error, msg ...string) {
+	gtrm.MoveCursor(2, 23)
+	pp := t.SError(err, msg...)
+	gtrm.Print(pp)
+	gtrm.Flush()
+	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
+	oldDelay := t.Delay()
+	t.SetDelayInSec(config.DefaultErrorDelay)
+	t.DelayIt()
+	t.SetDelayInMs(oldDelay)
+	gtrm.MoveCursor(2, 22)
+	gtrm.Print(lang.ConsoleClearLine)
+	gtrm.MoveCursor(2, 22)
+	gtrm.Print(p.prompt)
 }

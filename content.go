@@ -14,9 +14,18 @@ import (
 // @property {int} cols - The "cols" property represents the number of columns in the pageContent.
 // @property {int} rows - The "rows" property represents the number of rows in the pageContent.
 type pageContent struct {
-	row  map[int]string
-	cols int
-	rows int
+	row    map[int]string
+	cols   int
+	rows   int
+	prompt string
+}
+
+func (p *pageContent) SetPrompt(prompt string) {
+	p.prompt = prompt
+}
+
+func (p *pageContent) GetPrompt() string {
+	return p.prompt
 }
 
 // cleanContent removes unwanted characters from the rowContent string
