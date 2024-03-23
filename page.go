@@ -385,20 +385,25 @@ func (p *Page) PageError(t *Crt, err error, msg ...string) {
 
 func (p *Page) PageInfo(t *Crt, info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
+	gtrm.Print(lang.ConsoleClearLine)
 	pp := t.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
 	gtrm.Print(pp)
-	gtrm.Flush()
-	gtrm.MoveCursor(2, 22)
-	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
+	gtrm.Flush()
 }
 
 func (p *Page) PageWarning(t *Crt, warning string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	pp := t.SENotice(warning, lang.TxtWarning, lang.TextColorCyan, msg...)
+	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.Print(pp)
 	gtrm.Flush()
+	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
+	oldDelay := t.Delay()
+	t.SetDelayInSec(config.DefaultErrorDelay)
+	t.DelayIt()
+	t.SetDelayInMs(oldDelay)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.MoveCursor(2, 22)
@@ -407,11 +412,12 @@ func (p *Page) PageWarning(t *Crt, warning string, msg ...string) {
 
 func (p *Page) PageSuccess(t *Crt, message string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
+	gtrm.Print(lang.ConsoleClearLine)
 	pp := t.SENotice(message, lang.TxtSuccess, lang.TextColorCyan, msg...)
 	gtrm.Print(pp)
-	gtrm.Flush()
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(lang.ConsoleClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
+	gtrm.Flush()
 }
