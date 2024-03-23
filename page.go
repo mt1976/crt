@@ -208,7 +208,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	p.viewPort.Break()
 
 	p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	p.Hint("Valid actions : %v", strings.Join(p.actions, ", "))
+	p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
 	ok := false
 	for !ok {
 		nextAction = p.viewPort.Input(p.prompt, "")

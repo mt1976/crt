@@ -167,6 +167,7 @@ const (
 	TxtSuccess            string = "SUCCESS "
 	TxtHint               string = "HINT "
 	TxtPaging             string = "Page %v of %v"
+	TxtValidActions       string = "valid actions [%v]"
 )
 
 var ApplicationHeader []string = []string{
