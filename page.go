@@ -92,12 +92,6 @@ func (p *Page) AddAction(validAction string) {
 	}
 }
 
-// The `Display` function is responsible for displaying the page content to the user and handling user
-// input.
-func (p *Page) Display(t *Crt) (nextAction string, selected pageRow) {
-	return p.DisplayWithActions(t)
-}
-
 func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) {
 
 	exit := false
