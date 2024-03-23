@@ -342,7 +342,8 @@ func (t *Crt) SError(err error, msg ...string) string {
 		}
 		//	return t.Format(bold(lang.TextColorRed+lang.TxtError), pp)
 	}
-	errText = t.Format((lang.TextColorRed + lang.TxtError), fmt.Sprintf(errText, msg))
+	pp := (lang.TextColorRed + lang.TxtError + lang.TextStyleReset) + fmt.Sprintf(errText, msg)
+	errText = t.Format(pp, "")
 	return errText
 }
 
