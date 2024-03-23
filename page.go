@@ -29,7 +29,7 @@ type Page struct {
 	ActivePageIndex int       // The index of the active page.
 	counter         int       // A counter used for tracking.
 	pageRowCounter  int       // A counter used for tracking the page rows.
-	viewPort        *Crt      // The viewPort object used for displaying the page.
+	viewPort        *ViewPort // The viewPort object used for displaying the page.
 }
 
 // pageRow represents a row of content on a page.
@@ -40,6 +40,10 @@ type pageRow struct {
 	Title       string // The title of the page row.
 	AlternateID string // The alternate identifier of the page row.
 	DateTime    string // The date and time of the page row.
+}
+
+func (p *Page) ViewPort() ViewPort {
+	return *p.viewPort
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
