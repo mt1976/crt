@@ -265,7 +265,7 @@ func (t *Crt) InfoMessage(msg string) {
 
 }
 
-// The `InputPageInfo` function is a method of the `Crt` struct. It is used to print information about the current page and total number of pages to the terminal.
+// The `InputPagingInfo` function is a method of the `Crt` struct. It is used to print information about the current page and total number of pages to the terminal.
 //
 // Parameters:
 // page: The current page number.
@@ -273,7 +273,7 @@ func (t *Crt) InfoMessage(msg string) {
 //
 // Returns:
 // None.
-func (t *Crt) InputPageInfo(page, ofPages int) {
+func (t *Crt) InputPagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
 	lmsg := len(msg)
 	gtrm.MoveCursor(t.width-lmsg-1, 22)
@@ -333,6 +333,11 @@ func (t *Crt) Error(err error, msg ...string) {
 
 func (t *Crt) SError(err error, msg ...string) string {
 	errText := err.Error()
+	colour := lang.TextColorRed
+	return t.SENotice(errText, lang.TxtError, colour, msg...)
+}
+
+func (t *Crt) SENotice(errText, promptTxt, colour string, msg ...string) string {
 	if len(msg) > 0 {
 		// check for enough %v strings in the error
 		// if not enough then add them on the end
@@ -342,7 +347,7 @@ func (t *Crt) SError(err error, msg ...string) string {
 		}
 		//	return t.Format(bold(lang.TextColorRed+lang.TxtError), pp)
 	}
-	errText = (lang.TextColorRed + lang.TxtError + lang.TextStyleReset) + fmt.Sprintf(errText, msg)
+	errText = (colour + promptTxt + lang.TextStyleReset) + fmt.Sprintf(errText, msg)
 	errText = t.Format(errText, "")
 	return errText
 }
