@@ -15,6 +15,7 @@ type Helpers struct {
 	GetUsername        func() string
 	GetSytemInfo       func() string
 	RoundFloatToTwoDPS func(f float64) float64
+	IsActionIn         func(action string, actionToCheck ...string) bool
 }
 
 type Formatters struct {
@@ -51,6 +52,7 @@ func initHelpers() *Helpers {
 		GetUsername:        getUsername,
 		GetSytemInfo:       getSystemInfo,
 		RoundFloatToTwoDPS: roundFloatToTwoDPS,
+		IsActionIn:         isActionIn,
 	}
 	return &help
 }

@@ -54,3 +54,12 @@ func dQuote(s string) string {
 func qQuote(s string) string {
 	return lang.SymSquareQuoteOpen + s + lang.SymSquareQuoteClose
 }
+
+func isActionIn(in string, check ...string) bool {
+	for i := 0; i < len(check); i++ {
+		if strings.Contains(upcase(in), check[i]) {
+			return true
+		}
+	}
+	return false
+}
