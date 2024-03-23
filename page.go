@@ -178,6 +178,48 @@ func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
 	return upcase(nextAction), pageRow{}
 }
 
+func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, selected pageRow) {
+	rowsDisplayed := 0
+	t.Clear()
+	t.Header(p.title)
+	for i := range p.pageRows {
+		if p.ActivePageIndex == p.pageRows[i].PageIndex {
+			rowsDisplayed++
+			if p.pageRows[i].Content == "" {
+				t.Println("")
+				continue
+			}
+			t.Println(format(t, p.pageRows[i]))
+		}
+	}
+	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
+	if extraRows > 0 {
+		for i := 0; i <= extraRows; i++ {
+			t.Print(lang.SymNewline)
+		}
+	}
+	t.Break()
+	if minLen > 0 || maxLen > 0 {
+		p.PageInfo(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+	}
+	t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	for {
+		out := t.Input("", "")
+		if isActionIn(out, lang.SymActionQuit) {
+			return lang.SymActionQuit, pageRow{}
+		}
+		if isActionIn(out, lang.SymActionExit) {
+			os.Exit(0)
+		}
+		if minLen > 0 && len(out) < minLen {
+			t.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
+		}
+		if maxLen > 0 && len(out) > maxLen {
+			t.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
+		}
+	}
+}
+
 // NextPage moves to the next page.
 // If the current page is the last page, it returns an error.
 func (p *Page) NextPage(t *Crt) {

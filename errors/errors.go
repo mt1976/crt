@@ -15,4 +15,6 @@ var (
 	ErrHostName                    = errors.New("unable to get hostname")
 	ErrUserName                    = errors.New("unable to get username")
 	ErrSystemInfo                  = errors.New("unable to get machine name")
+	ErrInputLengthMinimum          = errors.New("text must be at least %v characters")
+	ErrInputLengthMaximum          = errors.New("text must be at most %v characters, is %v")
 )

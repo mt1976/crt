@@ -206,3 +206,7 @@ const (
 	TxtDashboardCheckingService string = "Checking %v..."
 	TxtNoResponseFromServer     string = "No response from server"
 )
+
+const (
+	TxtMinMaxLength string = "Text Length Min: %v Max: %v"
+)
