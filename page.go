@@ -28,6 +28,7 @@ type Page struct {
 	ActivePageIndex int       // The index of the active page.
 	counter         int       // A counter used for tracking.
 	pageRowCounter  int       // A counter used for tracking the page rows.
+	viewPort        *Crt      // The viewPort object used for displaying the page.
 }
 
 // pageRow represents a row of content on a page.
@@ -102,9 +103,9 @@ func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) 
 			exit = true
 			return lang.SymActionQuit, pageRow{}
 		case nextAction == lang.SymActionForward:
-			p.NextPage(t)
+			p.NextPage()
 		case nextAction == lang.SymActionBack:
-			p.PreviousPage(t)
+			p.PreviousPage()
 		case isInList(nextAction, p.actions):
 			// upcase the action
 			exit = true
@@ -113,42 +114,42 @@ func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) 
 			}
 			return upcase(nextAction), pageRow{}
 		default:
-			t.InputError(errs.ErrInvalidAction, nextAction)
+			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
 		}
 	}
 	return "", pageRow{}
 }
 
-func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, selected pageRow) {
+func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
 	rowsDisplayed := 0
-	t.Clear()
-	t.Header(p.title)
+	p.viewPort.Clear()
+	p.viewPort.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			if p.pageRows[i].Content == "" {
-				t.Println("")
+				p.viewPort.Println("")
 				continue
 			}
-			t.Println(format(t, p.pageRows[i]))
+			p.viewPort.Println(format(p.viewPort, p.pageRows[i]))
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			t.Print(lang.SymNewline)
+			p.viewPort.Print(lang.SymNewline)
 		}
 	}
-	t.Break()
+	p.viewPort.Break()
 	for {
 
 		if minLen > 0 || maxLen > 0 {
-			p.Hint(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+			p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
 		}
 
-		t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+		p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
-		out := t.Input("", "")
+		out := p.viewPort.Input("", "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
 		}
@@ -158,11 +159,11 @@ func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, s
 		}
 
 		if minLen > 0 && len(out) < minLen {
-			t.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
+			p.viewPort.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
 		}
 
 		if maxLen > 0 && len(out) > maxLen {
-			t.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
+			p.viewPort.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
 		}
 
 		if len(out) >= minLen && len(out) <= maxLen {
@@ -230,9 +231,9 @@ func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
 
 // NextPage moves to the next page.
 // If the current page is the last page, it returns an error.
-func (p *Page) NextPage(t *Crt) {
+func (p *Page) NextPage() {
 	if p.ActivePageIndex == p.noPages {
-		t.InputError(errs.ErrNoMorePages)
+		p.viewPort.InputError(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex++
@@ -240,9 +241,9 @@ func (p *Page) NextPage(t *Crt) {
 
 // PreviousPage moves to the previous page.
 // If the current page is the first page, it returns an error.
-func (p *Page) PreviousPage(t *Crt) {
+func (p *Page) PreviousPage() {
 	if p.ActivePageIndex == 0 {
-		t.InputError(errs.ErrNoMorePages)
+		p.viewPort.InputError(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex--
@@ -443,10 +444,10 @@ func (p *Page) Info(t *Crt, info string, msg ...string) {
 	gtrm.Flush()
 }
 
-func (p *Page) Hint(t *Crt, info string, msg ...string) {
+func (p *Page) Hint(info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
-	pp := t.SENotice(info, lang.TxtHint, lang.TextStyleReset, msg...)
+	pp := p.viewPort.SENotice(info, lang.TxtHint, lang.TextStyleReset, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)

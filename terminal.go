@@ -539,6 +539,7 @@ func (t *Crt) NewTitledPage(title string) *Page {
 	m.AddAction(lang.SymActionForward) // Add Next action
 	m.AddAction(lang.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
+	m.viewPort = t
 	return &m
 }
 
