@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -88,6 +89,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 func (p *Page) AddAction(validAction string) {
 	if validAction == "" {
 		log.Fatal(errs.ErrInvalidAction)
+		return
+	}
+	//If the validAction is already in the list of actions, return
+	if slices.Contains(p.actions, validAction) {
+		//do nothing
 		return
 	}
 	validAction = strings.ReplaceAll(validAction, lang.Space, "")
@@ -202,7 +208,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	p.viewPort.Break()
 
 	p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	p.Hint("Valid actions are %v", strings.Join(p.actions, ", "))
+	p.Hint("Valid actions : %v", strings.Join(p.actions, ", "))
 	ok := false
 	for !ok {
 		nextAction = p.viewPort.Input(p.prompt, "")
