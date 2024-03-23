@@ -238,7 +238,7 @@ func (t *Crt) Input(msg string, options string) (output string) {
 func (t *Crt) InputError(err error, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	pp := t.SError(err, msg...)
-	gtrm.Print(t.Format(gtrm.Color(gtrm.Bold(lang.TxtError), gtrm.RED), pp))
+	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := t.Delay()
