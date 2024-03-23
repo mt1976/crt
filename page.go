@@ -125,6 +125,58 @@ func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) 
 	return "", pageRow{}
 }
 
+func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, selected pageRow) {
+	rowsDisplayed := 0
+	t.Clear()
+	t.Header(p.title)
+	for i := range p.pageRows {
+		if p.ActivePageIndex == p.pageRows[i].PageIndex {
+			rowsDisplayed++
+			if p.pageRows[i].Content == "" {
+				t.Println("")
+				continue
+			}
+			t.Println(format(t, p.pageRows[i]))
+		}
+	}
+	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
+	if extraRows > 0 {
+		for i := 0; i <= extraRows; i++ {
+			t.Print(lang.SymNewline)
+		}
+	}
+	t.Break()
+	for {
+
+		if minLen > 0 || maxLen > 0 {
+			p.Hint(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+		}
+
+		t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+
+		out := t.Input("", "")
+		if isActionIn(out, lang.SymActionQuit) {
+			return lang.SymActionQuit, pageRow{}
+		}
+
+		if isActionIn(out, lang.SymActionExit) {
+			os.Exit(0)
+		}
+
+		if minLen > 0 && len(out) < minLen {
+			t.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
+		}
+
+		if maxLen > 0 && len(out) > maxLen {
+			t.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
+		}
+
+		if len(out) >= minLen && len(out) <= maxLen {
+			return out, pageRow{}
+		}
+	}
+}
+
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
 	t.Clear()
@@ -180,58 +232,6 @@ func (p *Page) displayIt(t *Crt) (nextAction string, selected pageRow) {
 		os.Exit(0)
 	}
 	return upcase(nextAction), pageRow{}
-}
-
-func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, selected pageRow) {
-	rowsDisplayed := 0
-	t.Clear()
-	t.Header(p.title)
-	for i := range p.pageRows {
-		if p.ActivePageIndex == p.pageRows[i].PageIndex {
-			rowsDisplayed++
-			if p.pageRows[i].Content == "" {
-				t.Println("")
-				continue
-			}
-			t.Println(format(t, p.pageRows[i]))
-		}
-	}
-	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
-	if extraRows > 0 {
-		for i := 0; i <= extraRows; i++ {
-			t.Print(lang.SymNewline)
-		}
-	}
-	t.Break()
-	for {
-
-		if minLen > 0 || maxLen > 0 {
-			p.PageInfo(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
-		}
-
-		t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
-
-		out := t.Input("", "")
-		if isActionIn(out, lang.SymActionQuit) {
-			return lang.SymActionQuit, pageRow{}
-		}
-
-		if isActionIn(out, lang.SymActionExit) {
-			os.Exit(0)
-		}
-
-		if minLen > 0 && len(out) < minLen {
-			t.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
-		}
-
-		if maxLen > 0 && len(out) > maxLen {
-			t.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
-		}
-
-		if len(out) >= minLen && len(out) <= maxLen {
-			return out, pageRow{}
-		}
-	}
 }
 
 // NextPage moves to the next page.
@@ -422,7 +422,7 @@ func (p *Page) Paragraph(msg []string) {
 	}
 }
 
-func (p *Page) PageError(t *Crt, err error, msg ...string) {
+func (p *Page) Error(t *Crt, err error, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	//pp := t.SError(err, msg...)
 	pp := t.SENotice(err.Error(), lang.TxtError, lang.TextColorRed, msg...)
@@ -439,7 +439,7 @@ func (p *Page) PageError(t *Crt, err error, msg ...string) {
 	gtrm.Print(p.prompt)
 }
 
-func (p *Page) PageInfo(t *Crt, info string, msg ...string) {
+func (p *Page) Info(t *Crt, info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
 	pp := t.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
@@ -449,7 +449,7 @@ func (p *Page) PageInfo(t *Crt, info string, msg ...string) {
 	gtrm.Flush()
 }
 
-func (p *Page) PageHint(t *Crt, info string, msg ...string) {
+func (p *Page) Hint(t *Crt, info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
 	pp := t.SENotice(info, lang.TxtHint, lang.TextStyleReset, msg...)
@@ -459,7 +459,7 @@ func (p *Page) PageHint(t *Crt, info string, msg ...string) {
 	gtrm.Flush()
 }
 
-func (p *Page) PageWarning(t *Crt, warning string, msg ...string) {
+func (p *Page) Warning(t *Crt, warning string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	pp := t.SENotice(warning, lang.TxtWarning, lang.TextColorCyan, msg...)
 	gtrm.Print(lang.ConsoleClearLine)
