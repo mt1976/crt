@@ -161,10 +161,11 @@ const (
 	TxtApplicationVersion string = "StarTerm - Utilities 1.0 %s"
 	TxtApplicationName    string = "StarTerm"
 	SymPromptSymbol       string = "? "
-	TxtError              string = "[ERROR  ] "
-	TxtInfo               string = "[INFO   ] "
-	TxtWarning            string = "[WARNING] "
-	TxtSuccess            string = "[SUCCESS] "
+	TxtError              string = "ERROR "
+	TxtInfo               string = "INFO "
+	TxtWarning            string = "WARNING "
+	TxtSuccess            string = "SUCCESS "
+	TxtHint               string = "HINT "
 	TxtPaging             string = "Page %v of %v"
 )
 

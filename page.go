@@ -95,6 +95,10 @@ func (p *Page) AddAction(validAction string) {
 // The `Display` function is responsible for displaying the page content to the user and handling user
 // input.
 func (p *Page) Display(t *Crt) (nextAction string, selected pageRow) {
+	return p.DisplayWithActions(t)
+}
+
+func (p *Page) DisplayWithActions(t *Crt) (nextAction string, selected pageRow) {
 
 	exit := false
 	for !exit {
@@ -199,11 +203,12 @@ func (p *Page) DisplayAndInput(t *Crt, minLen, maxLen int) (nextAction string, s
 		}
 	}
 	t.Break()
-	if minLen > 0 || maxLen > 0 {
-		p.PageInfo(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
-	}
-	t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	for {
+		if minLen > 0 || maxLen > 0 {
+			p.PageInfo(t, lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+		}
+		t.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+
 		out := t.Input("", "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
@@ -429,6 +434,16 @@ func (p *Page) PageInfo(t *Crt, info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	gtrm.Print(lang.ConsoleClearLine)
 	pp := t.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
+	gtrm.Print(pp)
+	gtrm.MoveCursor(2, 22)
+	gtrm.Print(p.prompt)
+	gtrm.Flush()
+}
+
+func (p *Page) PageHint(t *Crt, info string, msg ...string) {
+	gtrm.MoveCursor(2, 23)
+	gtrm.Print(lang.ConsoleClearLine)
+	pp := t.SENotice(info, lang.TxtHint, lang.TextStyleReset, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
