@@ -26,17 +26,17 @@ import (
 // @property {bool} firstRow - The `firstRow` property is a boolean value that indicates whether the
 // current row is the first row of the terminal screen.
 type ViewPort struct {
-	isTerminal bool         // true if running in terminal mode
-	width      int          // the width of the terminal
-	height     int          // the height of the terminal
-	firstRow   bool         // true if the current row is the first row
-	delay      int          // delay in milliseconds
-	baudRate   int          // baud rate, which simulates the speed of a terminal
-	currentRow int          // the current row of the terminal
-	currentCol int          // the current column of the terminal
-	content    *pageContent // the current screen content
-	Helpers    *Helpers     // Helper functions
-	Formatters *Formatters  // Formatter functions
+	isTerminal     bool            // true if running in terminal mode
+	width          int             // the width of the terminal
+	height         int             // the height of the terminal
+	firstRow       bool            // true if the current row is the first row
+	delay          int             // delay in milliseconds
+	baudRate       int             // baud rate, which simulates the speed of a terminal
+	currentRow     int             // the current row of the terminal
+	currentCol     int             // the current column of the terminal
+	visibleContent *visibleContent // the current screen content
+	Helpers        *Helpers        // Helper functions
+	Formatters     *Formatters     // Formatter functions
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -55,7 +55,7 @@ func New() ViewPort {
 	x.defaultDelay() // set delay to 0
 	x.defaultBaud()  // set baud to 9600
 
-	x.newPageDefinition(x.width, x.height)
+	x.newPageContent(x.width, x.height)
 	x.Helpers = initHelpers()
 	x.Formatters = initFormatters()
 	return x
@@ -528,26 +528,11 @@ func (t *ViewPort) ClearCurrentLine() {
 	fmt.Print(lang.ConsoleClearLine)
 }
 
-// The NewTitledPage function creates a new page with a truncated title and initializes other properties.
-func (t *ViewPort) NewTitledPage(title string) *Page {
-	// truncate title to 25 characters
-	if len(title) > config.TitleLength {
-		title = title[:config.TitleLength] + lang.SymTruncate
-	}
-	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(lang.SymActionQuit) // Add Quit action
-	//m.AddAction(lang.SymActionForward) // Add Next action
-	//m.AddAction(lang.SymActionBack)    // Add Previous action
-	m.pageRowCounter = 0
-	m.viewPort = t
-	return &m
-}
-
-// newPageDefinition initializes a new page with the specified number of columns and rows.
-func (c *ViewPort) newPageDefinition(cols, rows int) {
-	p := pageContent{}
-	p.cols = cols
-	p.rows = rows
-	p.row = make(map[int]string)
-	c.content = &p
+// newPageContent initializes a new page with the specified number of columns and rows.
+func (t *ViewPort) newPageContent(cols, rows int) {
+	v := visibleContent{}
+	v.cols = cols
+	v.rows = rows
+	v.row = make(map[int]string)
+	t.visibleContent = &v
 }

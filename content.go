@@ -7,25 +7,25 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-// The "pageContent" type represents a pageContent with a map of rows and columns.
-// @property row - The "row" property is a map that stores the values of each row in the pageContent. The keys
+// The "visibleContent" type represents a visibleContent with a map of rows and columns.
+// @property row - The "row" property is a map that stores the values of each row in the visibleContent. The keys
 // of the map are integers representing the row numbers, and the values are strings representing the
 // content of each row.
-// @property {int} cols - The "cols" property represents the number of columns in the pageContent.
-// @property {int} rows - The "rows" property represents the number of rows in the pageContent.
-type pageContent struct {
+// @property {int} cols - The "cols" property represents the number of columns in the visibleContent.
+// @property {int} rows - The "rows" property represents the number of rows in the visibleContent.
+type visibleContent struct {
 	row    map[int]string
 	cols   int
 	rows   int
 	prompt string
 }
 
-func (p *pageContent) SetPrompt(prompt string) {
-	p.prompt = prompt
+func (v *visibleContent) SetPrompt(prompt string) {
+	v.prompt = prompt
 }
 
-func (p *pageContent) GetPrompt() string {
-	return p.prompt
+func (v *visibleContent) GetPrompt() string {
+	return v.prompt
 }
 
 // cleanContent removes unwanted characters from the rowContent string
@@ -50,12 +50,6 @@ func isInList(value string, list []string) bool {
 	// if no match was found, return false
 	return false
 }
-
-// The format function returns the first 50 characters of the content in a pageRow object.
-// format returns the first n characters of the content in a pageRow object.
-// func format(t *Crt, m pageRow) string {
-// 	return m.Content
-// }
 
 // The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.

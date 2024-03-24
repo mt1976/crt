@@ -35,7 +35,7 @@ type Page struct {
 // pageRow represents a row of content on a page.
 type pageRow struct {
 	ID          int    // The unique identifier of the page row.
-	Content     string // The content of the page row.
+	RowContent  string // The content of the page row.
 	PageIndex   int    // The index of the page row.
 	Title       string // The title of the page row.
 	AlternateID string // The alternate identifier of the page row.
@@ -44,6 +44,25 @@ type pageRow struct {
 
 func (p *Page) ViewPort() ViewPort {
 	return *p.viewPort
+}
+
+func NewPage() *Page {
+	return &Page{}
+}
+
+// The NewTitledPage function creates a new page with a truncated title and initializes other properties.
+func (t *ViewPort) NewTitledPage(title string) *Page {
+	// truncate title to 25 characters
+	if len(title) > config.TitleLength {
+		title = title[:config.TitleLength] + lang.SymTruncate
+	}
+	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	m.AddAction(lang.SymActionQuit) // Add Quit action
+	//m.AddAction(lang.SymActionForward) // Add Next action
+	//m.AddAction(lang.SymActionBack)    // Add Previous action
+	m.pageRowCounter = 0
+	m.viewPort = t
+	return &m
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
@@ -141,11 +160,11 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
-			if p.pageRows[i].Content == "" {
+			if p.pageRows[i].RowContent == "" {
 				p.viewPort.Println("")
 				continue
 			}
-			p.viewPort.Println(p.pageRows[i].Content)
+			p.viewPort.Println(p.pageRows[i].RowContent)
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
@@ -196,11 +215,11 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
-			if p.pageRows[i].Content == "" {
+			if p.pageRows[i].RowContent == "" {
 				p.viewPort.Println("")
 				continue
 			}
-			p.viewPort.Println(p.pageRows[i].Content)
+			p.viewPort.Println(p.pageRows[i].RowContent)
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
@@ -413,7 +432,7 @@ func (p *Page) AddOption(id int, rowContent string, altID string, dateTime strin
 	mi.AlternateID = altID
 	mi.Title = rowContent
 	mi.DateTime = dateTime
-	mi.Content = formatOption(mi)
+	mi.RowContent = formatOption(mi)
 	p.AddActionInt(id)
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
