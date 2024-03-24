@@ -480,6 +480,13 @@ func (t *ViewPort) defaultBaud() {
 func (t *ViewPort) PrintIt(msg string) {
 	t.currentRow++
 	rowString := fmt.Sprintf("%v", t.currentRow-1)
+	//truncate rowString to length-1 and add a | character to the end
+	if len(rowString) < t.width {
+		rowString = rowString + lang.Space
+	} else {
+		rowString = rowString[0:t.width-1] + lang.BoxCharacterNormal
+	}
+	t.Print(rowString + msg)
 	if t.NoBaudRate() {
 		fmt.Print(msg + lang.Space)
 		return
