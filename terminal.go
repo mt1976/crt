@@ -183,6 +183,7 @@ func (t *ViewPort) Break() {
 // prints it to the terminal. It uses the `Format` method of the `Crt` struct to format the message
 // with the normal character (`chNormal`). Then, it prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) Print(msg string) {
+	//log.Println(msg)
 	t.PrintIt(t.Format(msg, ""))
 }
 
@@ -486,7 +487,7 @@ func (t *ViewPort) PrintIt(msg string) {
 	} else {
 		rowString = rowString[0:t.width-1] + lang.BoxCharacterNormal
 	}
-	t.Print(rowString + msg)
+	//t.Print(rowString + msg)
 	if t.NoBaudRate() {
 		fmt.Print(msg + lang.Space)
 		return
