@@ -37,6 +37,7 @@ type ViewPort struct {
 	visibleContent *visibleContent // the current screen content
 	Helpers        *Helpers        // Helper functions
 	Formatters     *Formatters     // Formatter functions
+	Styles         *Styles         // Colour functions
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -58,6 +59,7 @@ func New() ViewPort {
 	x.newPageContent(x.width, x.height)
 	x.Helpers = initHelpers()
 	x.Formatters = initFormatters()
+	x.Styles = initStyles()
 	return x
 }
 
@@ -319,7 +321,7 @@ func (t *ViewPort) Clear() {
 // prints a formatted message to the terminal.
 func (t *ViewPort) Shout(msg string) {
 	t.PrintIt(t.row() + lang.SymNewline)
-	t.PrintIt(t.Format(lang.TextStyleBold+lang.TextStyleReset+msg, "") + lang.SymNewline)
+	t.PrintIt(t.Format(t.Styles.Bold+t.Styles.Reset+msg, "") + lang.SymNewline)
 	t.PrintIt(t.lineBreakEnd() + lang.SymNewline)
 }
 
@@ -333,7 +335,7 @@ func (t *ViewPort) Error(err error, msg ...string) {
 
 func (t *ViewPort) SError(err error, msg ...string) string {
 	errText := err.Error()
-	colour := lang.TextColorRed
+	colour := t.Styles.Red
 	return t.SENotice(errText, lang.TxtError, colour, msg...)
 }
 
@@ -352,7 +354,7 @@ func (t *ViewPort) SENotice(errText, promptTxt, colour string, msg ...string) st
 	for i := range msg {
 		qq = strings.Replace(qq, "%v", fmt.Sprintf("%v", msg[i]), 1)
 	}
-	errText = (colour + promptTxt + lang.TextStyleReset) + qq
+	errText = (colour + promptTxt + t.Styles.Reset) + qq
 	errText = t.Format(errText, "")
 	return errText
 }
@@ -362,7 +364,7 @@ func (t *ViewPort) SENotice(errText, promptTxt, colour string, msg ...string) st
 // characters (`bold` and `reset`). The `fmt.Sprintf` function is used to concatenate the escape
 // characters and the `msg` string.
 // func (T *Crt) bold(msg string) string {
-// 	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleBold, msg, lang.TextStyleReset)
+// 	return fmt.Sprintf(lang.TextLineConstructor, p.viewPort.Styles.Bold, msg, p.viewPort.Styles.Reset)
 // }
 
 // The `Underline` method of the `Crt` struct is used to format a string with an underline. It takes a
@@ -371,7 +373,7 @@ func (t *ViewPort) SENotice(errText, promptTxt, colour string, msg ...string) st
 // concatenate the escape characters and the `msg` string. This method is used to create an underlined
 // text effect when printing to the terminal.
 func (t *ViewPort) Underline(msg string) string {
-	return fmt.Sprintf(lang.TextLineConstructor, lang.TextStyleUnderline, msg, lang.TextStyleReset)
+	return fmt.Sprintf(lang.TextLineConstructor, t.Styles.Underline, msg, t.Styles.Reset)
 }
 
 // Spool prints the contents of a byte slice to the terminal.
@@ -525,7 +527,7 @@ func (t *ViewPort) NoBaudRate() bool {
 
 // ClearCurrentLine clears the current line in the terminal
 func (t *ViewPort) ClearCurrentLine() {
-	fmt.Print(lang.ConsoleClearLine)
+	fmt.Print(t.Styles.ClearLine)
 }
 
 // newPageContent initializes a new page with the specified number of columns and rows.

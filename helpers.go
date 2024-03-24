@@ -1,6 +1,10 @@
 package crt
 
-import "time"
+import (
+	"time"
+
+	styl "github.com/mt1976/crt/styles"
+)
 
 type Helpers struct {
 	RandomIP           func() string
@@ -36,6 +40,21 @@ type Formatters struct {
 	TimeAgo                 func(t string) string
 	FormatDate              func(t time.Time) string
 	FormatDuration          func(t time.Duration) string
+}
+
+type Styles struct {
+	Reset     string
+	Red       string
+	Green     string
+	Yellow    string
+	Blue      string
+	Purple    string
+	Cyan      string
+	Gray      string
+	White     string
+	Bold      string
+	Underline string
+	ClearLine string
 }
 
 func initHelpers() *Helpers {
@@ -78,4 +97,22 @@ func initFormatters() *Formatters {
 		FormatDuration:          formatDuration,
 	}
 	return &fmts
+}
+
+func initStyles() *Styles {
+	s := Styles{
+		Reset:     styl.Reset,
+		Red:       styl.Red,
+		Green:     styl.Green,
+		Yellow:    styl.Yellow,
+		Blue:      styl.Blue,
+		Purple:    styl.Purple,
+		Cyan:      styl.Cyan,
+		Gray:      styl.Gray,
+		White:     styl.White,
+		Bold:      styl.Bold,
+		Underline: styl.Underline,
+		ClearLine: styl.ClearLine,
+	}
+	return &s
 }

@@ -3,7 +3,7 @@ package crt
 import (
 	"testing"
 
-	lang "github.com/mt1976/crt/language"
+	styl "github.com/mt1976/crt/styles"
 )
 
 func Test_upcase(t *testing.T) {
@@ -86,7 +86,7 @@ func Test_trimRepeatingCharacters(t *testing.T) {
 
 func Test_Bold(t *testing.T) {
 	input := "hello world"
-	expected := lang.TextStyleBold + input + lang.TextStyleReset
+	expected := styl.Bold + input + styl.Reset
 	actual := bold(input)
 	if actual != expected {
 		t.Errorf("Expected %s but got %s", expected, actual)

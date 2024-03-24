@@ -126,6 +126,152 @@ func (p *Page) AddAction(validAction string) {
 	}
 }
 
+// AddAction_int adds an action to the page with the given integer value
+func (p *Page) AddAction_int(validAction int) {
+	p.AddAction(fmt.Sprintf("%v", validAction))
+}
+
+// The `Add` function is used to add a new row of data to a page. It takes four parameters:
+// `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
+func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime string) {
+	// lets clean the rowContent
+	rowContent = cleanContent(rowContent)
+
+	if rowContent == "" {
+		return
+	}
+
+	if strings.Trim(rowContent, lang.Space) == "" {
+		return
+	}
+
+	p.counter++
+
+	if p.counter >= conf.Configuration.MaxContentRows {
+		p.counter = 0
+		p.noPages++
+	}
+
+	if len(rowContent) > config.TerminalWidth {
+		rowContent = rowContent[:config.TerminalWidth]
+	}
+
+	p.pageRowCounter++
+	mi := pageRow{}
+	mi.ID = id
+	mi.PageIndex = p.noPages
+	mi.AlternateID = altID
+	mi.Title = rowContent
+	mi.DateTime = dateTime
+	mi.RowContent = formatOption(mi)
+	p.AddAction_int(id)
+	p.pageRows = append(p.pageRows, mi)
+	p.noRows++
+}
+
+// AddFieldValuePair adds a field value pair to the page
+//
+// AddFieldValuePair takes two strings as arguments, where the first string represents the field name and the second string represents the field value. The function adds a row to the page with the field name on the left and the field value on the right, separated by a colon.
+//
+// Example:
+//
+//	page.AddFieldValuePair("Field Name", "Field Value")
+func (p *Page) AddFieldValuePair(key string, value string) {
+	// format the field value pair
+	format := "%-20s : %s" + lang.SymNewline
+	p.Add(fmt.Sprintf(format, key, value), "", "")
+}
+
+// AddColumns adds columns of data to the page
+//
+// AddColumns takes a variadic number of strings as arguments, where each string represents a column of data.
+// The function calculates the optimal column width based on the terminal width, and then adds each column
+// to the page, right-aligned.
+//
+// If the number of columns specified is greater than 10, an error is returned.
+//
+// Example:
+//
+//	page.AddColumns("Column 1", "Column 2", "Column 3")
+func (p *Page) AddColumns(columns ...string) {
+	// Check the number of columns
+	if len(columns) > 10 {
+		p.viewPort.Error(errs.ErrAddColumns)
+		os.Exit(1)
+	}
+
+	// Get the terminal width
+	screenWidth := p.viewPort.Width()
+
+	// Calculate the column width
+	colSize := screenWidth / len(columns)
+
+	// Loop through each column
+	var output []string
+	for i := 0; i < len(columns); i++ {
+		// Get the current column
+		op := columns[i]
+
+		// Check if the column is longer than the column width
+		if len(op) > colSize {
+			// Truncate the column to the column width
+			op = op[0:colSize]
+		} else {
+			// Calculate the number of spaces to add
+			noToAdd := colSize - (len(op) + 1)
+
+			// Add the spaces to the column
+			op = op + strings.Repeat(lang.Space, noToAdd)
+		}
+
+		// Add the column to the output slice
+		output = append(output, op)
+	}
+
+	// Join the output slice into a single string and add it to the page
+	p.Add(strings.Join(output, lang.Space), "", "")
+}
+
+// AddColumnsTitle adds a ruler to the page, separating the columns
+func (p *Page) AddColumnsTitle(columns ...string) {
+	p.AddColumns(columns...)
+	var output []string
+	screenWidth := p.viewPort.Width()
+	colSize := screenWidth / len(columns)
+
+	for i := 0; i < len(columns); i++ {
+
+		op := columns[i]
+		if len(op) > colSize {
+			op = op[0:colSize]
+		} else {
+			noToAdd := colSize - (len(op) + 1)
+			op = op + strings.Repeat(lang.Space, noToAdd)
+		}
+
+		noChars := len(op)
+		op = strings.Repeat(lang.TableCharacterUnderline, noChars)
+
+		output = append(output, op)
+	}
+
+	// turn string array into sigle string
+	p.Add(strings.Join(output, lang.Space), "", "")
+}
+
+// AddBlankRow adds a blank row to the page
+func (p *Page) AddBlankRow() {
+	p.Add(lang.SymBlank, "", "")
+}
+
+func (p *Page) AddParagraph(msg []string) {
+	// make sure the lines are no longer than the screen width and wrap them if they are.
+	for _, s := range msg {
+		s = trimRepeatingCharacters(s, lang.Space)
+		p.Add(s, "", "")
+	}
+}
+
 func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 
 	exit := false
@@ -295,96 +441,6 @@ func (p *Page) GetRows() int {
 	return p.noRows
 }
 
-// AddFieldValuePair adds a field value pair to the page
-//
-// AddFieldValuePair takes two strings as arguments, where the first string represents the field name and the second string represents the field value. The function adds a row to the page with the field name on the left and the field value on the right, separated by a colon.
-//
-// Example:
-//
-//	page.AddFieldValuePair("Field Name", "Field Value")
-func (p *Page) AddFieldValuePair(key string, value string) {
-	// format the field value pair
-	format := "%-20s : %s" + lang.SymNewline
-	p.Add(fmt.Sprintf(format, key, value), "", "")
-}
-
-// AddColumns adds columns of data to the page
-//
-// AddColumns takes a variadic number of strings as arguments, where each string represents a column of data.
-// The function calculates the optimal column width based on the terminal width, and then adds each column
-// to the page, right-aligned.
-//
-// If the number of columns specified is greater than 10, an error is returned.
-//
-// Example:
-//
-//	page.AddColumns("Column 1", "Column 2", "Column 3")
-func (p *Page) AddColumns(columns ...string) {
-	// Check the number of columns
-	if len(columns) > 10 {
-		p.viewPort.Error(errs.ErrAddColumns)
-		os.Exit(1)
-	}
-
-	// Get the terminal width
-	screenWidth := p.viewPort.Width()
-
-	// Calculate the column width
-	colSize := screenWidth / len(columns)
-
-	// Loop through each column
-	var output []string
-	for i := 0; i < len(columns); i++ {
-		// Get the current column
-		op := columns[i]
-
-		// Check if the column is longer than the column width
-		if len(op) > colSize {
-			// Truncate the column to the column width
-			op = op[0:colSize]
-		} else {
-			// Calculate the number of spaces to add
-			noToAdd := colSize - (len(op) + 1)
-
-			// Add the spaces to the column
-			op = op + strings.Repeat(lang.Space, noToAdd)
-		}
-
-		// Add the column to the output slice
-		output = append(output, op)
-	}
-
-	// Join the output slice into a single string and add it to the page
-	p.Add(strings.Join(output, lang.Space), "", "")
-}
-
-// AddColumnsTitle adds a ruler to the page, separating the columns
-func (p *Page) AddColumnsTitle(columns ...string) {
-	p.AddColumns(columns...)
-	var output []string
-	screenWidth := p.viewPort.Width()
-	colSize := screenWidth / len(columns)
-
-	for i := 0; i < len(columns); i++ {
-
-		op := columns[i]
-		if len(op) > colSize {
-			op = op[0:colSize]
-		} else {
-			noToAdd := colSize - (len(op) + 1)
-			op = op + strings.Repeat(lang.Space, noToAdd)
-		}
-
-		noChars := len(op)
-		op = strings.Repeat(lang.TableCharacterUnderline, noChars)
-
-		output = append(output, op)
-	}
-
-	// turn string array into sigle string
-	p.Add(strings.Join(output, lang.Space), "", "")
-}
-
 // SetPrompt sets the prompt for the page
 func (p *Page) SetPrompt(prompt string) {
 	p.prompt = prompt
@@ -395,66 +451,10 @@ func (p *Page) ResetPrompt() {
 	p.prompt = lang.TxtPagingPrompt
 }
 
-// BlankRow adds a blank row to the page
-func (p *Page) BlankRow() {
-	p.Add(lang.SymBlank, "", "")
-}
-
-// The `Add` function is used to add a new row of data to a page. It takes four parameters:
-// `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
-func (p *Page) AddOption(id int, rowContent string, altID string, dateTime string) {
-	// lets clean the rowContent
-	rowContent = cleanContent(rowContent)
-
-	if rowContent == "" {
-		return
-	}
-
-	if strings.Trim(rowContent, lang.Space) == "" {
-		return
-	}
-
-	p.counter++
-
-	if p.counter >= conf.Configuration.MaxContentRows {
-		p.counter = 0
-		p.noPages++
-	}
-
-	if len(rowContent) > config.TerminalWidth {
-		rowContent = rowContent[:config.TerminalWidth]
-	}
-
-	p.pageRowCounter++
-	mi := pageRow{}
-	mi.ID = id
-	mi.PageIndex = p.noPages
-	mi.AlternateID = altID
-	mi.Title = rowContent
-	mi.DateTime = dateTime
-	mi.RowContent = formatOption(mi)
-	p.AddActionInt(id)
-	p.pageRows = append(p.pageRows, mi)
-	p.noRows++
-}
-
-// AddActionInt adds an action to the page with the given integer value
-func (p *Page) AddActionInt(validAction int) {
-	p.AddAction(fmt.Sprintf("%v", validAction))
-}
-
-func (p *Page) Paragraph(msg []string) {
-	// make sure the lines are no longer than the screen width and wrap them if they are.
-	for _, s := range msg {
-		s = trimRepeatingCharacters(s, lang.Space)
-		p.Add(s, "", "")
-	}
-}
-
 func (p *Page) Error(err error, msg ...string) {
 	gtrm.MoveCursor(2, 23)
 	//pp := t.SError(err, msg...)
-	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, lang.TextColorRed, msg...)
+	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
@@ -463,15 +463,15 @@ func (p *Page) Error(err error, msg ...string) {
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
 	gtrm.MoveCursor(2, 22)
-	gtrm.Print(lang.ConsoleClearLine)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
 }
 
 func (p *Page) Info(info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
-	gtrm.Print(lang.ConsoleClearLine)
-	pp := p.viewPort.SENotice(info, lang.TxtInfo, lang.TextColorCyan, msg...)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
+	pp := p.viewPort.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
@@ -480,8 +480,8 @@ func (p *Page) Info(info string, msg ...string) {
 
 func (p *Page) Hint(info string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
-	gtrm.Print(lang.ConsoleClearLine)
-	pp := p.viewPort.SENotice(info, lang.TxtHint, lang.TextStyleReset, msg...)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
+	pp := p.viewPort.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
@@ -490,8 +490,8 @@ func (p *Page) Hint(info string, msg ...string) {
 
 func (p *Page) Warning(warning string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
-	pp := p.viewPort.SENotice(warning, lang.TxtWarning, lang.TextColorCyan, msg...)
-	gtrm.Print(lang.ConsoleClearLine)
+	pp := p.viewPort.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
@@ -500,18 +500,18 @@ func (p *Page) Warning(warning string, msg ...string) {
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
 	gtrm.MoveCursor(2, 22)
-	gtrm.Print(lang.ConsoleClearLine)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
 }
 
-func (p *Page) PageSuccess(message string, msg ...string) {
+func (p *Page) Success(message string, msg ...string) {
 	gtrm.MoveCursor(2, 23)
-	gtrm.Print(lang.ConsoleClearLine)
-	pp := p.viewPort.SENotice(message, lang.TxtSuccess, lang.TextColorCyan, msg...)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
+	pp := p.viewPort.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(2, 22)
-	gtrm.Print(lang.ConsoleClearLine)
+	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.MoveCursor(2, 22)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
