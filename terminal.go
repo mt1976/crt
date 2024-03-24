@@ -14,6 +14,8 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
+var col = 0
+
 // The ViewPort type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
 // @property {bool} isTerminal - A boolean value indicating whether the CRT (Cathode Ray Tube) is a
@@ -77,7 +79,7 @@ func (t *ViewPort) row() string {
 		displayChar = lang.BoxCharacterStart
 		t.firstRow = false
 	}
-	return t.lineBreakJunction(displayChar)
+	return displayChar + strings.Repeat(lang.BoxCharacterBar, t.width-2) + lang.BoxCharacterNormal
 }
 
 // The `Close()` function is a method of the `Crt` struct. It is used to print a closing line on the
@@ -183,7 +185,7 @@ func (t *ViewPort) Break() {
 // prints it to the terminal. It uses the `Format` method of the `Crt` struct to format the message
 // with the normal character (`chNormal`). Then, it prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) Print(msg string) {
-	//log.Println(msg)
+	//log.Println(msg)x
 	t.PrintIt(t.Format(msg, ""))
 }
 
@@ -218,9 +220,9 @@ func (t *ViewPort) Special(msg string) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (t *ViewPort) Input(msg string, options string) (output string) {
-	gtrm.MoveCursor(2, 21)
+	gtrm.MoveCursor(col, 21)
 	gtrm.Print(t.row())
-	gtrm.MoveCursor(2, 22)
+	gtrm.MoveCursor(col, 22)
 	mesg := msg
 	//T.Format(msg, "")
 	if options != "" {
@@ -239,7 +241,7 @@ func (t *ViewPort) Input(msg string, options string) (output string) {
 
 // The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) InputError(err error, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	pp := t.SError(err, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
@@ -251,11 +253,11 @@ func (t *ViewPort) InputError(err error, msg ...string) {
 }
 
 func (t *ViewPort) InfoMessage(msg string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	//Print a line that clears the entire line
 	blanks := strings.Repeat(lang.Space, t.width)
 	gtrm.Print(t.Format(blanks, ""))
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	gtrm.Print(
 		t.Format(gtrm.Color(gtrm.Bold(lang.TxtInfo), gtrm.CYAN)+msg, ""))
 	//T.Print(msg + t.SymNewline)
@@ -280,7 +282,7 @@ func (t *ViewPort) InputPagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
 	lmsg := len(msg)
 	gtrm.MoveCursor(t.width-lmsg-1, 22)
-	//gT.MoveCursor(2, 23)
+	//gT.MoveCursor(col, 23)
 	gtrm.Print(
 		t.Format(gtrm.Color(msg, gtrm.YELLOW), ""))
 	//T.Print(msg + t.SymNewline)
@@ -314,7 +316,7 @@ func (t *ViewPort) Clear() {
 	t.firstRow = true
 	t.currentRow = 0
 	gtrm.Clear()
-	gtrm.MoveCursor(2, 1)
+	gtrm.MoveCursor(col, 1)
 	gtrm.Flush()
 }
 
@@ -419,7 +421,10 @@ func (t *ViewPort) Banner(msg string) {
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (t *ViewPort) Header(msg string) {
-	t.PrintIt(t.row() + lang.SymNewline)
+	// Print Header Line
+	gtrm.MoveCursor(1, 1)
+	gtrm.Println(t.row()) // + lang.SymNewline)
+	gtrm.MoveCursor(col, 2)
 	var line map[int]string = make(map[int]string)
 	midway := (t.width - len(msg)) / 2
 	for i := 0; i < len(lang.TxtApplicationName); i++ {
@@ -443,7 +448,8 @@ func (t *ViewPort) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	t.Print(bold(headerRowString) + lang.SymNewline)
+	gtrm.Print(bold(headerRowString) + lang.SymNewline)
+	gtrm.Flush()
 	t.Break()
 }
 
@@ -473,31 +479,42 @@ func (t *ViewPort) defaultBaud() {
 
 // PrintIt prints a message to the terminal.
 //
-// If the CRT's baud rate is set to 0, the function prints the message without applying any delays or formatting.
+// If the CRT's baud rate is set to col, the function prints the message without applying any delays or formatting.
 // If the baud rate is non-zero, the function prints the message character by character, with a delay of 1000000 microseconds (1 millisecond) between each character.
 // The function also prints the current row number at the end of the message.
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (t *ViewPort) PrintIt(msg string) {
 	t.currentRow++
-	rowString := fmt.Sprintf("%v", t.currentRow-1)
+	rowString := msg
+	gtrm.MoveCursor(col, t.currentRow)
 	//truncate rowString to length-1 and add a | character to the end
+	//log.Printf("len(rowString): %v\n", len(rowString))
+	//log.Printf("t.width: %v\n", t.width)
+	//log.Printf("msg: %v\n", msg)
+	//log.Printf("t.currentRow: %v\n", t.currentRow)
 	if len(rowString) < t.width {
-		rowString = rowString + lang.Space
+		rowString = rowString + strings.Repeat(".", t.width-(len(rowString)+1))
 	} else {
-		rowString = rowString[0:t.width-1] + lang.BoxCharacterNormal
+		rowString = rowString[0 : t.width+1]
 	}
-	//t.Print(rowString + msg)
+	//t.Print(rowString + msg
+	rowString = rowString + lang.BoxCharacterNormal
+	//log.Printf("rowString: [%v]\n", rowString)
+	//log.Printf("len(rowString): %v\n", len(rowString))
 	if t.NoBaudRate() {
-		fmt.Print(msg + lang.Space)
+		gtrm.Print(rowString)
+		//fmt.Println(rowString)
 		return
 	} else {
 		// print one character at a time
-		for _, c := range msg {
-			fmt.Print(string(c))
+		for col, c := range msg {
+			gtrm.MoveCursor(col, t.currentRow)
+			gtrm.Print(string(c))
+			//fmt.Print(string(c))
 			time.Sleep(time.Duration(1000000/t.baudRate) * time.Microsecond)
 		}
-		fmt.Print(lang.Space + rowString)
+		//fmt.Print(lang.Space + rowString)
 		//fmt.Println("")
 	}
 }
@@ -509,7 +526,7 @@ func (t *ViewPort) Height() int {
 
 // Println prints a message to the terminal and adds a new line.
 //
-// If the CRT's baud rate is set to 0, the function prints the message without applying any delays or formatting.
+// If the CRT's baud rate is set to col, the function prints the message without applying any delays or formatting.
 // If the baud rate is non-zero, the function prints the message character by character, with a delay of 1000000 microseconds (1 millisecond) between each character.
 // The function also prints the current row number at the end of the message.
 //
@@ -528,7 +545,7 @@ func (t *ViewPort) CurrentRow() int {
 	return t.currentRow
 }
 
-// NoBaudRate returns true if the CRT's baud rate is set to 0, false otherwise.
+// NoBaudRate returns true if the CRT's baud rate is set to col, false otherwise.
 func (t *ViewPort) NoBaudRate() bool {
 	return t.baudRate == 0
 }

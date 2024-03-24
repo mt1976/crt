@@ -16,6 +16,10 @@ import (
 )
 
 var config = conf.Configuration
+var First = 0
+var Middle = 1
+var Last = 2
+var Break = 3
 
 // Page represents a page in a document or a user interface.
 type Page struct {
@@ -353,31 +357,53 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt() (nextAction string, selected pageRow) {
-	p.viewPort.Clear()
+	gtrm.Clear()
+	//gtrm.MoveCursor(col, 0)
+	// header row
+	//hr := gtrm.Color(strings.Repeat("*", config.TerminalWidth), gtrm.CYAN)
+	//gtrm.Println(hr)
+	p.Header(p.title)
+	//gtrm.MoveCursor(col, 2)
+	//gtrm.Println(p.title)
+	//gtrm.MoveCursor(col, 3)
+	//gtrm.Println(hr)
+	//p.viewPort.Clear()
 	rowsDisplayed := 0
-	p.AddAction(lang.SymActionQuit) // Add Quit action
-	p.AddAction(lang.SymActionExit)
-	p.viewPort.Header(p.title)
+	offset := 4
+	//p.AddAction(lang.SymActionQuit) // Add Quit action
+	//p.AddAction(lang.SymActionExit)
+	//p.viewPort.Header(p.title)
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			if p.pageRows[i].RowContent == "" {
-				p.viewPort.Println("")
+				gtrm.MoveCursor(col, offset+i)
+				gtrm.Println(p.viewPort.Format("", ""))
+				//	p.viewPort.Println("")
 				continue
 			}
-			p.viewPort.Println(p.pageRows[i].RowContent)
+			//p.viewPort.Println(p.pageRows[i].RowContent)
+			gtrm.MoveCursor(col, offset+i)
+			gtrm.Println(p.viewPort.Format(p.pageRows[i].RowContent, ""))
 		}
 	}
-	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
+	extraRows := (config.MaxContentRows - rowsDisplayed)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			p.viewPort.Print(lang.SymNewline)
+			//p.viewPort.Print(lang.SymNewline)
+			gtrm.MoveCursor(col, rowsDisplayed+i+offset)
+			gtrm.Println(p.viewPort.Format("", ""))
 		}
 	}
-	p.viewPort.Break()
-
-	p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	//p.viewPort.Break()
+	gtrm.MoveCursor(col, 21)
+	gtrm.Println(p.row(Middle))
+	gtrm.MoveCursor(col, 24)
+	gtrm.Println(p.row(Last))
+	//	gtrm.MoveCursor(2, 4)
+	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
+	gtrm.Flush()
 	ok := false
 	for !ok {
 		nextAction = p.viewPort.Input(p.prompt, "")
@@ -407,6 +433,77 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 		os.Exit(0)
 	}
 	return upcase(nextAction), pageRow{}
+}
+
+// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
+// message to the console.
+func (p *Page) Header(msg string) {
+	// Print Header Line
+	gtrm.MoveCursor(col, 1)
+	gtrm.Println(p.row(First))
+	gtrm.MoveCursor(col, 2)
+	width := p.viewPort.Width()
+	gtrm.Println(p.viewPort.Format(lang.TxtApplicationName, ""))
+	midway := (width - len(msg)) / 2
+	gtrm.MoveCursor(midway, 2)
+	gtrm.Print(msg)
+	gtrm.MoveCursor(width-len(dateTimeString()), 2)
+	gtrm.Print(dateTimeString())
+	gtrm.MoveCursor(width, 2)
+	gtrm.Println(lang.BoxCharacterNormal)
+	gtrm.MoveCursor(col, 3)
+	gtrm.Println(p.row(Middle))
+}
+
+// The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
+// terminal.
+func (p *Page) Input(msg string, options string) (output string) {
+	// gtrm.MoveCursor(col, 21)
+	// gtrm.Print(p.row(Middle))
+	gtrm.MoveCursor(col, 22)
+	mesg := msg
+	//T.Format(msg, "")
+	if options != "" {
+		mesg = (p.viewPort.Format(msg, "") + pQuote(bold(options)))
+	}
+	mesg = mesg + lang.SymPromptSymbol
+	//mesg = p.viewPort.Format(mesg, "")
+	//T.Print(mesg)
+	gtrm.Print(mesg)
+	gtrm.Flush()
+	var out string
+	fmt.Scan(&out)
+	output = out
+	return output
+}
+
+func (p *Page) row(which int) string {
+	//	displayChar := lang.BoxCharacterBreak
+	bar := strings.Repeat(lang.BoxCharacterBar, p.viewPort.width-2)
+	switch which {
+	case First:
+		return lang.BoxCharacterStart + bar + "┓"
+	case Last:
+		return "┗" + bar + "┛"
+	case Middle:
+		return lang.BoxCharacterBreak + bar + "┫"
+	default:
+		return lang.BoxCharacterNormal + bar + lang.BoxCharacterNormal
+	}
+	//return displayChar + strings.Repeat(lang.BoxCharacterBar, t.width-2) + lang.BoxCharacterNormal
+}
+
+// func (p *Page) Break(row int) {
+// 	gtrm.MoveCursor(col, row)
+// 	gtrm.Println(p.viewPort.row())
+// 	//t.PrintIt(t.row() + lang.SymNewline)
+// }
+
+func (p *Page) PagingInfo(page, ofPages int) {
+	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
+	lmsg := len(msg)
+	gtrm.MoveCursor(p.viewPort.width-lmsg-1, 22)
+	gtrm.Print(""+gtrm.Color(msg, gtrm.YELLOW), "")
 }
 
 // NextPage moves to the next page.
@@ -452,7 +549,7 @@ func (p *Page) ResetPrompt() {
 }
 
 func (p *Page) Error(err error, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	//pp := t.SError(err, msg...)
 	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
 	gtrm.Print(pp)
@@ -462,34 +559,32 @@ func (p *Page) Error(err error, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	gtrm.MoveCursor(2, 22)
-	gtrm.Print(p.viewPort.Styles.ClearLine)
-	gtrm.MoveCursor(2, 22)
+	p.Clearline(22)
 	gtrm.Print(p.prompt)
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
-	gtrm.MoveCursor(2, 22)
+	p.Clearline(22)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
 	gtrm.Print(pp)
-	gtrm.MoveCursor(2, 22)
+	p.Clearline(22)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	pp := p.viewPort.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.Print(pp)
@@ -499,20 +594,23 @@ func (p *Page) Warning(warning string, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	gtrm.MoveCursor(2, 22)
-	gtrm.Print(p.viewPort.Styles.ClearLine)
-	gtrm.MoveCursor(2, 22)
+	p.Clearline(22)
 	gtrm.Print(p.prompt)
 }
 
+func (p *Page) Clearline(row int) {
+	gtrm.MoveCursor(col, row)
+	gtrm.Print(strings.Repeat(lang.Space, config.TerminalWidth))
+	gtrm.MoveCursor(col, row)
+}
 func (p *Page) Success(message string, msg ...string) {
-	gtrm.MoveCursor(2, 23)
+	gtrm.MoveCursor(col, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
-	gtrm.MoveCursor(2, 22)
+	gtrm.MoveCursor(col, 22)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
-	gtrm.MoveCursor(2, 22)
+	gtrm.MoveCursor(col, 22)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
