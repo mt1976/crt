@@ -15,7 +15,7 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-var col = 0
+const col int = 1
 
 // The ViewPort type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
