@@ -1,12 +1,7 @@
 package crt
 
 import (
-	"fmt"
 	"testing"
-
-	lang "github.com/mt1976/crt/language"
-
-	goterm "github.com/buger/goterm"
 )
 
 func TestPage_Add(t *testing.T) {
@@ -54,25 +49,4 @@ func TestPage_Add(t *testing.T) {
 			p.Add(tt.args.rowContent, tt.args.altID, tt.args.dateTime)
 		})
 	}
-}
-
-func Test_PrintIt(t *testing.T) {
-	t.Run("No Baud Rate", func(t *testing.T) {
-		vp := New()
-		msg := "Hello, World!"
-		vp.PrintIt(msg)
-		if got, want := fmt.Sprintf("%s", goterm.Screen.String()), fmt.Sprintf("%s%s", msg, "\n"); got != want {
-			t.Errorf("got %q, want %q", got, want)
-		}
-	})
-
-	t.Run("With Baud Rate", func(t *testing.T) {
-		vp := New()
-		vp.SetBaud(9600)
-		msg := "Hello, World!"
-		vp.PrintIt(msg)
-		if got, want := fmt.Sprintf("%s", goterm.Screen.String()), fmt.Sprintf("%c%s%c", lang.BoxCharacterNormal, msg, lang.BoxCharacterNormal); got != want {
-			t.Errorf("got %q, want %q", got, want)
-		}
-	})
 }

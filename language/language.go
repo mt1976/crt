@@ -180,11 +180,6 @@ var ApplicationHeader []string = []string{
 
 // General
 const (
-	BoxCharacterNormal      string = "┃"
-	BoxCharacterBreak       string = "┣"
-	BoxCharacterStart       string = "┏"
-	BoxCharacterBar         string = "━"
-	BoxCharacterBarBreak    string = "┗"
 	TableCharacterUnderline string = "-"
 	TextLineConstructor     string = "%s%s%s"
 	MACAddressConstructor   string = "%v:%v:%v:%v:%v:%v"

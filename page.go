@@ -10,16 +10,20 @@ import (
 
 	gtrm "github.com/buger/goterm"
 	beep "github.com/gen2brain/beeep"
+	boxr "github.com/mt1976/crt/box"
 	conf "github.com/mt1976/crt/config"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 )
 
 var config = conf.Configuration
-var First = 0
-var Middle = 1
-var Last = 2
-var Break = 3
+
+const (
+	first = iota
+	middle
+	last
+	lineBreak
+)
 
 // Page represents a page in a document or a user interface.
 type Page struct {
@@ -397,9 +401,9 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	}
 	//p.viewPort.Break()
 	gtrm.MoveCursor(col, 21)
-	gtrm.Println(p.row(Middle))
+	gtrm.Println(p.row(middle))
 	gtrm.MoveCursor(col, 24)
-	gtrm.Println(p.row(Last))
+	gtrm.Println(p.row(last))
 	//	gtrm.MoveCursor(2, 4)
 	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
@@ -440,7 +444,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 func (p *Page) Header(msg string) {
 	// Print Header Line
 	gtrm.MoveCursor(col, 1)
-	gtrm.Println(p.row(First))
+	gtrm.Println(p.row(first))
 	gtrm.MoveCursor(col, 2)
 	width := p.viewPort.Width()
 	gtrm.Println(p.viewPort.Format(lang.TxtApplicationName, ""))
@@ -450,9 +454,9 @@ func (p *Page) Header(msg string) {
 	gtrm.MoveCursor(width-len(dateTimeString()), 2)
 	gtrm.Print(dateTimeString())
 	gtrm.MoveCursor(width, 2)
-	gtrm.Println(lang.BoxCharacterNormal)
+	//gtrm.Println(lang.BoxCharacterUpright)
 	gtrm.MoveCursor(col, 3)
-	gtrm.Println(p.row(Middle))
+	gtrm.Println(p.row(middle))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -478,26 +482,23 @@ func (p *Page) Input(msg string, options string) (output string) {
 }
 
 func (p *Page) row(which int) string {
-	//	displayChar := lang.BoxCharacterBreak
-	bar := strings.Repeat(lang.BoxCharacterBar, p.viewPort.width-2)
+	bar := strings.Repeat(boxr.Horizontal, p.viewPort.width-2)
 	switch which {
-	case First:
-		return lang.BoxCharacterStart + bar + "┓"
-	case Last:
-		return "┗" + bar + "┛"
-	case Middle:
-		return lang.BoxCharacterBreak + bar + "┫"
+	case first:
+		return boxr.StartLeft + bar + boxr.StartRight
+	case last:
+		return boxr.EndLeft + bar + boxr.EndRight
+	case middle, lineBreak:
+		return boxr.DividerLeft + bar + boxr.DividerRight
 	default:
-		return lang.BoxCharacterNormal + bar + lang.BoxCharacterNormal
+		return boxr.Upright + bar + boxr.Upright
 	}
-	//return displayChar + strings.Repeat(lang.BoxCharacterBar, t.width-2) + lang.BoxCharacterNormal
 }
 
-// func (p *Page) Break(row int) {
-// 	gtrm.MoveCursor(col, row)
-// 	gtrm.Println(p.viewPort.row())
-// 	//t.PrintIt(t.row() + lang.SymNewline)
-// }
+func (p *Page) Break(row int) {
+	gtrm.MoveCursor(col, row)
+	gtrm.Println(p.row(middle))
+}
 
 func (p *Page) PagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)

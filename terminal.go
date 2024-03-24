@@ -10,6 +10,7 @@ import (
 
 	gtrm "github.com/buger/goterm"
 	beep "github.com/gen2brain/beeep"
+	boxr "github.com/mt1976/crt/box"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 )
@@ -74,12 +75,12 @@ func NewWithSize(width, height int) ViewPort {
 // The `row()` function is a method of the `Crt` struct. It is used to generate a formatted string that
 // represents a row on the terminal.
 func (t *ViewPort) row() string {
-	displayChar := lang.BoxCharacterBreak
+	displayChar := boxr.DividerLeft
 	if t.firstRow {
-		displayChar = lang.BoxCharacterStart
+		displayChar = boxr.StartLeft
 		t.firstRow = false
 	}
-	return displayChar + strings.Repeat(lang.BoxCharacterBar, t.width-2) + lang.BoxCharacterNormal
+	return displayChar + strings.Repeat(boxr.Horizontal, t.width-2)
 }
 
 // The `Close()` function is a method of the `Crt` struct. It is used to print a closing line on the
@@ -87,7 +88,7 @@ func (t *ViewPort) row() string {
 // and then it prints the string using `fmt.Println()`. This creates a visual separation between
 // different sections or blocks of text on the terminal.
 func (t *ViewPort) Close() {
-	t.PrintIt(t.row())
+	// t.PrintIt(t.row())
 }
 
 // The `SetDelayInMs` function is a method of the `Crt` struct. It takes an `int` parameter `delay` and
@@ -214,7 +215,7 @@ func (t *ViewPort) Paragraph(msg []string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (t *ViewPort) Special(msg string) {
-	t.Println(t.Format(msg, lang.BoxCharacterBreak) + lang.SymNewline)
+	t.Println(t.Format(msg, boxr.DividerLeft) + lang.SymNewline)
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -291,18 +292,18 @@ func (t *ViewPort) InputPagingInfo(page, ofPages int) {
 
 // lineBreakEnd returns a string that represents a line break with the end character.
 func (t *ViewPort) lineBreakEnd() string {
-	return t.lineBreakJunction(lang.BoxCharacterBarBreak)
+	return t.lineBreakJunction(boxr.EndLeft)
 }
 
 // lineBreakJunction returns a string that represents a line break with the end character.
 func (t *ViewPort) lineBreakJunction(displayChar string) string {
-	return fmt.Sprintf(lang.TextLineConstructor, displayChar, strings.Repeat(lang.BoxCharacterBar, t.width+1), lang.BoxCharacterBar)
+	return fmt.Sprintf(lang.TextLineConstructor, displayChar, strings.Repeat(boxr.Horizontal, t.width+1), boxr.Horizontal)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
 // and `t` of type string.
 func (t *ViewPort) Format(msg string, text string) string {
-	char := lang.BoxCharacterNormal
+	char := boxr.Upright
 	if text != "" {
 		char = text
 	}
@@ -499,7 +500,7 @@ func (t *ViewPort) PrintIt(msg string) {
 		rowString = rowString[0 : t.width+1]
 	}
 	//t.Print(rowString + msg
-	rowString = rowString + lang.BoxCharacterNormal
+	rowString = rowString + boxr.Upright
 	//log.Printf("rowString: [%v]\n", rowString)
 	//log.Printf("len(rowString): %v\n", len(rowString))
 	if t.NoBaudRate() {
