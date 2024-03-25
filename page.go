@@ -613,7 +613,7 @@ func (p *Page) Info(info string, msg ...string) {
 	gtrm.MoveCursor(startColumn, inputbar)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	gtrm.MoveCursor(startColumn, infobar)
-	pp := p.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
+	pp := p.SENotice(info, lang.TxtInfo, "", msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
 }
@@ -659,7 +659,8 @@ func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string
 	for i := range msg {
 		qq = strings.Replace(qq, "%v", fmt.Sprintf("%v", msg[i]), 1)
 	}
-	errText = (colour + promptTxt + p.viewPort.Styles.Reset) + qq
+	//errText = (colour + promptTxt + p.viewPort.Styles.Reset) + qq
+	errText = ("" + promptTxt + "") + qq
 	errText = p.FormatRowOutput(errText)
 	return errText
 }
