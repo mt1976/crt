@@ -362,32 +362,21 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	gtrm.Clear()
-	//gtrm.MoveCursor(col, 0)
-	// header row
-	//hr := gtrm.Color(strings.Repeat("*", config.TerminalWidth), gtrm.CYAN)
-	//gtrm.Println(hr)
+
 	p.Header(p.title)
-	//gtrm.MoveCursor(col, 2)
-	//gtrm.Println(p.title)
-	//gtrm.MoveCursor(col, 3)
-	//gtrm.Println(hr)
-	//p.viewPort.Clear()
+
 	rowsDisplayed := 0
 	offset := 4
-	//p.AddAction(lang.SymActionQuit) // Add Quit action
-	//p.AddAction(lang.SymActionExit)
-	//p.viewPort.Header(p.title)
+
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			if p.pageRows[i].RowContent == "" {
-				gtrm.MoveCursor(col, offset+i)
+				gtrm.MoveCursor(startColumn, offset+i)
 				gtrm.Println(p.viewPort.Format("", ""))
-				//	p.viewPort.Println("")
 				continue
 			}
-			//p.viewPort.Println(p.pageRows[i].RowContent)
-			gtrm.MoveCursor(col, offset+i)
+			gtrm.MoveCursor(startColumn, offset+i)
 			gtrm.Println(p.viewPort.Format(p.pageRows[i].RowContent, ""))
 		}
 	}
@@ -395,16 +384,14 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
 			//p.viewPort.Print(lang.SymNewline)
-			gtrm.MoveCursor(col, rowsDisplayed+i+offset)
+			gtrm.MoveCursor(startColumn, rowsDisplayed+i+offset)
 			gtrm.Println(p.viewPort.Format("", ""))
 		}
 	}
-	//p.viewPort.Break()
-	gtrm.MoveCursor(col, 21)
+	gtrm.MoveCursor(startColumn, 21)
 	gtrm.Println(p.row(middle))
-	gtrm.MoveCursor(col, 24)
+	gtrm.MoveCursor(startColumn, 24)
 	gtrm.Println(p.row(last))
-	//	gtrm.MoveCursor(2, 4)
 	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
 	gtrm.Flush()
@@ -443,9 +430,9 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 // message to the console.
 func (p *Page) Header(msg string) {
 	// Print Header Line
-	gtrm.MoveCursor(col, 1)
+	gtrm.MoveCursor(startColumn, 1)
 	gtrm.Println(p.row(first))
-	gtrm.MoveCursor(col, 2)
+	gtrm.MoveCursor(startColumn, 2)
 	width := p.viewPort.Width()
 	gtrm.Println(p.viewPort.Format(lang.TxtApplicationName, ""))
 	midway := (width - len(msg)) / 2
@@ -454,25 +441,21 @@ func (p *Page) Header(msg string) {
 	gtrm.MoveCursor(width-len(dateTimeString()), 2)
 	gtrm.Print(dateTimeString())
 	gtrm.MoveCursor(width, 2)
-	//gtrm.Println(lang.BoxCharacterUpright)
-	gtrm.MoveCursor(col, 3)
+	gtrm.MoveCursor(startColumn, 3)
 	gtrm.Println(p.row(middle))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) (output string) {
-	// gtrm.MoveCursor(col, 21)
-	// gtrm.Print(p.row(Middle))
-	gtrm.MoveCursor(col, 22)
+	gtrm.MoveCursor(startColumn, 22)
 	mesg := msg
-	//T.Format(msg, "")
+
 	if options != "" {
-		mesg = (p.viewPort.Format(msg, "") + pQuote(bold(options)))
+		mesg = (msg + pQuote(bold(options)))
 	}
-	mesg = mesg + lang.SymPromptSymbol
-	//mesg = p.viewPort.Format(mesg, "")
-	//T.Print(mesg)
+	mesg = p.Format(mesg + lang.SymPromptSymbol)
+
 	gtrm.Print(mesg)
 	gtrm.Flush()
 	var out string
@@ -481,8 +464,13 @@ func (p *Page) Input(msg string, options string) (output string) {
 	return output
 }
 
+func (p *Page) Format(msg string) (output string) {
+	return p.viewPort.Format(msg, "")
+}
+
 func (p *Page) row(which int) string {
 	bar := strings.Repeat(boxr.Horizontal, p.viewPort.width-2)
+	space := strings.Repeat(lang.Space, p.viewPort.width-2)
 	switch which {
 	case first:
 		return boxr.StartLeft + bar + boxr.StartRight
@@ -491,12 +479,12 @@ func (p *Page) row(which int) string {
 	case middle, lineBreak:
 		return boxr.DividerLeft + bar + boxr.DividerRight
 	default:
-		return boxr.Upright + bar + boxr.Upright
+		return boxr.Upright + space + boxr.Upright
 	}
 }
 
 func (p *Page) Break(row int) {
-	gtrm.MoveCursor(col, row)
+	gtrm.MoveCursor(startColumn, row)
 	gtrm.Println(p.row(middle))
 }
 
@@ -550,7 +538,7 @@ func (p *Page) ResetPrompt() {
 }
 
 func (p *Page) Error(err error, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	//pp := t.SError(err, msg...)
 	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
 	gtrm.Print(pp)
@@ -565,7 +553,7 @@ func (p *Page) Error(err error, msg ...string) {
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
@@ -575,7 +563,7 @@ func (p *Page) Info(info string, msg ...string) {
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
 	gtrm.Print(pp)
@@ -585,7 +573,7 @@ func (p *Page) Hint(info string, msg ...string) {
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	pp := p.viewPort.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.Print(pp)
@@ -600,18 +588,18 @@ func (p *Page) Warning(warning string, msg ...string) {
 }
 
 func (p *Page) Clearline(row int) {
-	gtrm.MoveCursor(col, row)
+	gtrm.MoveCursor(startColumn, row)
 	gtrm.Print(strings.Repeat(lang.Space, config.TerminalWidth))
-	gtrm.MoveCursor(col, row)
+	gtrm.MoveCursor(startColumn, row)
 }
 func (p *Page) Success(message string, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
-	gtrm.MoveCursor(col, 22)
+	gtrm.MoveCursor(startColumn, 22)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
-	gtrm.MoveCursor(col, 22)
+	gtrm.MoveCursor(startColumn, 22)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }

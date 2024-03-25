@@ -15,7 +15,7 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-const col int = 1
+const startColumn int = 1
 
 // The ViewPort type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
@@ -221,9 +221,9 @@ func (t *ViewPort) Special(msg string) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (t *ViewPort) Input(msg string, options string) (output string) {
-	gtrm.MoveCursor(col, 21)
+	gtrm.MoveCursor(startColumn, 21)
 	gtrm.Print(t.row())
-	gtrm.MoveCursor(col, 22)
+	gtrm.MoveCursor(startColumn, 22)
 	mesg := msg
 	//T.Format(msg, "")
 	if options != "" {
@@ -242,7 +242,7 @@ func (t *ViewPort) Input(msg string, options string) (output string) {
 
 // The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) InputError(err error, msg ...string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	pp := t.SError(err, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
@@ -254,11 +254,11 @@ func (t *ViewPort) InputError(err error, msg ...string) {
 }
 
 func (t *ViewPort) InfoMessage(msg string) {
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	//Print a line that clears the entire line
 	blanks := strings.Repeat(lang.Space, t.width)
 	gtrm.Print(t.Format(blanks, ""))
-	gtrm.MoveCursor(col, 23)
+	gtrm.MoveCursor(startColumn, 23)
 	gtrm.Print(
 		t.Format(gtrm.Color(gtrm.Bold(lang.TxtInfo), gtrm.CYAN)+msg, ""))
 	//T.Print(msg + t.SymNewline)
@@ -317,7 +317,7 @@ func (t *ViewPort) Clear() {
 	t.firstRow = true
 	t.currentRow = 0
 	gtrm.Clear()
-	gtrm.MoveCursor(col, 1)
+	gtrm.MoveCursor(startColumn, 1)
 	gtrm.Flush()
 }
 
@@ -425,7 +425,7 @@ func (t *ViewPort) Header(msg string) {
 	// Print Header Line
 	gtrm.MoveCursor(1, 1)
 	gtrm.Println(t.row()) // + lang.SymNewline)
-	gtrm.MoveCursor(col, 2)
+	gtrm.MoveCursor(startColumn, 2)
 	var line map[int]string = make(map[int]string)
 	midway := (t.width - len(msg)) / 2
 	for i := 0; i < len(lang.TxtApplicationName); i++ {
@@ -488,7 +488,7 @@ func (t *ViewPort) defaultBaud() {
 func (t *ViewPort) PrintIt(msg string) {
 	t.currentRow++
 	rowString := msg
-	gtrm.MoveCursor(col, t.currentRow)
+	gtrm.MoveCursor(startColumn, t.currentRow)
 	//truncate rowString to length-1 and add a | character to the end
 	//log.Printf("len(rowString): %v\n", len(rowString))
 	//log.Printf("t.width: %v\n", t.width)
