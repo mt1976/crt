@@ -167,8 +167,9 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 		p.noPages++
 	}
 
-	if len(rowContent) > p.viewPort.width {
-		rowContent = rowContent[:p.viewPort.width]
+	visible := p.viewPort.width - 10
+	if len(rowContent) > visible {
+		rowContent = rowContent[:visible]
 	}
 
 	p.pageRowCounter++
