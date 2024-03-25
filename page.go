@@ -365,12 +365,13 @@ func drawScreen(p *Page) {
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
+			lineNumber := (offset + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
-				gtrm.MoveCursor(startColumn, offset+i)
+				gtrm.MoveCursor(startColumn, lineNumber)
 				gtrm.Println(p.FormatRowOutput(""))
 				continue
 			}
-			gtrm.MoveCursor(startColumn, offset+i)
+			gtrm.MoveCursor(startColumn, lineNumber)
 			gtrm.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
 		}
 	}
