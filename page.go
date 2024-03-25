@@ -476,7 +476,7 @@ func (p *Page) Header(msg string) {
 	midway := (width - len(msg)) / 2
 	gtrm.MoveCursor(midway, 2)
 	gtrm.Print(msg)
-	gtrm.MoveCursor(width-len(dateTimeString()), 2)
+	gtrm.MoveCursor(width-(len(dateTimeString())+1), 2)
 	gtrm.Print(dateTimeString())
 	gtrm.MoveCursor(width, 2)
 	gtrm.MoveCursor(startColumn, 3)
