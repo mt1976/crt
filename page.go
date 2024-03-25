@@ -537,8 +537,9 @@ func (p *Page) Break(row int) {
 func (p *Page) PagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
 	lmsg := len(msg)
-	gtrm.MoveCursor(p.viewPort.width-lmsg-1, inputbar)
+	gtrm.MoveCursor(p.viewPort.width-lmsg-1, infobar)
 	gtrm.Print(""+gtrm.Color(msg, gtrm.YELLOW), "")
+	gtrm.Flush()
 }
 
 // NextPage moves to the next page.
@@ -586,7 +587,7 @@ func (p *Page) ResetPrompt() {
 func (p *Page) Error(err error, msg ...string) {
 	gtrm.MoveCursor(startColumn, infobar)
 	//pp := t.SError(err, msg...)
-	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
+	pp := p.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
@@ -605,15 +606,37 @@ func (p *Page) Info(info string, msg ...string) {
 	gtrm.MoveCursor(startColumn, inputbar)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	gtrm.MoveCursor(startColumn, infobar)
-	pp := p.viewPort.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
+	//pp := p.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
+	pp := p.SENotice(info, lang.TxtInfo, "", msg...)
 	gtrm.Print(pp)
+	gtrm.MoveCursor(startColumn, inputbar)
 	gtrm.Flush()
+}
+
+func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string {
+
+	if len(msg) > 0 {
+		// check for enough %v strings in the error
+		// if not enough then add them on the end
+		noVars := strings.Count(errText, "%v")
+
+		if noVars < len(msg) {
+			errText = errText + strings.Repeat(" %v", len(msg)-noVars)
+		}
+	}
+	qq := errText
+	for i := range msg {
+		qq = strings.Replace(qq, "%v", fmt.Sprintf("%v", msg[i]), 1)
+	}
+	errText = (colour + promptTxt + p.viewPort.Styles.Reset) + qq
+	errText = p.FormatRowOutput(errText)
+	return errText
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
-	pp := p.viewPort.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
+	pp := p.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
 	gtrm.Print(pp)
 	p.Clearline(infobar)
 	gtrm.MoveCursor(startColumn, infobar)
@@ -623,7 +646,7 @@ func (p *Page) Hint(info string, msg ...string) {
 
 func (p *Page) Warning(warning string, msg ...string) {
 	gtrm.MoveCursor(startColumn, infobar)
-	pp := p.viewPort.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
+	pp := p.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.Print(pp)
 	gtrm.Flush()
@@ -644,7 +667,7 @@ func (p *Page) Clearline(row int) {
 func (p *Page) Success(message string, msg ...string) {
 	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
-	pp := p.viewPort.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
+	pp := p.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
 	gtrm.MoveCursor(startColumn, inputbar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
