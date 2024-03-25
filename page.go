@@ -330,14 +330,16 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 		p.Error(errs.ErrNoPromptSpecified, "Please set a prompt for the page")
 		os.Exit(1)
 	}
+	if minLen > 0 || maxLen > 0 {
+		//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+		p.Add(lang.SymBlank, "", "")
+		p.Add("Help:", "", "")
+		p.Add(p.MinMaxHint(minLen, maxLen), "", "")
+	}
 	drawScreen(p)
 
 	for {
 
-		if minLen > 0 || maxLen > 0 {
-			//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
-			p.MinMaxHint(minLen, maxLen)
-		}
 		//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 		//gtrm.Flush()
 		out := p.Input(p.prompt, "")
