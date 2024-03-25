@@ -504,7 +504,7 @@ func (t *ViewPort) PrintIt(msg string) {
 	//log.Printf("rowString: [%v]\n", rowString)
 	//log.Printf("len(rowString): %v\n", len(rowString))
 	if t.NoBaudRate() {
-		gtrm.Print(rowString)
+		gtrm.Println(rowString)
 		//fmt.Println(rowString)
 		return
 	} else {
