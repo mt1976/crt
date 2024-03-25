@@ -167,6 +167,7 @@ const (
 	TxtSuccess            string = "SUCCESS "
 	TxtHint               string = "HINT "
 	TxtPaging             string = "Page %v of %v"
+	TxtMinMax             string = "Min: %v Max: %v"
 	TxtValidActions       string = "valid actions [%v]"
 )
 

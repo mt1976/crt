@@ -326,17 +326,21 @@ func (p *Page) Clear() {
 	gtrm.Flush()
 }
 func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
-
+	if p.prompt == "" {
+		p.Error(errs.ErrNoPromptSpecified, "Please set a prompt for the page")
+		os.Exit(1)
+	}
 	drawScreen(p)
 
 	for {
 
 		if minLen > 0 || maxLen > 0 {
-			p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+			//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
+			p.MinMaxHint(minLen, maxLen)
 		}
-		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-
-		out := p.Input("", "")
+		//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+		//gtrm.Flush()
+		out := p.Input(p.prompt, "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
 		}
@@ -552,6 +556,20 @@ func (p *Page) PagingInfo(page, ofPages int) {
 
 	gtrm.MoveCursor(p.viewPort.width-lmsg-1, infobar)
 	gtrm.Print(msg)
+}
+
+func (p *Page) InputHintInfo(msg string) {
+	lmsg := len(msg)
+	gtrm.MoveCursor(p.viewPort.width-lmsg-1, infobar)
+	gtrm.Print(msg)
+}
+
+func (p *Page) MinMaxHint(min, max int) string {
+	if min <= 0 && max <= 0 {
+		return ""
+	}
+	msg := fmt.Sprintf(lang.TxtMinMax, min, max)
+	return msg
 }
 
 // NextPage moves to the next page.

@@ -17,4 +17,5 @@ var (
 	ErrSystemInfo                  = errors.New("unable to get machine name")
 	ErrInputLengthMinimum          = errors.New("text must be at least %v characters")
 	ErrInputLengthMaximum          = errors.New("text must be at most %v characters, is %v")
+	ErrNoPromptSpecified           = errors.New("no prompt specified")
 )
