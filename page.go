@@ -102,10 +102,13 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	}
 
 	remainder := ""
-	if len(rowContent) > p.viewPort.width {
-		remainder = rowContent[p.viewPort.width:]
-		rowContent = rowContent[:p.viewPort.width]
+	width := p.viewPort.width - 5
+	if len(rowContent) > width {
+		remainder = rowContent[width:]
+		rowContent = rowContent[:width]
 	}
+	//	fmt.Printf("rowContent: %v %d\n", rowContent, len(rowContent))
+	//	fmt.Printf("remainder: %v\n", remainder)
 
 	p.pageRowCounter++
 	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
