@@ -17,6 +17,10 @@ import (
 )
 
 var config = conf.Configuration
+var inputrow int = 22
+var inputbar int = 23
+var infobar int = 24
+var lastrow int = 25
 
 const (
 	first = iota
@@ -65,9 +69,9 @@ func (t *ViewPort) NewTitledPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	m := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	m.AddAction(lang.SymActionQuit) // Add Quit action
-	//m.AddAction(lang.SymActionForward) // Add Next action
-	//m.AddAction(lang.SymActionBack)    // Add Previous action
+	m.AddAction(lang.SymActionQuit)    // Add Quit action
+	m.AddAction(lang.SymActionForward) // Add Next action
+	m.AddAction(lang.SymActionBack)    // Add Previous action
 	m.pageRowCounter = 0
 	m.viewPort = t
 	return &m
@@ -98,9 +102,9 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	}
 
 	remainder := ""
-	if len(rowContent) > config.TerminalWidth {
-		remainder = rowContent[config.TerminalWidth:]
-		rowContent = rowContent[:config.TerminalWidth]
+	if len(rowContent) > p.viewPort.width {
+		remainder = rowContent[p.viewPort.width:]
+		rowContent = rowContent[:p.viewPort.width]
 	}
 
 	p.pageRowCounter++
@@ -160,8 +164,8 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 		p.noPages++
 	}
 
-	if len(rowContent) > config.TerminalWidth {
-		rowContent = rowContent[:config.TerminalWidth]
+	if len(rowContent) > p.viewPort.width {
+		rowContent = rowContent[:p.viewPort.width]
 	}
 
 	p.pageRowCounter++
@@ -171,10 +175,15 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 	mi.AlternateID = altID
 	mi.Title = rowContent
 	mi.DateTime = dateTime
-	mi.RowContent = formatOption(mi)
+	mi.RowContent = p.formatNumberedOptionText(mi)
 	p.AddAction_int(id)
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
+}
+
+func (p *Page) formatNumberedOptionText(row pageRow) string {
+	miString := fmt.Sprintf("%3v) %v", row.ID, row.Title)
+	return miString
 }
 
 // AddFieldValuePair adds a field value pair to the page
@@ -204,7 +213,7 @@ func (p *Page) AddFieldValuePair(key string, value string) {
 func (p *Page) AddColumns(columns ...string) {
 	// Check the number of columns
 	if len(columns) > 10 {
-		p.viewPort.Error(errs.ErrAddColumns)
+		p.Error(errs.ErrAddColumns)
 		os.Exit(1)
 	}
 
@@ -301,42 +310,28 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 			}
 			return upcase(nextAction), pageRow{}
 		default:
-			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
+			p.Error(errs.ErrInvalidAction, nextAction)
 		}
 	}
 	return "", pageRow{}
 }
 
+func (p *Page) Clear() {
+	gtrm.Clear()
+	gtrm.Flush()
+}
 func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
-	rowsDisplayed := 0
-	p.viewPort.Clear()
-	p.viewPort.Header(p.title)
-	for i := range p.pageRows {
-		if p.ActivePageIndex == p.pageRows[i].PageIndex {
-			rowsDisplayed++
-			if p.pageRows[i].RowContent == "" {
-				p.viewPort.Println("")
-				continue
-			}
-			p.viewPort.Println(p.pageRows[i].RowContent)
-		}
-	}
-	extraRows := (config.MaxContentRows - rowsDisplayed) + 1
-	if extraRows > 0 {
-		for i := 0; i <= extraRows; i++ {
-			p.viewPort.Print(lang.SymNewline)
-		}
-	}
-	p.viewPort.Break()
+
+	drawScreen(p)
+
 	for {
 
 		if minLen > 0 || maxLen > 0 {
 			p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
 		}
+		//		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
-		p.viewPort.InputPagingInfo(p.ActivePageIndex+1, p.noPages+1)
-
-		out := p.viewPort.Input("", "")
+		out := p.Input("", "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
 		}
@@ -346,11 +341,11 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 		}
 
 		if minLen > 0 && len(out) < minLen {
-			p.viewPort.InputError(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
+			p.Error(errs.ErrInputLengthMinimum, out, strconv.Itoa(minLen))
 		}
 
 		if maxLen > 0 && len(out) > maxLen {
-			p.viewPort.InputError(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
+			p.Error(errs.ErrInputLengthMaximum, out, strconv.Itoa(maxLen), strconv.Itoa(len(out)))
 		}
 
 		if len(out) >= minLen && len(out) <= maxLen {
@@ -359,47 +354,90 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 	}
 }
 
-// Display displays the page content to the user and handles user input.
-func (p *Page) displayIt() (nextAction string, selected pageRow) {
+func drawScreen(p *Page) {
+	rowsDisplayed := 0
 	gtrm.Clear()
-
 	p.Header(p.title)
 
-	rowsDisplayed := 0
 	offset := 4
 
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
-			if p.pageRows[i].RowContent == "" {
+			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
 				gtrm.MoveCursor(startColumn, offset+i)
-				gtrm.Println(p.viewPort.Format("", ""))
+				gtrm.Println(p.FormatRowOutput(""))
 				continue
 			}
 			gtrm.MoveCursor(startColumn, offset+i)
-			gtrm.Println(p.viewPort.Format(p.pageRows[i].RowContent, ""))
+			gtrm.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
 		}
 	}
 	extraRows := (config.MaxContentRows - rowsDisplayed)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
-			//p.viewPort.Print(lang.SymNewline)
+
 			gtrm.MoveCursor(startColumn, rowsDisplayed+i+offset)
-			gtrm.Println(p.viewPort.Format("", ""))
+			gtrm.Println(p.FormatRowOutput(""))
 		}
 	}
-	gtrm.MoveCursor(startColumn, 21)
-	gtrm.Println(p.row(middle))
-	gtrm.MoveCursor(startColumn, 24)
-	gtrm.Println(p.row(last))
-	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
+	gtrm.MoveCursor(startColumn, inputrow)
+	gtrm.Println(p.boxPartDraw(middle))
+	gtrm.MoveCursor(startColumn, inputbar)
+	gtrm.Println(p.boxPartDraw(99))
+	gtrm.MoveCursor(startColumn, infobar)
+	gtrm.Println(p.boxPartDraw(99))
+	gtrm.MoveCursor(startColumn, lastrow)
+	gtrm.Println(p.boxPartDraw(last))
 	gtrm.Flush()
+}
+
+// Display displays the page content to the user and handles user input.
+func (p *Page) displayIt() (nextAction string, selected pageRow) {
+	// gtrm.Clear()
+
+	// p.Header(p.title)
+
+	// rowsDisplayed := 0
+	// offset := 4
+
+	// for i := range p.pageRows {
+	// 	if p.ActivePageIndex == p.pageRows[i].PageIndex {
+	// 		rowsDisplayed++
+	// 		if p.pageRows[i].RowContent == "" {
+	// 			gtrm.MoveCursor(startColumn, offset+i)
+	// 			gtrm.Println(p.viewPort.Format("", ""))
+	// 			continue
+	// 		}
+	// 		gtrm.MoveCursor(startColumn, offset+i)
+	// 		gtrm.Println(p.viewPort.Format(p.pageRows[i].RowContent, ""))
+	// 	}
+	// }
+	// extraRows := (config.MaxContentRows - rowsDisplayed)
+	// if extraRows > 0 {
+	// 	for i := 0; i <= extraRows; i++ {
+	// 		//p.viewPort.Print(lang.SymNewline)
+	// 		gtrm.MoveCursor(startColumn, rowsDisplayed+i+offset)
+	// 		gtrm.Println(p.viewPort.Format("", ""))
+	// 	}
+	// }
+	// gtrm.MoveCursor(startColumn, inputrow)
+	// gtrm.Println(p.row(middle))
+	// gtrm.MoveCursor(startColumn, inputbar)
+	// gtrm.Println(p.row(99))
+	// gtrm.MoveCursor(startColumn, infobar)
+	// gtrm.Println(p.row(99))
+	// gtrm.MoveCursor(startColumn, lastrow)
+	// gtrm.Println(p.row(last))
+	// p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	// p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
+	// gtrm.Flush()
+	drawScreen(p)
 	ok := false
 	for !ok {
-		nextAction = p.viewPort.Input(p.prompt, "")
+		nextAction = p.Input(p.prompt, "")
 		if len(nextAction) > p.actionMaxLen {
-			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
+			p.Error(errs.ErrInvalidAction, nextAction)
 			continue
 		}
 
@@ -410,7 +448,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 			}
 		}
 		if !ok {
-			p.viewPort.InputError(errs.ErrInvalidAction, nextAction)
+			p.Error(errs.ErrInvalidAction, nextAction)
 
 		}
 	}
@@ -431,10 +469,10 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 func (p *Page) Header(msg string) {
 	// Print Header Line
 	gtrm.MoveCursor(startColumn, 1)
-	gtrm.Println(p.row(first))
+	gtrm.Println(p.boxPartDraw(first))
 	gtrm.MoveCursor(startColumn, 2)
 	width := p.viewPort.Width()
-	gtrm.Println(p.viewPort.Format(lang.TxtApplicationName, ""))
+	gtrm.Println(p.FormatRowOutput(lang.TxtApplicationName))
 	midway := (width - len(msg)) / 2
 	gtrm.MoveCursor(midway, 2)
 	gtrm.Print(msg)
@@ -442,21 +480,22 @@ func (p *Page) Header(msg string) {
 	gtrm.Print(dateTimeString())
 	gtrm.MoveCursor(width, 2)
 	gtrm.MoveCursor(startColumn, 3)
-	gtrm.Println(p.row(middle))
+	gtrm.Println(p.boxPartDraw(middle))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) (output string) {
-	gtrm.MoveCursor(startColumn, 22)
+	gtrm.MoveCursor(startColumn, infobar)
 	mesg := msg
 
 	if options != "" {
 		mesg = (msg + pQuote(bold(options)))
 	}
-	mesg = p.Format(mesg + lang.SymPromptSymbol)
+	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
 
 	gtrm.Print(mesg)
+	gtrm.MoveCursor(startColumn+2, inputbar)
 	gtrm.Flush()
 	var out string
 	fmt.Scan(&out)
@@ -464,11 +503,18 @@ func (p *Page) Input(msg string, options string) (output string) {
 	return output
 }
 
-func (p *Page) Format(msg string) (output string) {
-	return p.viewPort.Format(msg, "")
+func (p *Page) FormatRowOutput(msg string) string {
+	p.viewPort.DelayIt()
+	xx := fmt.Sprintf("%s %s", boxr.Upright, msg)
+	// place a upright at the end of the string at the last position based on screen width
+	if len(xx) < p.viewPort.Width() {
+		addChars := (p.viewPort.Width() - len(xx)) + 1
+		xx = xx + strings.Repeat(" ", addChars) + boxr.Upright
+	}
+	return xx
 }
 
-func (p *Page) row(which int) string {
+func (p *Page) boxPartDraw(which int) string {
 	bar := strings.Repeat(boxr.Horizontal, p.viewPort.width-2)
 	space := strings.Repeat(lang.Space, p.viewPort.width-2)
 	switch which {
@@ -485,13 +531,13 @@ func (p *Page) row(which int) string {
 
 func (p *Page) Break(row int) {
 	gtrm.MoveCursor(startColumn, row)
-	gtrm.Println(p.row(middle))
+	gtrm.Println(p.boxPartDraw(middle))
 }
 
 func (p *Page) PagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
 	lmsg := len(msg)
-	gtrm.MoveCursor(p.viewPort.width-lmsg-1, 22)
+	gtrm.MoveCursor(p.viewPort.width-lmsg-1, inputbar)
 	gtrm.Print(""+gtrm.Color(msg, gtrm.YELLOW), "")
 }
 
@@ -499,7 +545,7 @@ func (p *Page) PagingInfo(page, ofPages int) {
 // If the current page is the last page, it returns an error.
 func (p *Page) NextPage() {
 	if p.ActivePageIndex == p.noPages {
-		p.viewPort.InputError(errs.ErrNoMorePages)
+		p.Error(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex++
@@ -509,7 +555,7 @@ func (p *Page) NextPage() {
 // If the current page is the first page, it returns an error.
 func (p *Page) PreviousPage() {
 	if p.ActivePageIndex == 0 {
-		p.viewPort.InputError(errs.ErrNoMorePages)
+		p.Error(errs.ErrNoMorePages)
 		return
 	}
 	p.ActivePageIndex--
@@ -538,7 +584,7 @@ func (p *Page) ResetPrompt() {
 }
 
 func (p *Page) Error(err error, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(startColumn, infobar)
 	//pp := t.SError(err, msg...)
 	pp := p.viewPort.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
 	gtrm.Print(pp)
@@ -548,32 +594,35 @@ func (p *Page) Error(err error, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	p.Clearline(22)
+	p.Clearline(infobar)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.prompt)
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
+	gtrm.MoveCursor(startColumn, inputbar)
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	gtrm.MoveCursor(startColumn, infobar)
 	pp := p.viewPort.SENotice(info, lang.TxtInfo, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
-	p.Clearline(22)
-	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
 	gtrm.Print(pp)
-	p.Clearline(22)
+	p.Clearline(infobar)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(startColumn, infobar)
 	pp := p.viewPort.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	gtrm.Print(pp)
@@ -583,7 +632,7 @@ func (p *Page) Warning(warning string, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	p.Clearline(22)
+	p.Clearline(inputbar)
 	gtrm.Print(p.prompt)
 }
 
@@ -593,13 +642,13 @@ func (p *Page) Clearline(row int) {
 	gtrm.MoveCursor(startColumn, row)
 }
 func (p *Page) Success(message string, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
 	pp := p.viewPort.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
 	gtrm.Print(pp)
-	gtrm.MoveCursor(startColumn, 22)
+	gtrm.MoveCursor(startColumn, inputbar)
 	gtrm.Print(p.viewPort.Styles.ClearLine)
-	gtrm.MoveCursor(startColumn, 22)
+	gtrm.MoveCursor(startColumn, infobar)
 	gtrm.Print(p.prompt)
 	gtrm.Flush()
 }
