@@ -235,8 +235,7 @@ func (p *Page) AddColumns(columns ...string) {
 	}
 
 	// Calculate the column width
-	colSize := (p.width/len(columns) - 4)
-
+	colSize := p.calcColSize(columns)
 	// Loop through each column
 	var output []string
 	for i := 0; i < len(columns); i++ {
@@ -263,12 +262,18 @@ func (p *Page) AddColumns(columns ...string) {
 	p.Add(strings.Join(output, lang.Space), "", "")
 }
 
+func (p *Page) calcColSize(cols []string) int {
+	// Calculate the column width
+	colSize := (p.width/len(cols) - 6)
+	return colSize
+}
+
 // AddColumnsTitle adds a ruler to the page, separating the columns
 func (p *Page) AddColumnsTitle(columns ...string) {
 	p.AddColumns(columns...)
 	var output []string
 
-	colSize := p.width / len(columns)
+	colSize := p.calcColSize(columns)
 
 	for i := 0; i < len(columns); i++ {
 
