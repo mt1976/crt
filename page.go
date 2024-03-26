@@ -72,6 +72,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p.Clear()
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
@@ -120,8 +121,6 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		remainder = rowContent[width:]
 		rowContent = rowContent[:width]
 	}
-	//	fmt.Printf("rowContent: %v %d\n", rowContent, len(rowContent))
-	//	fmt.Printf("remainder: %v\n", remainder)
 
 	p.pageRowCounter++
 	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
@@ -309,7 +308,6 @@ func (p *Page) AddParagraph(msg []string) {
 }
 
 func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
-
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
