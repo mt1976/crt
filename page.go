@@ -175,7 +175,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 
 	p.counter++
 
-	if p.counter >= conf.Configuration.MaxContentRows {
+	if p.counter >= p.maxContentRows {
 		p.counter = 0
 		p.noPages++
 	}
