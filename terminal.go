@@ -54,8 +54,12 @@ func New() ViewPort {
 	x.currentCol = 0
 	x.currentRow = 0
 
-	x.width = 80
-	x.height = 25
+	// Use Helper function get get terminal width and height
+	x.width = gtrm.Width()
+	x.height = gtrm.Height()
+
+	//	x.width = 80
+	//	x.height = 25
 	x.defaultDelay() // set delay to 0
 	x.defaultBaud()  // set baud to 9600
 
