@@ -38,12 +38,13 @@ type Page struct {
 	counter         int       // A counter used for tracking.
 	pageRowCounter  int       // A counter used for tracking the page rows.
 	viewPort        *ViewPort // The viewPort object used for displaying the page.
-	inputrow        int
-	inputbar        int
-	infobar         int
-	lastrow         int
-	height          int // The height of the page
-	width           int // The width of the page
+	inputrow        int       // The row where the input box starts
+	inputbar        int       // The row where the input box is
+	infobar         int       // The row where the info box is
+	lastrow         int       // The last row of the page
+	height          int       // The height of the page
+	width           int       // The width of the page
+	maxContentRows  int       // The maximum number of rows available for content on the page.
 }
 
 // pageRow represents a row of content on a page.
@@ -83,6 +84,8 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.inputbar = t.height - 2
 	p.infobar = t.height - 1
 	p.lastrow = t.height
+	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
+	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
 
 	return &p
 }
@@ -106,7 +109,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	}
 
 	p.counter++
-	if p.counter >= config.MaxContentRows {
+	if p.counter >= p.maxContentRows {
 		p.counter = 0
 		p.noPages++
 	}
@@ -124,7 +127,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	mi := pageRow{p.pageRowCounter, rowContent, p.noPages, "", "", ""}
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
-	if p.noRows > config.MaxContentRows {
+	if p.noRows > p.maxContentRows {
 		p.AddAction(lang.SymActionForward) // Add Next action
 		p.AddAction(lang.SymActionBack)    // Add Previous action
 	}
@@ -392,7 +395,7 @@ func drawScreen(p *Page) {
 			gtrm.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
 		}
 	}
-	extraRows := (config.MaxContentRows - rowsDisplayed)
+	extraRows := (p.maxContentRows - rowsDisplayed)
 	if extraRows > 0 {
 		for i := 0; i <= extraRows; i++ {
 
@@ -414,44 +417,7 @@ func drawScreen(p *Page) {
 
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt() (nextAction string, selected pageRow) {
-	// gtrm.Clear()
 
-	// p.Header(p.title)
-
-	// rowsDisplayed := 0
-	// offset := 4
-
-	// for i := range p.pageRows {
-	// 	if p.ActivePageIndex == p.pageRows[i].PageIndex {
-	// 		rowsDisplayed++
-	// 		if p.pageRows[i].RowContent == "" {
-	// 			gtrm.MoveCursor(startColumn, offset+i)
-	// 			gtrm.Println(p.viewPort.Format("", ""))
-	// 			continue
-	// 		}
-	// 		gtrm.MoveCursor(startColumn, offset+i)
-	// 		gtrm.Println(p.viewPort.Format(p.pageRows[i].RowContent, ""))
-	// 	}
-	// }
-	// extraRows := (config.MaxContentRows - rowsDisplayed)
-	// if extraRows > 0 {
-	// 	for i := 0; i <= extraRows; i++ {
-	// 		//p.viewPort.Print(lang.SymNewline)
-	// 		gtrm.MoveCursor(startColumn, rowsDisplayed+i+offset)
-	// 		gtrm.Println(p.viewPort.Format("", ""))
-	// 	}
-	// }
-	// gtrm.MoveCursor(startColumn, inputrow)
-	// gtrm.Println(p.row(middle))
-	// gtrm.MoveCursor(startColumn, inputbar)
-	// gtrm.Println(p.row(99))
-	// gtrm.MoveCursor(startColumn, infobar)
-	// gtrm.Println(p.row(99))
-	// gtrm.MoveCursor(startColumn, lastrow)
-	// gtrm.Println(p.row(last))
-	// p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	// p.Hint(lang.TxtValidActions, strings.Join(p.actions, ","))
-	// gtrm.Flush()
 	drawScreen(p)
 	ok := false
 	for !ok {
