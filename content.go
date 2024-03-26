@@ -53,13 +53,13 @@ func isInList(value string, list []string) bool {
 
 // The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.
-func formatOption(row pageRow) string {
+func (p *Page) formatOption(row pageRow) string {
 	miNumber := fmt.Sprintf(bold("%3v"), row.ID)
 
 	//add Date to end of row
 	miTitle := row.Title
 	//padd out to 70 characters
-	width := config.TerminalWidth - 7
+	width := p.width - 7
 	pad := width - (len(miTitle) + len(row.DateTime))
 	if pad > 0 {
 		miTitle = miTitle + strings.Repeat(lang.Space, pad)

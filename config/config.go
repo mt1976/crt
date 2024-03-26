@@ -9,29 +9,28 @@ import (
 )
 
 type Config struct {
-	ApplicationDateFormat      string  `mapstructure:"ApplicationDateFormat"`
-	ApplicationDateFormatShort string  `mapstructure:"ApplicationDateFormatShort"`
-	ApplicationTimeFormat      string  `mapstructure:"ApplicationTimeFormat"`
-	TerminalWidth              int     `mapstructure:"TerminalWidth"`
-	TerminalHeight             int     `mapstructure:"TerminalHeight"`
-	Delay                      float64 `mapstructure:"Delay"`
-	Baud                       int     `mapstructure:"Baud"`
-	MaxContentRows             int     `mapstructure:"MaxContentRows"`
-	MaxNoItems                 int     `mapstructure:"MaxNoItems"`
-	TitleLength                int     `mapstructure:"TitleLength"`
-	Debug                      bool    `mapstructure:"Debug"`
-	DefaultErrorDelay          float64 `mapstructure:"DefaultErrorDelay"`
-	DefaultRandomPortMin       int     `mapstructure:"DefaultRandomPortMin"`
-	DefaultRandomPortMax       int     `mapstructure:"DefaultRandomPortMax"`
-	DefaultRandomMACMin        int     `mapstructure:"DefaultRandomMACMin"`
-	DefaultRandomMACMax        int     `mapstructure:"DefaultRandomMACMax"`
-	DefaultRandomIPMin         int     `mapstructure:"DefaultRandomIPMin"`
-	DefaultRandomIPMax         int     `mapstructure:"DefaultRandomIPMax"`
-	DefaultBaud                int     `mapstructure:"DefaultBaud"`
-	DefaultBeepDuration        int
-	DefaultBeepFrequency       float64
-	ValidBaudRates             []int
-	ValidFileNameCharacters    []string
+	ApplicationDateFormat      string `mapstructure:"ApplicationDateFormat"`
+	ApplicationDateFormatShort string `mapstructure:"ApplicationDateFormatShort"`
+	ApplicationTimeFormat      string `mapstructure:"ApplicationTimeFormat"`
+
+	Delay                   float64 `mapstructure:"Delay"`
+	Baud                    int     `mapstructure:"Baud"`
+	MaxContentRows          int     `mapstructure:"MaxContentRows"`
+	MaxNoItems              int     `mapstructure:"MaxNoItems"`
+	TitleLength             int     `mapstructure:"TitleLength"`
+	Debug                   bool    `mapstructure:"Debug"`
+	DefaultErrorDelay       float64 `mapstructure:"DefaultErrorDelay"`
+	DefaultRandomPortMin    int     `mapstructure:"DefaultRandomPortMin"`
+	DefaultRandomPortMax    int     `mapstructure:"DefaultRandomPortMax"`
+	DefaultRandomMACMin     int     `mapstructure:"DefaultRandomMACMin"`
+	DefaultRandomMACMax     int     `mapstructure:"DefaultRandomMACMax"`
+	DefaultRandomIPMin      int     `mapstructure:"DefaultRandomIPMin"`
+	DefaultRandomIPMax      int     `mapstructure:"DefaultRandomIPMax"`
+	DefaultBaud             int     `mapstructure:"DefaultBaud"`
+	DefaultBeepDuration     int
+	DefaultBeepFrequency    float64
+	ValidBaudRates          []int
+	ValidFileNameCharacters []string
 }
 
 var Configuration = Config{}

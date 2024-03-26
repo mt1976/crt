@@ -13,6 +13,7 @@ import (
 	boxr "github.com/mt1976/crt/box"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
+	"golang.org/x/term"
 )
 
 const startColumn int = 1
@@ -54,8 +55,12 @@ func New() ViewPort {
 	x.currentCol = 0
 	x.currentRow = 0
 
-	x.width = gtrm.Width()
-	x.height = gtrm.Height()
+	width, height, err := term.GetSize(0)
+	if err != nil {
+		return ViewPort{}
+	}
+	x.width = width
+	x.height = height
 
 	x.SetTerminalSize(x.width, x.height)
 	x.defaultDelay() // set delay to 0
