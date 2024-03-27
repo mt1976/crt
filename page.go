@@ -1,6 +1,8 @@
 package crt
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -487,10 +489,25 @@ func (p *Page) Input(msg string, options string) (output string) {
 	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	gtrm.MoveCursor(startColumn+2, p.inputbar)
 	gtrm.Flush()
-	var out string
-	fmt.Scan(&out)
-	output = out
-	return output
+	//var out string
+	//fmt.Scan(&out)
+	//output = out
+	// no input
+	input, err := getUserInput()
+	if err != nil {
+		p.Error(err, "Not able to get input string")
+	}
+	return input
+}
+
+func getUserInput() (string, error) {
+	scanner := bufio.NewScanner(os.Stdin)
+	if !scanner.Scan() {
+		return "", errors.New("Scanner Error")
+	}
+	var input string
+	fmt.Sscanf(scanner.Text(), "%s", &input)
+	return input, nil
 }
 
 func (p *Page) FormatRowOutput(msg string) string {
