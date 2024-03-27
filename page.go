@@ -19,6 +19,7 @@ import (
 	conf "github.com/mt1976/crt/config"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
+	"github.com/rivo/tview"
 )
 
 var config = conf.Configuration
@@ -359,7 +360,7 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 	for {
 
 		//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-		//gtrm.Flush()
+		gtrm.Flush()
 		out := p.Input(p.prompt, "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
@@ -384,6 +385,12 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 }
 
 func drawScreen(p *Page) {
+
+	//box := tview.NewBox().SetBorder(true).SetTitle(p.title)
+	//box.SetTitleAlign(tview.AlignCenter)
+	llll := tview.NewList()
+	llll.SetBorder(true).SetTitle(p.title)
+
 	rowsDisplayed := 0
 	gtrm.Clear()
 	p.Header(p.title)
@@ -401,6 +408,7 @@ func drawScreen(p *Page) {
 			}
 			gtrm.MoveCursor(startColumn, lineNumber)
 			gtrm.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
+			llll.AddItem(p.pageRows[i].RowContent, "", rune(p.pageRows[i].ID), nil)
 		}
 	}
 	extraRows := (p.maxContentRows - rowsDisplayed)
@@ -416,11 +424,18 @@ func drawScreen(p *Page) {
 	gtrm.MoveCursor(startColumn, p.inputbar)
 	gtrm.Println(p.boxPartDraw(99))
 	gtrm.MoveCursor(startColumn, p.infobar)
-	gtrm.Println(p.boxPartDraw(99))
+	gtrm.Println(p.FormatRowOutput(p.prompt))
 	gtrm.MoveCursor(startColumn, p.lastrow)
 	gtrm.Println(p.boxPartDraw(last))
-	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	gtrm.Flush()
+
+	llll.AddItem("Quit", "Press to exit", 'q', func() { os.Exit(0) })
+
+	if err := tview.NewApplication().SetRoot(llll, true).Run(); err != nil {
+		panic(err)
+	}
+	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	p.Dump("Drawing Screen...")
+	//gtrm.Flush()
 }
 
 // Display displays the page content to the user and handles user input.
@@ -430,6 +445,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	ok := false
 	for !ok {
 		nextAction = p.Input(p.prompt, "")
+		gtrm.Flush()
 		if len(nextAction) > p.actionMaxLen {
 			p.Error(errs.ErrInvalidAction, nextAction)
 			continue
@@ -480,26 +496,25 @@ func (p *Page) Header(msg string) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) (output string) {
-	gtrm.MoveCursor(startColumn, p.infobar)
 	mesg := msg
 
 	if options != "" {
-		mesg = (msg + pQuote(bold(options)))
+		mesg = msg + pQuote(bold(options))
 	}
 	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
-
-	gtrm.Print(mesg)
-	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	gtrm.MoveCursor(startColumn, p.infobar)
+	p.Dump("input in", msg, options, p.prompt, mesg)
+	gtrm.Println("MESSAGE HERE")
+	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	gtrm.MoveCursor(startColumn+2, p.inputbar)
+	gtrm.Println("CURSOR HERE")
 	gtrm.Flush()
-	//var out string
-	//fmt.Scan(&out)
-	//output = out
-	// no input
+
 	input, err := getUserInput()
 	if err != nil {
 		p.Error(err, "Not able to get input string")
 	}
+	p.Dump("input returned", input)
 	return input
 }
 
@@ -517,11 +532,13 @@ func (p *Page) Dump(in ...string) {
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
-	filename := fmt.Sprintf("dump_%v.txt", dateTimeString()+seconds)
-	currentpath := filepath.Join(".", "dumps", filename)
+	filename := fmt.Sprintf("dump_%v.txt", seconds)
+	thisPath, _ := os.Getwd()
+	currentpath := filepath.Join(thisPath, "dumps", filename)
 	f, err := os.Create(currentpath)
 	if err != nil {
-		p.Error(err, "Unable to create file")
+		panic(err)
+		//p.Error(err, "Unable to create file")
 	}
 	defer f.Close()
 	for i := range in {
@@ -529,7 +546,16 @@ func (p *Page) Dump(in ...string) {
 	}
 	f.WriteString("\n")
 	f.WriteString(spew.Sdump(p))
-	p.Info(fmt.Sprintf("Dumped to %v", filename))
+	f.WriteString("\n")
+	f.WriteString(spew.Sdump(gtrm.Output))
+	f.WriteString("\n")
+	f.WriteString(spew.Sdump(gtrm.Screen))
+	f.WriteString("\n")
+	f.WriteString(fmt.Sprintf("P=%+v\n", p))
+	f.WriteString(fmt.Sprintf("T=%+v\n", p.ViewPort()))
+	f.WriteString(fmt.Sprintf("GTRM=%+v\n", gtrm.Screen.String()))
+	f.WriteString("END")
+	//p.Info(fmt.Sprintf("Dumped to %v", filename))
 	f.Close()
 }
 
@@ -646,6 +672,7 @@ func (p *Page) Error(err error, msg ...string) {
 	p.Clearline(p.infobar)
 	gtrm.MoveCursor(startColumn, p.infobar)
 	gtrm.Print(p.prompt)
+	gtrm.Flush()
 }
 
 func (p *Page) Info(info string, msg ...string) {

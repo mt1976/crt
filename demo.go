@@ -1,0 +1,24 @@
+package crt
+
+func Sample() {
+	vp := NewWithSize(80, 25)
+	pg := vp.NewPage("Testing testing 123")
+	pg.AddMenuOption(1, "Option 1 Description", "Option 1 Action", "Option")
+	pg.AddFieldValuePair("Field1", "Value1")
+	pg.AddFieldValuePair("Field2", "Value2")
+	pg.AddFieldValuePair("Field3", "Value3")
+	pg.AddFieldValuePair("Field4", "Value4")
+	pg.AddFieldValuePair("Field5", "Value5")
+	pg.AddFieldValuePair("Field6", "Value6")
+	pg.AddFieldValuePair("Field7", "Value7")
+	pg.AddFieldValuePair("Field8", "Value8")
+	pg.AddFieldValuePair("Field9", "Value9")
+	pg.AddFieldValuePair("Field10", "Value10")
+	pg.AddFieldValuePair("Field11", "Value11")
+	pg.AddFieldValuePair("Field12", "Value12")
+	pg.AddFieldValuePair("Field13", "Value13")
+	pg.AddFieldValuePair("Field14", "Value14")
+	pg.AddFieldValuePair("Field15", "Value15")
+	pg.AddFieldValuePair("Field16", "Value16")
+	pg.DisplayWithActions()
+}
