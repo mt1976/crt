@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
@@ -514,9 +515,11 @@ func getUserInput() (string, error) {
 
 func (p *Page) Dump(in ...string) {
 	time.Sleep(1 * time.Second)
+
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
 	filename := fmt.Sprintf("dump_%v.txt", dateTimeString()+seconds)
-	f, err := os.Create(filename)
+	currentpath := filepath.Join(".", "dumps", filename)
+	f, err := os.Create(currentpath)
 	if err != nil {
 		p.Error(err, "Unable to create file")
 	}
