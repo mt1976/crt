@@ -9,8 +9,10 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	gtrm "github.com/buger/goterm"
+	spew "github.com/davecgh/go-spew/spew"
 	beep "github.com/gen2brain/beeep"
 	boxr "github.com/mt1976/crt/box"
 	conf "github.com/mt1976/crt/config"
@@ -508,6 +510,24 @@ func getUserInput() (string, error) {
 	var input string
 	fmt.Sscanf(scanner.Text(), "%s", &input)
 	return input, nil
+}
+
+func (p *Page) Dump(in ...string) {
+	time.Sleep(1 * time.Second)
+	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
+	filename := fmt.Sprintf("dump_%v.txt", dateTimeString()+seconds)
+	f, err := os.Create(filename)
+	if err != nil {
+		p.Error(err, "Unable to create file")
+	}
+	defer f.Close()
+	for i := range in {
+		f.WriteString(in[i] + "\n")
+	}
+	f.WriteString("\n")
+	f.WriteString(spew.Sdump(p))
+	p.Info(fmt.Sprintf("Dumped to %v", filename))
+	f.Close()
 }
 
 func (p *Page) FormatRowOutput(msg string) string {

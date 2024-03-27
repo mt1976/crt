@@ -4,6 +4,7 @@ go 1.22
 
 require (
 	github.com/buger/goterm v1.0.4
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/dustin/go-humanize v1.0.1
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/spf13/viper v1.18.2
