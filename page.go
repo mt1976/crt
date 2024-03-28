@@ -421,6 +421,7 @@ func drawScreen(p *Page) {
 				continue
 			}
 			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
+			//	p.Dump(p.pageRows[i].RowContent)
 		}
 	}
 
@@ -503,7 +504,7 @@ func (p *Page) Input(msg string, options string) (output string) {
 	}
 	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
 	disp.PrintAt(mesg, startColumn, p.footerBarMessage)
-
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	input, err := p.getUserInput()
 	if err != nil {
 		p.Error(err, "Not able to get input string")
@@ -523,7 +524,7 @@ func (p *Page) getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
-	return
+	//return
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -581,11 +582,12 @@ func (p *Page) Break(row int) {
 }
 
 func (p *Page) PagingInfo(page, ofPages int) {
-	msg := fmt.Sprintf(yellow(lang.TxtPaging), page, ofPages)
+	msg := fmt.Sprintf(lang.TxtPaging, page+1, ofPages+1)
 	lmsg := len(msg)
-	if ofPages == 1 {
-		msg = strings.Repeat(lang.Space, lmsg)
+	if ofPages == 0 {
+		msg = strings.Repeat(" ", lmsg)
 	}
+	msg = yellow(msg)
 	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
