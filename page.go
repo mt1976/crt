@@ -360,7 +360,9 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 
 func (p *Page) Clear() {
 	disp.Clear()
-	disp.Flush()
+	p.Header(p.title)
+	p.Body()
+	p.Footer()
 }
 func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
 	if p.prompt == "" {
@@ -377,8 +379,8 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 
 	for {
 
-		//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-		disp.Flush()
+		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+
 		out := p.Input(p.prompt, "")
 		if isActionIn(out, lang.SymActionQuit) {
 			return lang.SymActionQuit, pageRow{}
@@ -431,19 +433,13 @@ func drawScreen(p *Page) {
 // message to the console.
 func (p *Page) Header(msg string) {
 	// Print Header Line
-	//disp.MoveCursor(startColumn, 1)
 	disp.PrintAt(p.boxPartDraw(first), startColumn, p.headerBarTop)
-	//disp.MoveCursor(startColumn, 2)
 	width := p.width
 	disp.PrintAt(p.boxPartDraw(99), startColumn, p.headerBarContent)
 	disp.PrintAt(lang.TxtApplicationName, startColumn+2, p.headerBarContent)
 	midway := (width - len(msg)) / 2
-	//	disp.MoveCursor(midway, 2)
 	disp.PrintAt(msg, midway, p.headerBarContent)
-	//disp.MoveCursor(width-(len(dateTimeString())+1), 2)
 	disp.PrintAt(dateTimeString(), width-(len(dateTimeString())+1), p.headerBarContent)
-	//disp.MoveCursor(width, 2)
-	//disp.MoveCursor(startColumn, 3)
 	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.headerBarBotton)
 }
 func (p *Page) Body() {
@@ -650,8 +646,8 @@ func (p *Page) ResetPrompt() {
 
 func (p *Page) Error(err error, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
-	pp := p.SENotice(err.Error(), red(lang.TxtWarning), p.viewPort.Styles.Cyan, msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	pp := p.SENotice(err.Error(), red(lang.TxtWarning), msg...)
+	disp.PrintAt(pp, startColumn+2, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -664,20 +660,20 @@ func (p *Page) Error(err error, msg ...string) {
 func (p *Page) Info(info string, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(info, white(lang.TxtInfo), "", msg...)
+	pp := p.SENotice(info, white(lang.TxtInfo), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(info, cyan(lang.TxtHint), "", msg...)
+	pp := p.SENotice(info, cyan(lang.TxtHint), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
-	pp := p.SENotice(warning, yellow(lang.TxtWarning), p.viewPort.Styles.Cyan, msg...)
+	pp := p.SENotice(warning, yellow(lang.TxtWarning), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
@@ -688,24 +684,22 @@ func (p *Page) Warning(warning string, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
 }
 
-func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string {
+func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
 
 	if len(msg) > 0 {
 		// check for enough %v strings in the error
 		// if not enough then add them on the end
 		noVars := strings.Count(errText, "%v")
-
 		if noVars < len(msg) {
 			errText = errText + strings.Repeat(" %v", len(msg)-noVars)
 		}
 	}
+
 	qq := errText
 	for i := range msg {
 		qq = strings.Replace(qq, "%v", fmt.Sprintf("%v", msg[i]), 1)
 	}
-	//errText = (colour + promptTxt + p.viewPort.Styles.Reset) + qq
 	errText = ("" + promptTxt + "") + qq
-	errText = p.FormatRowOutput(errText)
 	return errText
 }
 
@@ -718,6 +712,6 @@ func (p *Page) Clearline(row int) {
 func (p *Page) Success(message string, msg ...string) {
 	disp.ClearLine(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(message, bold(lang.TxtSuccess), "", msg...)
+	pp := p.SENotice(message, bold(lang.TxtSuccess), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }

@@ -26,7 +26,7 @@ func Clear() {
 }
 
 func ClearLine(row int) {
-	ansi.MoveTo(0, row)
+	MoveCursor(0, row)
 	ansi.ClearLine()
 }
 
