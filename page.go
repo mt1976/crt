@@ -434,13 +434,9 @@ func (p *Page) Body() {
 }
 
 func (p *Page) Footer() {
-	//	disp.MoveCursor(startColumn, p.footerBarTop)
 	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.footerBarTop)
-	//disp.MoveCursor(startColumn, p.footerBarInput)
 	disp.PrintAt(p.boxPartDraw(99), startColumn, p.footerBarInput)
-	//disp.MoveCursor(startColumn, p.footerBarMessage)
 	disp.PrintAt(p.FormatRowOutput(p.prompt), startColumn, p.footerBarMessage)
-	//disp.MoveCursor(startColumn, p.footerBarBottom)
 	disp.PrintAt(p.boxPartDraw(last), startColumn, p.footerBarBottom)
 }
 
