@@ -420,11 +420,9 @@ func drawScreen(p *Page) {
 			rowsDisplayed++
 			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
-				//disp.PrintAt("", inputColumn, lineNumber)
 				continue
 			}
 			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
-			//	p.Dump(p.pageRows[i].RowContent)
 		}
 	}
 
@@ -468,25 +466,13 @@ func (p *Page) displayIt() (string, pageRow) {
 	inputAction := ""
 	ok := false
 	for !ok {
-		p.Dump("B4 INPUT", p.prompt, inputAction)
 		inputAction = p.Input(p.prompt, "")
-		p.Dump("AF INPUT", p.prompt, inputAction)
-		//	disp.Flush()
 		if len(inputAction) > p.actionLen {
 			p.Error(errs.ErrInvalidAction, inputAction+"len")
 			continue
 		}
 
 		ok = p.viewPort.Helpers.IsActionIn(upcase(inputAction), p.actions...)
-		p.Dump("ok=", strconv.FormatBool(ok), sQuote(inputAction), upcase(inputAction))
-		// for i := range p.actions {
-		// 	p.Dump("check=", inputAction, p.actions[i])
-		// 	if upcase(inputAction) == upcase(p.actions[i]) {
-		// 		p.Dump("checkOK=", inputAction, p.actions[i])
-		// 		ok = true
-		// 		break
-		// 	}
-		// }
 		if !ok {
 			p.Error(errs.ErrInvalidAction, inputAction+"notinlist")
 		}
@@ -506,24 +492,19 @@ func (p *Page) displayIt() (string, pageRow) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) string {
-	p.Dump("INPUT READY")
 	mesg := msg + lang.SymPromptSymbol + lang.Space
 	if p.showOptions {
 		mesg = msg + lang.Space + italic(p.GetOptions(true))
 		p.showOptions = false
 	}
-	p.Dump("INPUT READY AFTER SHOW OPTIONS", mesg)
-	//mesg = p.FormatRowOutput(mesg)
+
 	disp.PrintAt(mesg, inputColumn, p.footerBarMessage)
-	p.Dump("INPUT READY AFTER PROMPT DISPLAY")
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	p.Dump("B4 getUserInput")
+
 	input, err := p.getUserInput()
-	p.Dump("AF getUserInput", input)
 	if err != nil {
 		p.Error(err, "Not able to get input string")
 	}
-	p.Dump("INPUT READY DONE")
 	return input
 }
 
@@ -740,14 +721,14 @@ func (p *Page) ClearContent(row int) {
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
-	p.Dump("GetOptions IN")
+
 	xx := p.actions
 	if !includeDefaults {
 		xx = remove(xx, lang.SymActionQuit)
 		xx = remove(xx, lang.SymActionForward)
 		xx = remove(xx, lang.SymActionBack)
 	}
-	p.Dump("GetOptions OUT", qQuote(strings.Join(xx, ",")))
+
 	return qQuote(strings.Join(xx, ","))
 }
 
