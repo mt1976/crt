@@ -217,7 +217,8 @@ func (p *Page) formatNumberedOptionText(row pageRow) string {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s" + lang.SymNewline
+	format := "%-20s : %s"
+	//+ disp.Printewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
 
@@ -314,6 +315,7 @@ func (p *Page) AddParagraph(msg []string) {
 }
 
 func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
+	disp.Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
@@ -398,11 +400,11 @@ func drawScreen(p *Page) {
 			lineNumber := (offset + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
 				disp.MoveCursor(startColumn, lineNumber)
-				disp.Println(p.FormatRowOutput(""))
+				disp.Print(p.FormatRowOutput(""))
 				continue
 			}
 			disp.MoveCursor(startColumn, lineNumber)
-			disp.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
+			disp.Print(p.FormatRowOutput(p.pageRows[i].RowContent))
 		}
 	}
 	extraRows := (p.maxContentRows - rowsDisplayed)
@@ -410,31 +412,36 @@ func drawScreen(p *Page) {
 		for i := 0; i <= extraRows; i++ {
 
 			disp.MoveCursor(startColumn, rowsDisplayed+i+offset)
-			disp.Println(p.FormatRowOutput(""))
+			disp.Print(p.FormatRowOutput(""))
 		}
 	}
-	disp.MoveCursor(startColumn, p.inputrow)
-	disp.Println(p.boxPartDraw(middle))
-	disp.MoveCursor(startColumn, p.inputbar)
-	disp.Println(p.boxPartDraw(99))
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Println(p.FormatRowOutput(p.prompt))
-	disp.MoveCursor(startColumn, p.lastrow)
-	disp.Println(p.boxPartDraw(last))
+	p.Footer()
 
 	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	p.Dump("Drawing Screen...")
+	//p.Dump("Drawing Screen...")
 	//disp.Flush()
+}
+
+func (p *Page) Footer() {
+	disp.MoveCursor(startColumn, p.inputrow)
+	disp.Print(p.boxPartDraw(middle))
+	disp.MoveCursor(startColumn, p.inputbar)
+	disp.Print(p.boxPartDraw(99))
+	disp.MoveCursor(startColumn, p.infobar)
+	disp.Print(p.FormatRowOutput(p.prompt))
+	disp.MoveCursor(startColumn, p.lastrow)
+	disp.Print(p.boxPartDraw(last))
 }
 
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt() (nextAction string, selected pageRow) {
 
 	drawScreen(p)
+	//time.Sleep(10 * time.Minute)
 	ok := false
 	for !ok {
 		nextAction = p.Input(p.prompt, "")
-		disp.Flush()
+		//	disp.Flush()
 		if len(nextAction) > p.actionMaxLen {
 			p.Error(errs.ErrInvalidAction, nextAction)
 			continue
@@ -468,10 +475,10 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 func (p *Page) Header(msg string) {
 	// Print Header Line
 	disp.MoveCursor(startColumn, 1)
-	disp.Println(p.boxPartDraw(first))
+	disp.Print(p.boxPartDraw(first))
 	disp.MoveCursor(startColumn, 2)
 	width := p.width
-	disp.Println(p.FormatRowOutput(lang.TxtApplicationName))
+	disp.Print(p.FormatRowOutput(lang.TxtApplicationName))
 	midway := (width - len(msg)) / 2
 	disp.MoveCursor(midway, 2)
 	disp.Print(msg)
@@ -479,7 +486,7 @@ func (p *Page) Header(msg string) {
 	disp.Print(dateTimeString())
 	disp.MoveCursor(width, 2)
 	disp.MoveCursor(startColumn, 3)
-	disp.Println(p.boxPartDraw(middle))
+	disp.Print(p.boxPartDraw(middle))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -491,19 +498,23 @@ func (p *Page) Input(msg string, options string) (output string) {
 		mesg = msg + pQuote(bold(options))
 	}
 	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
-	disp.MoveCursor(startColumn, p.infobar)
-	p.Dump("input in", msg, options, p.prompt, mesg)
-	//disp.Println("MESSAGE HERE")
-	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+	//disp.MoveCursor(startColumn, p.infobar)
+	disp.PrintAt(mesg, startColumn, p.infobar)
+
+	// xx := strconv.Itoa(startColumn + 2)
+	// yy := strconv.Itoa(p.infobar)
+	// zz := strconv.Itoa(p.inputbar)
+	// p.Dump("input in", msg, options, p.prompt, mesg, "column="+xx, "inforow="+yy, "inputrow="+zz)
+	// //p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	disp.MoveCursor(startColumn+2, p.inputbar)
-	//disp.Println("CURSOR HERE")
-	disp.Flush()
+	//disp.Print("CURSOR HERE")
+	//disp.Flush()
 
 	input, err := getUserInput()
 	if err != nil {
 		p.Error(err, "Not able to get input string")
 	}
-	p.Dump("input returned", input)
+	//p.Dump("input returned", input)
 	return input
 }
 
@@ -518,6 +529,7 @@ func getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
+	return
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -571,7 +583,7 @@ func (p *Page) boxPartDraw(which int) string {
 
 func (p *Page) Break(row int) {
 	disp.MoveCursor(startColumn, row)
-	disp.Println(p.boxPartDraw(middle))
+	disp.Print(p.boxPartDraw(middle))
 }
 
 func (p *Page) PagingInfo(page, ofPages int) {
