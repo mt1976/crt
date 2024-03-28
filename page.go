@@ -423,9 +423,29 @@ func drawScreen(p *Page) {
 	}
 
 	p.Footer()
+	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 }
 
+// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
+// message to the console.
+func (p *Page) Header(msg string) {
+	// Print Header Line
+	//disp.MoveCursor(startColumn, 1)
+	disp.PrintAt(p.boxPartDraw(first), startColumn, p.headerBarTop)
+	//disp.MoveCursor(startColumn, 2)
+	width := p.width
+	disp.PrintAt(p.boxPartDraw(99), startColumn, p.headerBarContent)
+	disp.PrintAt(lang.TxtApplicationName, startColumn+2, p.headerBarContent)
+	midway := (width - len(msg)) / 2
+	//	disp.MoveCursor(midway, 2)
+	disp.PrintAt(msg, midway, p.headerBarContent)
+	//disp.MoveCursor(width-(len(dateTimeString())+1), 2)
+	disp.PrintAt(dateTimeString(), width-(len(dateTimeString())+1), p.headerBarContent)
+	//disp.MoveCursor(width, 2)
+	//disp.MoveCursor(startColumn, 3)
+	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.headerBarBotton)
+}
 func (p *Page) Body() {
 	for x := 4; x < p.footerBarMessage; x++ {
 		disp.PrintAt(p.FormatRowOutput(""), 0, x)
@@ -475,25 +495,6 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 		os.Exit(0)
 	}
 	return upcase(nextAction), pageRow{}
-}
-
-// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
-// message to the console.
-func (p *Page) Header(msg string) {
-	// Print Header Line
-	disp.MoveCursor(startColumn, 1)
-	disp.Print(p.boxPartDraw(first))
-	disp.MoveCursor(startColumn, 2)
-	width := p.width
-	disp.Print(p.FormatRowOutput(lang.TxtApplicationName))
-	midway := (width - len(msg)) / 2
-	disp.MoveCursor(midway, 2)
-	disp.Print(msg)
-	disp.MoveCursor(width-(len(dateTimeString())+1), 2)
-	disp.Print(dateTimeString())
-	disp.MoveCursor(width, 2)
-	disp.MoveCursor(startColumn, 3)
-	disp.Print(p.boxPartDraw(middle))
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -595,14 +596,13 @@ func (p *Page) Break(row int) {
 
 func (p *Page) PagingInfo(page, ofPages int) {
 
-	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
+	msg := fmt.Sprintf(yellow(lang.TxtPaging), page, ofPages)
 	lmsg := len(msg)
 	if ofPages == 1 {
 		msg = strings.Repeat(lang.Space, lmsg)
 	}
-
-	disp.MoveCursor(p.width-lmsg-1, p.footerBarMessage)
-	disp.Print(msg)
+	//disp.MoveCursor(p.width-lmsg-1, p.footerBarMessage)
+	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) InputHintInfo(msg string) {
