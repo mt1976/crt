@@ -607,8 +607,8 @@ func (p *Page) PagingInfo(page, ofPages int) {
 
 func (p *Page) InputHintInfo(msg string) {
 	lmsg := len(msg)
-	disp.MoveCursor(p.width-lmsg-1, p.footerBarMessage)
-	disp.Print(msg)
+	//disp.MoveCursor(p.width-lmsg-1, p.footerBarMessage)
+	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) MinMaxHint(min, max int) string {
@@ -679,14 +679,13 @@ func (p *Page) Error(err error, msg ...string) {
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	disp.MoveCursor(startColumn, p.footerBarMessage)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	disp.MoveCursor(startColumn, p.footerBarInput)
+	//disp.MoveCursor(startColumn, p.footerBarMessage)
+	disp.PrintAt(p.viewPort.Styles.ClearLine, startColumn, p.footerBarMessage)
+	//disp.MoveCursor(startColumn, p.footerBarInput)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	disp.MoveCursor(startColumn, p.footerBarMessage)
+	//disp.MoveCursor(startColumn, p.footerBarMessage)
 	pp := p.SENotice(info, white(lang.TxtInfo), "", msg...)
-	disp.Print(pp)
-	disp.Flush()
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
