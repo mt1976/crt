@@ -468,13 +468,13 @@ func (p *Page) displayIt() (string, pageRow) {
 	for !ok {
 		inputAction = p.Input(p.prompt, "")
 		if len(inputAction) > p.actionLen {
-			p.Error(errs.ErrInvalidAction, inputAction+"len")
+			p.Error(errs.ErrInvalidActionLen, inputAction, strconv.Itoa(len(inputAction)), strconv.Itoa(p.actionLen))
 			continue
 		}
 
 		ok = p.viewPort.Helpers.IsActionIn(upcase(inputAction), p.actions...)
 		if !ok {
-			p.Error(errs.ErrInvalidAction, inputAction+"notinlist")
+			p.Error(errs.ErrInvalidAction, inputAction)
 		}
 	}
 	// if nextAction is a numnber, find the menu item
