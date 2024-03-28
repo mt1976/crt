@@ -37,6 +37,7 @@ type Page struct {
 	pageRows         []pageRow // The rows of content on the page.
 	noRows           int       // The number of rows on the page.
 	prompt           string    // The prompt displayed to the user.
+	showOptions      bool      // The text to be displayed to the user in the case options are possible
 	actions          []string  // The available actions on the page.
 	actionMaxLen     int       // The maximum length of an action.
 	noPages          int       // The total number of pages.
@@ -86,6 +87,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
+	p.showOptions = false
 	p.pageRowCounter = 0
 	p.viewPort = t
 	// Setup viewport page info
@@ -497,12 +499,12 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) (output string) {
-	mesg := msg
-
-	if options != "" {
-		mesg = msg + pQuote(italic(options))
+	mesg := msg + lang.SymPromptSymbol + lang.Space
+	if p.showOptions {
+		mesg = msg + lang.Space + pQuote(italic(p.GetOptions(false)))
+		p.showOptions = false
 	}
-	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
+	mesg = p.FormatRowOutput(mesg)
 	disp.PrintAt(mesg, startColumn, p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	input, err := p.getUserInput()
@@ -510,6 +512,10 @@ func (p *Page) Input(msg string, options string) (output string) {
 		p.Error(err, "Not able to get input string")
 	}
 	return input
+}
+
+func (p *Page) ShowOptions() {
+	p.showOptions = true
 }
 
 func (p *Page) getUserInput() (string, error) {
