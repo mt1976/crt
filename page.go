@@ -687,29 +687,32 @@ func (p *Page) Info(info string, msg ...string) {
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	disp.MoveCursor(startColumn, p.footerBarMessage)
+	//disp.MoveCursor(startColumn, p.footerBarMessage)
 	disp.ClearLine(p.footerBarMessage)
-	pp := p.SENotice(info, cyan(lang.TxtHint), p.viewPort.Styles.Reset, msg...)
-	disp.Print(pp)
-	p.Clearline(p.footerBarMessage)
-	disp.MoveCursor(startColumn, p.footerBarMessage)
-	disp.Print(p.prompt)
-	disp.Flush()
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	pp := p.SENotice(info, cyan(lang.TxtHint), "", msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	//p.Clearline(p.footerBarMessage)
+	//disp.MoveCursor(startColumn, p.footerBarMessage)
+	//disp.Print(p.prompt)
+	//disp.Flush()
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	disp.MoveCursor(startColumn, p.footerBarMessage)
+	disp.ClearLine(p.footerBarMessage)
+	//disp.MoveCursor(startColumn, p.footerBarMessage)
 	pp := p.SENotice(warning, yellow(lang.TxtWarning), p.viewPort.Styles.Cyan, msg...)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	disp.Print(pp)
-	disp.Flush()
+	//disp.Print(p.viewPort.Styles.ClearLine)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	//disp.Flush()
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	p.Clearline(p.footerBarInput)
-	disp.Print(p.prompt)
+	disp.ClearLine(p.footerBarInput)
+	disp.ClearLine(p.footerBarMessage)
+	//disp.Print(p.prompt)
 }
 
 func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string {
