@@ -1,6 +1,8 @@
 package styles
 
-import "runtime"
+import (
+	"runtime"
+)
 
 var Reset string = "\033[0m"
 var Red string = "\033[1;31m"

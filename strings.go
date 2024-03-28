@@ -1,10 +1,11 @@
 package crt
 
 import (
+	"fmt"
 	"strings"
 
+	colour "github.com/fatih/color"
 	lang "github.com/mt1976/crt/language"
-	styl "github.com/mt1976/crt/styles"
 )
 
 // The upcase function in Go converts a string to uppercase.
@@ -37,7 +38,44 @@ func trimRepeatingCharacters(s string, c string) string {
 }
 
 func bold(s string) string {
-	return styl.Bold + s + styl.Reset
+	embolden := colour.New(colour.Bold)
+	return embolden.Sprintf("%v", s)
+}
+
+func cyan(s string) string {
+	return colour.CyanString(s)
+}
+
+func red(s string) string {
+	return colour.New(colour.FgRed).Sprintf("%v", s)
+}
+
+func green(s string) string {
+	return colour.New(colour.FgGreen).Sprintf("%v", s)
+}
+
+func yellow(s string) string {
+	return colour.New(colour.FgYellow).Sprintf("%v", s)
+}
+
+func blue(s string) string {
+	return colour.New(colour.FgBlue).Sprintf("%v", s)
+}
+
+func magenta(s string) string {
+	return colour.New(colour.FgMagenta).Sprintf("%v", s)
+}
+
+func italic(s string) string {
+	return colour.New(colour.Italic).Sprintf("%v", s)
+}
+
+func white(s string) string {
+	return colour.New(colour.FgWhite).Sprintf("%v", s)
+}
+
+func boldInt(s int) string {
+	return bold(fmt.Sprintf("%d", s))
 }
 
 func sQuote(s string) string {

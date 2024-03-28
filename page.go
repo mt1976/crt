@@ -33,24 +33,29 @@ const (
 
 // Page represents a page in a document or a user interface.
 type Page struct {
-	title           string    // The title of the page.
-	pageRows        []pageRow // The rows of content on the page.
-	noRows          int       // The number of rows on the page.
-	prompt          string    // The prompt displayed to the user.
-	actions         []string  // The available actions on the page.
-	actionMaxLen    int       // The maximum length of an action.
-	noPages         int       // The total number of pages.
-	ActivePageIndex int       // The index of the active page.
-	counter         int       // A counter used for tracking.
-	pageRowCounter  int       // A counter used for tracking the page rows.
-	viewPort        *ViewPort // The viewPort object used for displaying the page.
-	inputrow        int       // The row where the input box starts
-	inputbar        int       // The row where the input box is
-	infobar         int       // The row where the info box is
-	lastrow         int       // The last row of the page
-	height          int       // The height of the page
-	width           int       // The width of the page
-	maxContentRows  int       // The maximum number of rows available for content on the page.
+	title            string    // The title of the page.
+	pageRows         []pageRow // The rows of content on the page.
+	noRows           int       // The number of rows on the page.
+	prompt           string    // The prompt displayed to the user.
+	actions          []string  // The available actions on the page.
+	actionMaxLen     int       // The maximum length of an action.
+	noPages          int       // The total number of pages.
+	ActivePageIndex  int       // The index of the active page.
+	counter          int       // A counter used for tracking.
+	pageRowCounter   int       // A counter used for tracking the page rows.
+	viewPort         *ViewPort // The viewPort object used for displaying the page.
+	headerBarTop     int       // The header row top row
+	headerBarContent int       // The header row content row
+	headerBarBotton  int       // The header row bottom row
+	footerBarTop     int       // The row where the input box starts
+	footerBarInput   int       // The row where the input box is
+	footerBarMessage int       // The row where the info box is
+	footerBarBottom  int       // The last row of the page
+	textAreaStart    int       // The row where the text area starts
+	textAreaEnd      int       // The row where the text area ends
+	height           int       // The height of the page
+	width            int       // The width of the page
+	maxContentRows   int       // The maximum number of rows available for content on the page.
 }
 
 // pageRow represents a row of content on a page.
@@ -87,10 +92,15 @@ func (t *ViewPort) NewPage(title string) *Page {
 	// Setup viewport page info
 	p.height = t.height
 	p.width = t.width
-	p.inputrow = t.height - 3
-	p.inputbar = t.height - 2
-	p.infobar = t.height - 1
-	p.lastrow = t.height
+	p.headerBarTop = 1
+	p.headerBarContent = 2
+	p.headerBarBotton = 3
+	p.textAreaStart = 4
+	p.textAreaEnd = t.height - 4
+	p.footerBarTop = t.height - 3
+	p.footerBarInput = t.height - 2
+	p.footerBarMessage = t.height - 1
+	p.footerBarBottom = t.height
 	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
 	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
 
@@ -204,7 +214,13 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 }
 
 func (p *Page) formatNumberedOptionText(row pageRow) string {
-	miString := fmt.Sprintf("%3v) %v", row.ID, row.Title)
+	si := strconv.Itoa(row.ID)
+	if len(si) < 4 {
+		si = si + strings.Repeat(lang.Space, 4-len(si))
+	}
+	seq := bold(si)
+
+	miString := fmt.Sprintf("%v) %v", seq, row.Title)
 	return miString
 }
 
@@ -217,7 +233,8 @@ func (p *Page) formatNumberedOptionText(row pageRow) string {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s" + lang.SymNewline
+	format := "%-20s : %s"
+	//+ disp.Printewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
 
@@ -269,7 +286,7 @@ func (p *Page) AddColumns(columns ...string) {
 
 func (p *Page) calcColSize(cols []string) int {
 	// Calculate the column width
-	colSize := (p.width/len(cols) - 6)
+	colSize := ((p.width - 2) / len(cols))
 	return colSize
 }
 
@@ -314,6 +331,7 @@ func (p *Page) AddParagraph(msg []string) {
 }
 
 func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
+	disp.Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
@@ -387,54 +405,70 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 func drawScreen(p *Page) {
 
 	rowsDisplayed := 0
+
 	disp.Clear()
 	p.Header(p.title)
-
-	offset := 4
+	p.Body()
 
 	for i := range p.pageRows {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
-			lineNumber := (offset + rowsDisplayed) - 1
+			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
-				disp.MoveCursor(startColumn, lineNumber)
-				disp.Println(p.FormatRowOutput(""))
+				//disp.PrintAt("", startColumn+2, lineNumber)
 				continue
 			}
-			disp.MoveCursor(startColumn, lineNumber)
-			disp.Println(p.FormatRowOutput(p.pageRows[i].RowContent))
+			disp.PrintAt(p.pageRows[i].RowContent, startColumn+2, lineNumber)
 		}
 	}
-	extraRows := (p.maxContentRows - rowsDisplayed)
-	if extraRows > 0 {
-		for i := 0; i <= extraRows; i++ {
 
-			disp.MoveCursor(startColumn, rowsDisplayed+i+offset)
-			disp.Println(p.FormatRowOutput(""))
-		}
+	p.Footer()
+	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
+
+}
+
+// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
+// message to the console.
+func (p *Page) Header(msg string) {
+	// Print Header Line
+	//disp.MoveCursor(startColumn, 1)
+	disp.PrintAt(p.boxPartDraw(first), startColumn, p.headerBarTop)
+	//disp.MoveCursor(startColumn, 2)
+	width := p.width
+	disp.PrintAt(p.boxPartDraw(99), startColumn, p.headerBarContent)
+	disp.PrintAt(lang.TxtApplicationName, startColumn+2, p.headerBarContent)
+	midway := (width - len(msg)) / 2
+	//	disp.MoveCursor(midway, 2)
+	disp.PrintAt(msg, midway, p.headerBarContent)
+	//disp.MoveCursor(width-(len(dateTimeString())+1), 2)
+	disp.PrintAt(dateTimeString(), width-(len(dateTimeString())+1), p.headerBarContent)
+	//disp.MoveCursor(width, 2)
+	//disp.MoveCursor(startColumn, 3)
+	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.headerBarBotton)
+}
+func (p *Page) Body() {
+	for x := 4; x < p.footerBarMessage; x++ {
+		disp.PrintAt(p.FormatRowOutput(""), 0, x)
 	}
-	disp.MoveCursor(startColumn, p.inputrow)
-	disp.Println(p.boxPartDraw(middle))
-	disp.MoveCursor(startColumn, p.inputbar)
-	disp.Println(p.boxPartDraw(99))
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Println(p.FormatRowOutput(p.prompt))
-	disp.MoveCursor(startColumn, p.lastrow)
-	disp.Println(p.boxPartDraw(last))
+	return
+}
 
-	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	p.Dump("Drawing Screen...")
-	//disp.Flush()
+func (p *Page) Footer() {
+	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.footerBarTop)
+	disp.PrintAt(p.boxPartDraw(99), startColumn, p.footerBarInput)
+	disp.PrintAt(p.FormatRowOutput(p.prompt), startColumn, p.footerBarMessage)
+	disp.PrintAt(p.boxPartDraw(last), startColumn, p.footerBarBottom)
 }
 
 // Display displays the page content to the user and handles user input.
 func (p *Page) displayIt() (nextAction string, selected pageRow) {
 
 	drawScreen(p)
+	//time.Sleep(10 * time.Minute)
 	ok := false
 	for !ok {
 		nextAction = p.Input(p.prompt, "")
-		disp.Flush()
+		//	disp.Flush()
 		if len(nextAction) > p.actionMaxLen {
 			p.Error(errs.ErrInvalidAction, nextAction)
 			continue
@@ -463,51 +497,26 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	return upcase(nextAction), pageRow{}
 }
 
-// The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
-// message to the console.
-func (p *Page) Header(msg string) {
-	// Print Header Line
-	disp.MoveCursor(startColumn, 1)
-	disp.Println(p.boxPartDraw(first))
-	disp.MoveCursor(startColumn, 2)
-	width := p.width
-	disp.Println(p.FormatRowOutput(lang.TxtApplicationName))
-	midway := (width - len(msg)) / 2
-	disp.MoveCursor(midway, 2)
-	disp.Print(msg)
-	disp.MoveCursor(width-(len(dateTimeString())+1), 2)
-	disp.Print(dateTimeString())
-	disp.MoveCursor(width, 2)
-	disp.MoveCursor(startColumn, 3)
-	disp.Println(p.boxPartDraw(middle))
-}
-
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) (output string) {
 	mesg := msg
 
 	if options != "" {
-		mesg = msg + pQuote(bold(options))
+		mesg = msg + pQuote(italic(options))
 	}
 	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
-	disp.MoveCursor(startColumn, p.infobar)
-	p.Dump("input in", msg, options, p.prompt, mesg)
-	//disp.Println("MESSAGE HERE")
-	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-	disp.MoveCursor(startColumn+2, p.inputbar)
-	//disp.Println("CURSOR HERE")
-	disp.Flush()
+	disp.PrintAt(mesg, startColumn, p.footerBarMessage)
 
-	input, err := getUserInput()
+	input, err := p.getUserInput()
 	if err != nil {
 		p.Error(err, "Not able to get input string")
 	}
-	p.Dump("input returned", input)
 	return input
 }
 
-func getUserInput() (string, error) {
+func (p *Page) getUserInput() (string, error) {
+	disp.MoveCursor(startColumn+2, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		return "", errors.New("Scanner Error")
@@ -518,6 +527,7 @@ func getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
+	return
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -571,25 +581,21 @@ func (p *Page) boxPartDraw(which int) string {
 
 func (p *Page) Break(row int) {
 	disp.MoveCursor(startColumn, row)
-	disp.Println(p.boxPartDraw(middle))
+	disp.Print(p.boxPartDraw(middle))
 }
 
 func (p *Page) PagingInfo(page, ofPages int) {
-
-	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
+	msg := fmt.Sprintf(yellow(lang.TxtPaging), page, ofPages)
 	lmsg := len(msg)
 	if ofPages == 1 {
 		msg = strings.Repeat(lang.Space, lmsg)
 	}
-
-	disp.MoveCursor(p.width-lmsg-1, p.infobar)
-	disp.Print(msg)
+	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) InputHintInfo(msg string) {
 	lmsg := len(msg)
-	disp.MoveCursor(p.width-lmsg-1, p.infobar)
-	disp.Print(msg)
+	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) MinMaxHint(min, max int) string {
@@ -643,57 +649,43 @@ func (p *Page) ResetPrompt() {
 }
 
 func (p *Page) Error(err error, msg ...string) {
-	disp.MoveCursor(startColumn, p.infobar)
-	//pp := t.SError(err, msg...)
-	pp := p.SENotice(err.Error(), lang.TxtError, p.viewPort.Styles.Red, msg...)
-	disp.Print(pp)
-	disp.Flush()
+	disp.ClearLine(p.footerBarMessage)
+	pp := p.SENotice(err.Error(), red(lang.TxtWarning), p.viewPort.Styles.Cyan, msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	p.Clearline(p.infobar)
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.prompt)
-	disp.Flush()
+	disp.ClearLine(p.footerBarInput)
+	disp.ClearLine(p.footerBarMessage)
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	disp.MoveCursor(startColumn, p.inputbar)
+	disp.ClearLine(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	disp.MoveCursor(startColumn, p.infobar)
-	pp := p.SENotice(info, lang.TxtInfo, "", msg...)
-	disp.Print(pp)
-	disp.Flush()
+	pp := p.SENotice(info, white(lang.TxtInfo), "", msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	pp := p.SENotice(info, lang.TxtHint, p.viewPort.Styles.Reset, msg...)
-	disp.Print(pp)
-	p.Clearline(p.infobar)
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.prompt)
-	disp.Flush()
+	disp.ClearLine(p.footerBarMessage)
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	pp := p.SENotice(info, cyan(lang.TxtHint), "", msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	disp.MoveCursor(startColumn, p.infobar)
-	pp := p.SENotice(warning, lang.TxtWarning, p.viewPort.Styles.Cyan, msg...)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	disp.Print(pp)
-	disp.Flush()
+	disp.ClearLine(p.footerBarMessage)
+	pp := p.SENotice(warning, yellow(lang.TxtWarning), p.viewPort.Styles.Cyan, msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	p.Clearline(p.inputbar)
-	disp.Print(p.prompt)
+	disp.ClearLine(p.footerBarInput)
+	disp.ClearLine(p.footerBarMessage)
 }
 
 func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string {
@@ -719,17 +711,13 @@ func (p *Page) SENotice(errText, promptTxt, colour string, msg ...string) string
 
 func (p *Page) Clearline(row int) {
 	disp.MoveCursor(startColumn, row)
-	disp.Print(strings.Repeat(lang.Space, p.width-2))
-	disp.MoveCursor(startColumn, row)
+	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), startColumn+2, row)
+	//disp.MoveCursor(startColumn, row)
 }
+
 func (p *Page) Success(message string, msg ...string) {
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	pp := p.SENotice(message, lang.TxtSuccess, p.viewPort.Styles.Cyan, msg...)
-	disp.Print(pp)
-	disp.MoveCursor(startColumn, p.inputbar)
-	disp.Print(p.viewPort.Styles.ClearLine)
-	disp.MoveCursor(startColumn, p.infobar)
-	disp.Print(p.prompt)
-	disp.Flush()
+	disp.ClearLine(p.footerBarMessage)
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	pp := p.SENotice(message, bold(lang.TxtSuccess), "", msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
