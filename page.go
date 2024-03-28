@@ -83,7 +83,6 @@ func (t *ViewPort) NewPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	p.Clear()
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
@@ -103,6 +102,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.footerBarBottom = t.height
 	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
 	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
+	p.Clear()
 
 	return &p
 }
