@@ -719,3 +719,22 @@ func (p *Page) Clearline(row int) {
 func (p *Page) ClearContent(row int) {
 	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), inputColumn, row)
 }
+
+func (p *Page) GetOptions(includeDefaults bool) string {
+	xx := p.actions
+	if !includeDefaults {
+		remove(xx, lang.SymActionQuit)
+		remove(xx, lang.SymActionForward)
+		remove(xx, lang.SymActionBack)
+	}
+	return qQuote(strings.Join(xx, ","))
+}
+
+func remove(s []string, r string) []string {
+	for i, v := range s {
+		if v == r {
+			return append(s[:i], s[i+1:]...)
+		}
+	}
+	return s
+}
