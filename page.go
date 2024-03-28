@@ -493,10 +493,10 @@ func (p *Page) Input(msg string, options string) (output string) {
 	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
 	disp.MoveCursor(startColumn, p.infobar)
 	p.Dump("input in", msg, options, p.prompt, mesg)
-	disp.Println("MESSAGE HERE")
+	//disp.Println("MESSAGE HERE")
 	//p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 	disp.MoveCursor(startColumn+2, p.inputbar)
-	disp.Println("CURSOR HERE")
+	//disp.Println("CURSOR HERE")
 	disp.Flush()
 
 	input, err := getUserInput()
