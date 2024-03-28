@@ -679,11 +679,9 @@ func (p *Page) Error(err error, msg ...string) {
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	//disp.MoveCursor(startColumn, p.footerBarMessage)
-	disp.PrintAt(p.viewPort.Styles.ClearLine, startColumn, p.footerBarMessage)
-	//disp.MoveCursor(startColumn, p.footerBarInput)
+	disp.ClearLine(p.footerBarMessage)
+	//disp.PrintAt(p.viewPort.Styles.ClearLine, startColumn, p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	//disp.MoveCursor(startColumn, p.footerBarMessage)
 	pp := p.SENotice(info, white(lang.TxtInfo), "", msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
