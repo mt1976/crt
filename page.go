@@ -155,6 +155,9 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
 func (p *Page) AddAction(validAction string) {
+
+	validAction = strings.ReplaceAll(validAction, lang.Space, "")
+
 	if validAction == "" {
 		log.Fatal(errs.ErrInvalidAction)
 		return
@@ -164,7 +167,6 @@ func (p *Page) AddAction(validAction string) {
 		//do nothing
 		return
 	}
-	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 	p.actions = append(p.actions, validAction)
 	if len(validAction) > p.actionLen {
 		p.actionLen = len(validAction)
