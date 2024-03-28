@@ -3,9 +3,11 @@ module github.com/mt1976/crt
 go 1.22
 
 require (
+	github.com/bit101/go-ansi v1.5.2
 	github.com/buger/goterm v1.0.4
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/dustin/go-humanize v1.0.1
+	github.com/fatih/color v1.16.0
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/spf13/viper v1.18.2
 	github.com/xeonx/timeago v1.0.0-rc5
@@ -13,16 +15,8 @@ require (
 )
 
 require (
-	github.com/bit101/go-ansi v1.5.2 // indirect
-	github.com/fatih/color v1.16.0 // indirect
-	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/gdamore/tcell/v2 v2.7.1 // indirect
-	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
-	github.com/mattn/go-runewidth v0.0.15 // indirect
-	github.com/rivo/tview v0.0.0-20240307173318-e804876934a1 // indirect
-	github.com/rivo/uniseg v0.4.7 // indirect
 )
 
 require (
