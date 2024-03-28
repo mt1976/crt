@@ -17,6 +17,7 @@ import (
 )
 
 const startColumn int = 1
+const inputColumn int = startColumn + 2
 
 // The ViewPort type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.

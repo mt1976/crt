@@ -417,10 +417,10 @@ func drawScreen(p *Page) {
 			rowsDisplayed++
 			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
-				//disp.PrintAt("", startColumn+2, lineNumber)
+				//disp.PrintAt("", inputColumn, lineNumber)
 				continue
 			}
-			disp.PrintAt(p.pageRows[i].RowContent, startColumn+2, lineNumber)
+			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
 		}
 	}
 
@@ -436,7 +436,7 @@ func (p *Page) Header(msg string) {
 	disp.PrintAt(p.boxPartDraw(first), startColumn, p.headerBarTop)
 	width := p.width
 	disp.PrintAt(p.boxPartDraw(99), startColumn, p.headerBarContent)
-	disp.PrintAt(lang.TxtApplicationName, startColumn+2, p.headerBarContent)
+	disp.PrintAt(lang.TxtApplicationName, inputColumn, p.headerBarContent)
 	midway := (width - len(msg)) / 2
 	disp.PrintAt(msg, midway, p.headerBarContent)
 	disp.PrintAt(dateTimeString(), width-(len(dateTimeString())+1), p.headerBarContent)
@@ -512,7 +512,7 @@ func (p *Page) Input(msg string, options string) (output string) {
 }
 
 func (p *Page) getUserInput() (string, error) {
-	disp.MoveCursor(startColumn+2, p.footerBarInput)
+	disp.MoveCursor(inputColumn, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		return "", errors.New("Scanner Error")
@@ -647,7 +647,7 @@ func (p *Page) ResetPrompt() {
 func (p *Page) Error(err error, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	pp := p.SENotice(err.Error(), red(lang.TxtWarning), msg...)
-	disp.PrintAt(pp, startColumn+2, p.footerBarMessage)
+	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -661,20 +661,20 @@ func (p *Page) Info(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.SENotice(info, white(lang.TxtInfo), msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.SENotice(info, cyan(lang.TxtHint), msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	pp := p.SENotice(warning, yellow(lang.TxtWarning), msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -687,7 +687,7 @@ func (p *Page) Success(message string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.SENotice(message, bold(lang.TxtSuccess), msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
 func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
@@ -710,10 +710,10 @@ func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
 }
 
 func (p *Page) Clearline(row int) {
-	disp.MoveCursor(startColumn, row)
-	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), startColumn+2, row)
+	//disp.MoveCursor(startColumn, row)
+	disp.ClearLine(row)
 }
 
 func (p *Page) ClearContent(row int) {
-	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), startColumn+2, row)
+	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), inputColumn, row)
 }
