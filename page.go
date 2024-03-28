@@ -339,7 +339,6 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
-
 		switch {
 		case nextAction == lang.SymActionQuit:
 			exit = true
@@ -462,57 +461,69 @@ func (p *Page) Footer() {
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt() (nextAction string, selected pageRow) {
+func (p *Page) displayIt() (string, pageRow) {
 
 	drawScreen(p)
-	//time.Sleep(10 * time.Minute)
+
+	inputAction := ""
 	ok := false
 	for !ok {
-		nextAction = p.Input(p.prompt, "")
+		p.Dump("B4 INPUT", p.prompt, inputAction)
+		inputAction = p.Input(p.prompt, "")
+		p.Dump("AF INPUT", p.prompt, inputAction)
 		//	disp.Flush()
-		if len(nextAction) > p.actionLen {
-			p.Error(errs.ErrInvalidAction, nextAction)
+		if len(inputAction) > p.actionLen {
+			p.Error(errs.ErrInvalidAction, inputAction+"len")
 			continue
 		}
 
-		for i := range p.actions {
-			if upcase(nextAction) == upcase(p.actions[i]) {
-				ok = true
-				break
-			}
-		}
+		ok = p.viewPort.Helpers.IsActionIn(upcase(inputAction), p.actions...)
+		p.Dump("ok=", strconv.FormatBool(ok), sQuote(inputAction), upcase(inputAction))
+		// for i := range p.actions {
+		// 	p.Dump("check=", inputAction, p.actions[i])
+		// 	if upcase(inputAction) == upcase(p.actions[i]) {
+		// 		p.Dump("checkOK=", inputAction, p.actions[i])
+		// 		ok = true
+		// 		break
+		// 	}
+		// }
 		if !ok {
-			p.Error(errs.ErrInvalidAction, nextAction)
-
+			p.Error(errs.ErrInvalidAction, inputAction+"notinlist")
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if isInt(nextAction) {
-		pos, _ := strconv.Atoi(nextAction)
-		return upcase(nextAction), p.pageRows[pos-1]
+	if isInt(inputAction) {
+		pos, _ := strconv.Atoi(inputAction)
+		return upcase(inputAction), p.pageRows[pos-1]
 	}
 
-	if upcase(nextAction) == lang.SymActionExit {
+	if upcase(inputAction) == lang.SymActionExit {
 		os.Exit(0)
 	}
-	return upcase(nextAction), pageRow{}
+	return upcase(inputAction), pageRow{}
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
-func (p *Page) Input(msg string, options string) (output string) {
+func (p *Page) Input(msg string, options string) string {
+	p.Dump("INPUT READY")
 	mesg := msg + lang.SymPromptSymbol + lang.Space
 	if p.showOptions {
-		mesg = msg + lang.Space + pQuote(italic(p.GetOptions(false)))
+		mesg = msg + lang.Space + italic(p.GetOptions(true))
 		p.showOptions = false
 	}
-	mesg = p.FormatRowOutput(mesg)
-	disp.PrintAt(mesg, startColumn, p.footerBarMessage)
+	p.Dump("INPUT READY AFTER SHOW OPTIONS", mesg)
+	//mesg = p.FormatRowOutput(mesg)
+	disp.PrintAt(mesg, inputColumn, p.footerBarMessage)
+	p.Dump("INPUT READY AFTER PROMPT DISPLAY")
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	p.Dump("B4 getUserInput")
 	input, err := p.getUserInput()
+	p.Dump("AF getUserInput", input)
 	if err != nil {
 		p.Error(err, "Not able to get input string")
 	}
+	p.Dump("INPUT READY DONE")
 	return input
 }
 
@@ -532,7 +543,7 @@ func (p *Page) getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
-	//return
+	return
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -729,19 +740,22 @@ func (p *Page) ClearContent(row int) {
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
+	p.Dump("GetOptions IN")
 	xx := p.actions
 	if !includeDefaults {
-		remove(xx, lang.SymActionQuit)
-		remove(xx, lang.SymActionForward)
-		remove(xx, lang.SymActionBack)
+		xx = remove(xx, lang.SymActionQuit)
+		xx = remove(xx, lang.SymActionForward)
+		xx = remove(xx, lang.SymActionBack)
 	}
+	p.Dump("GetOptions OUT", qQuote(strings.Join(xx, ",")))
 	return qQuote(strings.Join(xx, ","))
 }
 
 func remove(s []string, r string) []string {
-	for i, v := range s {
-		if v == r {
-			return append(s[:i], s[i+1:]...)
+	var rtn []string
+	for _, v := range s {
+		if v != r {
+			return append(rtn, v)
 		}
 	}
 	return s
