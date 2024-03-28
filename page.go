@@ -645,7 +645,7 @@ func (p *Page) ResetPrompt() {
 }
 
 func (p *Page) Error(err error, msg ...string) {
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarMessage)
 	pp := p.SENotice(err.Error(), red(lang.TxtWarning), msg...)
 	disp.PrintAt(pp, startColumn+2, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
@@ -653,26 +653,26 @@ func (p *Page) Error(err error, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	disp.ClearLine(p.footerBarInput)
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarInput)
+	p.ClearContent(p.footerBarMessage)
 }
 
 func (p *Page) Info(info string, msg ...string) {
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.SENotice(info, white(lang.TxtInfo), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.SENotice(info, cyan(lang.TxtHint), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarMessage)
 	pp := p.SENotice(warning, yellow(lang.TxtWarning), msg...)
 	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
@@ -680,8 +680,14 @@ func (p *Page) Warning(warning string, msg ...string) {
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
 	p.viewPort.DelayIt()
 	p.viewPort.SetDelayInMs(oldDelay)
-	disp.ClearLine(p.footerBarInput)
-	disp.ClearLine(p.footerBarMessage)
+	p.ClearContent(p.footerBarInput)
+	p.ClearContent(p.footerBarMessage)
+}
+func (p *Page) Success(message string, msg ...string) {
+	p.ClearContent(p.footerBarMessage)
+	p.PagingInfo(p.ActivePageIndex, p.noPages)
+	pp := p.SENotice(message, bold(lang.TxtSuccess), msg...)
+	disp.PrintAt(pp, startColumn, p.footerBarMessage)
 }
 
 func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
@@ -706,12 +712,8 @@ func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
 func (p *Page) Clearline(row int) {
 	disp.MoveCursor(startColumn, row)
 	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), startColumn+2, row)
-	//disp.MoveCursor(startColumn, row)
 }
 
-func (p *Page) Success(message string, msg ...string) {
-	disp.ClearLine(p.footerBarMessage)
-	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(message, bold(lang.TxtSuccess), msg...)
-	disp.PrintAt(pp, startColumn, p.footerBarMessage)
+func (p *Page) ClearContent(row int) {
+	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), startColumn+2, row)
 }
