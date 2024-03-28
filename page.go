@@ -2,7 +2,6 @@ package crt
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -84,9 +83,9 @@ func (t *ViewPort) NewPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	p.AddAction(lang.SymActionQuit)    // Add Quit action
-	p.AddAction(lang.SymActionForward) // Add Next action
-	p.AddAction(lang.SymActionBack)    // Add Previous action
+	//p.AddAction(lang.SymActionQuit)    // Add Quit action
+	//p.AddAction(lang.SymActionForward) // Add Next action
+	//p.AddAction(lang.SymActionBack)    // Add Previous action
 	p.showOptions = false
 	p.pageRowCounter = 0
 	p.viewPort = t
@@ -159,7 +158,7 @@ func (p *Page) AddAction(validAction string) {
 	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 
 	if validAction == "" {
-		log.Fatal(errs.ErrInvalidAction)
+		log.Fatal(errs.ErrNoActionSpecified)
 		return
 	}
 	//If the validAction is already in the list of actions, return
@@ -256,7 +255,7 @@ func (p *Page) AddFieldValuePair(key string, value string) {
 func (p *Page) AddColumns(columns ...string) {
 	// Check the number of columns
 	if len(columns) > 10 {
-		p.Error(errs.ErrAddColumns)
+		p.Error(errs.ErrAddColumns, strconv.Itoa(len(columns)), "10")
 		os.Exit(1)
 	}
 
@@ -503,8 +502,9 @@ func (p *Page) Input(msg string, options string) string {
 
 	input, err := p.getUserInput()
 	if err != nil {
-		p.Error(err, "Not able to get input string")
+		p.Error(errs.ErrInputFailure, err.Error())
 	}
+
 	return input
 }
 
@@ -516,7 +516,7 @@ func (p *Page) getUserInput() (string, error) {
 	disp.MoveCursor(inputColumn, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
-		return "", errors.New("Scanner Error")
+		return "", errs.ErrInputScannerFailure
 	}
 	var input string
 	fmt.Sscanf(scanner.Text(), "%s", &input)
