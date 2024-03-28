@@ -1,8 +1,6 @@
 package display
 
 import (
-	"fmt"
-
 	ansi "github.com/bit101/go-ansi"
 )
 
@@ -15,7 +13,7 @@ import (
 
 func PrintAt(content string, column, row int) {
 	MoveCursor(column, row)
-	fmt.Print(content)
+	ansi.Print(ansi.Green, content)
 }
 
 func Flush() {
@@ -33,13 +31,13 @@ func ClearLine(row int) {
 }
 
 func MoveCursor(column, row int) {
-	ansi.MoveTo(column, row+2)
+	ansi.MoveTo(column, row)
 }
 
 func Println(content string) {
-	Print(content + "\n")
+	ansi.Println(ansi.Green, content)
 }
 
 func Print(content string) {
-	fmt.Print(content)
+	ansi.Print(ansi.Green, content)
 }
