@@ -7,9 +7,13 @@ var (
 	ErrBaudRateError               = errors.New("invalid baud rate %v")
 	ErrDurationMismatch            = errors.New("duration mismatch")
 	ErrMaxPageRows                 = errors.New("max page rows reached")
-	ErrInvalidAction               = errors.New("invalid action specified %v")
+	ErrNoActionSpecified           = errors.New("no action specified")
+	ErrInvalidAction               = errors.New("invalid action specified. [%v]")
+	ErrInvalidActionLen            = errors.New("invalid action length. [%v] %v Characters should be %v")
+	ErrInputFailure                = errors.New("unable to get input data") // ErrInputFailure is returned when the input fails
+	ErrInputScannerFailure         = errors.New("unable to get input data") // ErrInputScannerFailure is returned when the input scanner fails
 	ErrNoMorePages                 = errors.New("no more pages")
-	ErrAddColumns                  = errors.New("too many columns 10 or less")
+	ErrAddColumns                  = errors.New("too many columns have %v should be %v or less")
 	ErrConfigurationColumnMismatch = errors.New("column mismatch in configuration got %v wanted %v in %s")
 	ErrDashboardNoHost             = errors.New("dashboard: No default host set")
 	ErrHostName                    = errors.New("unable to get hostname")

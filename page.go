@@ -2,7 +2,6 @@ package crt
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -37,8 +36,9 @@ type Page struct {
 	pageRows         []pageRow // The rows of content on the page.
 	noRows           int       // The number of rows on the page.
 	prompt           string    // The prompt displayed to the user.
+	showOptions      bool      // The text to be displayed to the user in the case options are possible
 	actions          []string  // The available actions on the page.
-	actionMaxLen     int       // The maximum length of an action.
+	actionLen        int       // The maximum length of an action.
 	noPages          int       // The total number of pages.
 	ActivePageIndex  int       // The index of the active page.
 	counter          int       // A counter used for tracking.
@@ -82,10 +82,11 @@ func (t *ViewPort) NewPage(title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
-	p.AddAction(lang.SymActionQuit)    // Add Quit action
-	p.AddAction(lang.SymActionForward) // Add Next action
-	p.AddAction(lang.SymActionBack)    // Add Previous action
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	//p.AddAction(lang.SymActionQuit)    // Add Quit action
+	//p.AddAction(lang.SymActionForward) // Add Next action
+	//p.AddAction(lang.SymActionBack)    // Add Previous action
+	p.showOptions = false
 	p.pageRowCounter = 0
 	p.viewPort = t
 	// Setup viewport page info
@@ -153,8 +154,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
 func (p *Page) AddAction(validAction string) {
+
+	validAction = strings.ReplaceAll(validAction, lang.Space, "")
+
 	if validAction == "" {
-		log.Fatal(errs.ErrInvalidAction)
+		log.Fatal(errs.ErrNoActionSpecified)
 		return
 	}
 	//If the validAction is already in the list of actions, return
@@ -162,10 +166,9 @@ func (p *Page) AddAction(validAction string) {
 		//do nothing
 		return
 	}
-	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 	p.actions = append(p.actions, validAction)
-	if len(validAction) > p.actionMaxLen {
-		p.actionMaxLen = len(validAction)
+	if len(validAction) > p.actionLen {
+		p.actionLen = len(validAction)
 	}
 }
 
@@ -252,7 +255,7 @@ func (p *Page) AddFieldValuePair(key string, value string) {
 func (p *Page) AddColumns(columns ...string) {
 	// Check the number of columns
 	if len(columns) > 10 {
-		p.Error(errs.ErrAddColumns)
+		p.Error(errs.ErrAddColumns, strconv.Itoa(len(columns)), "10")
 		os.Exit(1)
 	}
 
@@ -335,7 +338,6 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
-
 		switch {
 		case nextAction == lang.SymActionQuit:
 			exit = true
@@ -417,11 +419,9 @@ func drawScreen(p *Page) {
 			rowsDisplayed++
 			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
-				//disp.PrintAt("", inputColumn, lineNumber)
 				continue
 			}
 			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
-			//	p.Dump(p.pageRows[i].RowContent)
 		}
 	}
 
@@ -458,65 +458,65 @@ func (p *Page) Footer() {
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt() (nextAction string, selected pageRow) {
+func (p *Page) displayIt() (string, pageRow) {
 
 	drawScreen(p)
-	//time.Sleep(10 * time.Minute)
+
+	inputAction := ""
 	ok := false
 	for !ok {
-		nextAction = p.Input(p.prompt, "")
-		//	disp.Flush()
-		if len(nextAction) > p.actionMaxLen {
-			p.Error(errs.ErrInvalidAction, nextAction)
+		inputAction = p.Input(p.prompt, "")
+		if len(inputAction) > p.actionLen {
+			p.Error(errs.ErrInvalidActionLen, inputAction, strconv.Itoa(len(inputAction)), strconv.Itoa(p.actionLen))
 			continue
 		}
 
-		for i := range p.actions {
-			if upcase(nextAction) == upcase(p.actions[i]) {
-				ok = true
-				break
-			}
-		}
+		ok = p.viewPort.Helpers.IsActionIn(upcase(inputAction), p.actions...)
 		if !ok {
-			p.Error(errs.ErrInvalidAction, nextAction)
-
+			p.Error(errs.ErrInvalidAction, inputAction)
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if isInt(nextAction) {
-		pos, _ := strconv.Atoi(nextAction)
-		return upcase(nextAction), p.pageRows[pos-1]
+	if isInt(inputAction) {
+		pos, _ := strconv.Atoi(inputAction)
+		return upcase(inputAction), p.pageRows[pos-1]
 	}
 
-	if upcase(nextAction) == lang.SymActionExit {
+	if upcase(inputAction) == lang.SymActionExit {
 		os.Exit(0)
 	}
-	return upcase(nextAction), pageRow{}
+	return upcase(inputAction), pageRow{}
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
-func (p *Page) Input(msg string, options string) (output string) {
-	mesg := msg
-
-	if options != "" {
-		mesg = msg + pQuote(italic(options))
+func (p *Page) Input(msg string, options string) string {
+	mesg := msg + lang.SymPromptSymbol + lang.Space
+	if p.showOptions {
+		mesg = msg + lang.Space + italic(p.GetOptions(true))
+		p.showOptions = false
 	}
-	mesg = p.FormatRowOutput(mesg + lang.SymPromptSymbol)
-	disp.PrintAt(mesg, startColumn, p.footerBarMessage)
+
+	disp.PrintAt(mesg, inputColumn, p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
+
 	input, err := p.getUserInput()
 	if err != nil {
-		p.Error(err, "Not able to get input string")
+		p.Error(errs.ErrInputFailure, err.Error())
 	}
+
 	return input
+}
+
+func (p *Page) ShowOptions() {
+	p.showOptions = true
 }
 
 func (p *Page) getUserInput() (string, error) {
 	disp.MoveCursor(inputColumn, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
-		return "", errors.New("Scanner Error")
+		return "", errs.ErrInputScannerFailure
 	}
 	var input string
 	fmt.Sscanf(scanner.Text(), "%s", &input)
@@ -524,7 +524,7 @@ func (p *Page) getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
-	//return
+	return
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -721,19 +721,22 @@ func (p *Page) ClearContent(row int) {
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
+
 	xx := p.actions
 	if !includeDefaults {
-		remove(xx, lang.SymActionQuit)
-		remove(xx, lang.SymActionForward)
-		remove(xx, lang.SymActionBack)
+		xx = remove(xx, lang.SymActionQuit)
+		xx = remove(xx, lang.SymActionForward)
+		xx = remove(xx, lang.SymActionBack)
 	}
+
 	return qQuote(strings.Join(xx, ","))
 }
 
 func remove(s []string, r string) []string {
-	for i, v := range s {
-		if v == r {
-			return append(s[:i], s[i+1:]...)
+	var rtn []string
+	for _, v := range s {
+		if v != r {
+			return append(rtn, v)
 		}
 	}
 	return s
