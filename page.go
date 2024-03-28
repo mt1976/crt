@@ -39,7 +39,7 @@ type Page struct {
 	prompt           string    // The prompt displayed to the user.
 	showOptions      bool      // The text to be displayed to the user in the case options are possible
 	actions          []string  // The available actions on the page.
-	actionMaxLen     int       // The maximum length of an action.
+	actionLen        int       // The maximum length of an action.
 	noPages          int       // The total number of pages.
 	ActivePageIndex  int       // The index of the active page.
 	counter          int       // A counter used for tracking.
@@ -83,7 +83,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionMaxLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
@@ -166,8 +166,8 @@ func (p *Page) AddAction(validAction string) {
 	}
 	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 	p.actions = append(p.actions, validAction)
-	if len(validAction) > p.actionMaxLen {
-		p.actionMaxLen = len(validAction)
+	if len(validAction) > p.actionLen {
+		p.actionLen = len(validAction)
 	}
 }
 
@@ -468,7 +468,7 @@ func (p *Page) displayIt() (nextAction string, selected pageRow) {
 	for !ok {
 		nextAction = p.Input(p.prompt, "")
 		//	disp.Flush()
-		if len(nextAction) > p.actionMaxLen {
+		if len(nextAction) > p.actionLen {
 			p.Error(errs.ErrInvalidAction, nextAction)
 			continue
 		}
