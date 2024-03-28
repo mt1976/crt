@@ -66,6 +66,10 @@ func magenta(s string) string {
 	return colour.New(colour.FgMagenta).Sprintf("%v", s)
 }
 
+func italic(s string) string {
+	return colour.New(colour.Italic).Sprintf("%v", s)
+}
+
 func white(s string) string {
 	return colour.New(colour.FgWhite).Sprintf("%v", s)
 }
