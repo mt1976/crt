@@ -14,14 +14,17 @@ func PrintAt(content string, x, y int) {
 
 func Flush() {
 	// Do nothing
+	Print("FLUSH")
 }
 
 func Clear() {
 	// Do nothing
+	Print("CLEAR")
 }
 
 func MoveCursor(x, y int) {
 	// Do nothing
+	fmt.Printf("MOVECURSOR-%dx%d", x, y)
 }
 
 func Println(content string) {
@@ -31,4 +34,5 @@ func Println(content string) {
 
 func Print(content string) {
 	// Do nothing
+	fmt.Print(content)
 }
