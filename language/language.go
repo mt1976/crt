@@ -200,3 +200,17 @@ const (
 const (
 	TxtMinMaxLength string = "Text Length Min: %v Max: %v"
 )
+
+// FileChooser
+const (
+	TxtFileChooserTitle string = "File Chooser"
+	TxtFolderIcon              = "+"
+	TxtFileIcon                = "#"
+	TxtSymLinkIcon             = "~"
+)
+
+var (
+	TxtFileChooserDescription  []string = []string{"This menu shows the list of files available for maintenance.", "Select the file you wish to use. PLEASE BE CAREFUL!"}
+	TxtFileChooserPrompt       string   = "Choose a file to use"
+	TxtFileChooserConfirmation string   = "Choose (S)end or (Q)uit"
+)
