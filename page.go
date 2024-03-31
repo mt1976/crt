@@ -741,3 +741,18 @@ func remove(s []string, r string) []string {
 	}
 	return s
 }
+
+func (p *Page) Confirmation(msg string) (bool, error) {
+	if msg == "" {
+		msg = "Proceed"
+	}
+	for {
+		choice := p.Input(msg, "Y/N")
+		if upcase(choice) == "Y" {
+			return true, nil
+		} else if choice == "N" {
+			return false, nil
+		}
+	}
+	return true, nil
+}
