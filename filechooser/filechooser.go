@@ -44,53 +44,77 @@ var actionGo = "G"
 var pathSeparator = string(os.PathSeparator)
 var actionSelect = "S"
 
+// FileChooser is a function to choose a file or directory using the file chooser.
+//
+// Parameters:
+//
+//	searchPath (string): The directory to start browsing from.
+//	flags (flagger): A set of flags that control which types of items are included in the list and other behavior.
+//
+// Returns:
+//
+//	(string, bool, error): The chosen file or directory, a boolean indicating whether it is a directory, and an error if one occurred.
 func FileChooser(searchPath string, flags flagger) (string, bool, error) {
-
+	// Function to choose a file or directory using the file chooser
 	term := crt.New()
 	page := term.NewPage(lang.TxtFileChooserTitle)
 
+	// Get a list of files in the specified directory
 	files, err := GetFolderList(searchPath, flags)
 	if err != nil {
 		return "", false, err
 	}
+
+	// Add information about the current user and directory to the page
 	uh, _ := UserHome()
 	un, _ := UserName()
 	page.AddFieldValuePair("User Name", un)
 	page.AddFieldValuePair("User Home", uh)
 	page.AddFieldValuePair("Directory", searchPath)
-	page.AddBlankRow()
-	//page.AddColumnsTitle("Name", "Mode", "Size", "Modified")
-	formatter := "%1v %-30v %10v %12v %15v"
-	tformatter := "%5v %1v-|%-30v|-%-10v-|-%-12v-|-%-15v"
-	title := fmt.Sprintf(tformatter, "", "T", " Name", "Mode", "Modified", "Size")
-	title = strings.ReplaceAll(title, "|", " ")
-	title = strings.ReplaceAll(title, "-", " ")
 
+	// Add a blank row to separate the header from the file list
+	page.AddBlankRow()
+
+	// Add columns for the file list
+	page.AddColumnsTitle("Icon", "Name", "Mode", "Size", "Modified")
+
+	// Add a title row for the file list
+	title := fmt.Sprintf("%-5s %-1s| %-30s | %-10s | %-12s | %-15s", " ", "T", " Name", "Mode", "Modified", "Size")
 	page.Add(title, "", "")
-	breaker := fmt.Sprintf(tformatter, strings.Repeat(" ", 5), strings.Repeat("-", 1), strings.Repeat("-", 30), strings.Repeat("-", 10), strings.Repeat("-", 12), strings.Repeat("-", 15))
-	//breaker = strings.Repeat("-", len(breaker))
+
+	// Add a row for a separator between the header and the file list
+	breaker := fmt.Sprintf("%-5s %-1s| %-30s | %-10s | %-12s | %-15s", strings.Repeat(" ", 5), strings.Repeat("-", 1), strings.Repeat("-", 30), strings.Repeat("-", 10), strings.Repeat("-", 12), strings.Repeat("-", 15))
 	page.Add(breaker, "", "")
-	up := fmt.Sprintf(formatter, "^", " ..", "", "", "")
-	page.Add(actionUp+" "+up, "", "")
+
+	// Add an option for the parent directory
+	up := fmt.Sprintf("%-1s %-30s | %-10s | %-12s | %-15s", actionUp, "..", "", "", "")
+	page.Add(up, "", "")
+
+	// Add actions for the parent directory, up arrow, and select
 	page.AddAction(actionUp)
 	page.AddAction(actionUpArrow)
 	page.AddAction(actionUpDoubleDot)
 	page.AddAction(actionSelect)
 
+	// Add options for each file or directory in the list
 	for _, file := range files {
-		row := fmt.Sprintf(formatter, file.Icon, file.Name, file.Mode, file.Modified, file.SizeTxt)
+		// Create a row for the file or directory
+		row := fmt.Sprintf("%-1s %-30s | %-10s | %-12s | %-15s", file.Icon, file.Name, file.Mode, file.Modified, file.SizeTxt)
 		page.AddMenuOption(file.Seq+1, row, "", "")
+
+		// Add an action for selecting the directory if it is a directory
 		if file.IsDir {
 			page.AddAction(actionGo + fmt.Sprintf("%v", file.Seq+1))
 		}
 	}
-	// spew.Dump(page)
-	// os.Exit(0)
+
+	// Display the file chooser with actions
 	na, _ := page.DisplayWithActions()
 	if na == lang.SymActionQuit {
 		return "", false, nil
 	}
 
+	// Handle actions for the parent directory, up arrow, and select
 	if na == actionUp || na == actionUpArrow || na == actionUpDoubleDot {
 		upPath := strings.Split(searchPath, pathSeparator)
 		if len(upPath) > 1 {
@@ -100,9 +124,12 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 		return FileChooser(toPath, flags)
 	}
-	// split na into first char and remainder
+
+	// Split the action into its first character and the remaining characters
 	first := upcase(na[:1])
 	remainder := na[1:]
+
+	// Handle actions for selecting a directory or file
 	if first == actionGo || isInt(remainder) {
 		r := files[term.Helpers.ToInt(remainder)-1]
 		if !r.IsDir {
@@ -112,8 +139,8 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		return FileChooser(r.Path, flags)
 	}
 
+	// Handle selection of a specific file or directory
 	if term.Helpers.IsInt(na) {
-		// if a specific item has been selected, return the path of that item
 		r := files[term.Helpers.ToInt(na)-1]
 		if !r.IsDir && flags.directory {
 			page.Error(errs.ErrNotAFile, r.Path)
@@ -125,6 +152,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		}
 		return r.Path, r.IsDir, nil
 	}
+
 	if upcase(na) == upcase(actionSelect) {
 		// The current folder has been selected
 		return searchPath, true, nil
@@ -133,6 +161,9 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	return FileChooser(searchPath, flags)
 }
 
+// GetFolderList gets a list of files in the specified directory.
+// It filters the list of files to only include directories that match the include flags.
+// It returns a slice of File structs that contain information about each file or directory.
 func GetFolderList(dir string, include flagger) ([]File, error) {
 	// Get a list of files in the specified directory
 	files, err := os.ReadDir(dir)
@@ -142,42 +173,32 @@ func GetFolderList(dir string, include flagger) ([]File, error) {
 
 	// Filter the list of files to only include directories
 	var directories []File
-	//include := false
+
 	itemNo := 0
-	// upPath := strings.Split(dir, "/")
-	// if len(upPath) > 1 {
-	// 	upPath = upPath[:len(upPath)-1]
-	// }
-	//upPath = strings.Join(upPath, "/")
-	//up := File{Name: "..", Path: strings.Join(upPath, "/"), Icon: lang.TxtFolderIcon, IsDir: true, Seq: -1}
-	//directories = append(directories, up)
+
 	for _, file := range files {
-		// fmt.Printf("\"PROCESSING\": %v\n", file.Name())
-		// fmt.Printf("file.IsDir(): %v\n", file.IsDir())
-		// fmt.Printf("include.directory: %v\n", include.directory)
+
+		// Check if the file is a directory and should be included
 		if file.IsDir() && !include.directory {
-			//include = true
-			continue
-		}
-		// fmt.Printf("file.Name()[0]: %v\n", file.Name()[0])
-		// fmt.Printf("include.dotfile: %v\n", include.dotfile)
-		if file.Name()[0] == '.' && !include.dotfile {
-			//include = false
-			continue
-		}
-		// fmt.Printf("file.IsDir(): %v\n", file.IsDir())
-		// fmt.Printf("include.file: %v\n", include.file)
-		if !file.IsDir() && !include.file {
-			//include = false
-			continue
-		}
-		// fmt.Printf("file.IsDir(): %v\n", file.IsDir())
-		// fmt.Printf("include.showFiles: %v\n", include.showFiles)
-		if !file.IsDir() && !include.showFiles {
-			//include = false
 			continue
 		}
 
+		// Check if the file is a hidden file and should be included
+		if file.Name()[0] == '.' && !include.dotfile {
+			continue
+		}
+
+		// Check if the file is a regular file and should be included
+		if !file.IsDir() && !include.file {
+			continue
+		}
+
+		// Check if the file should be shown
+		if !file.IsDir() && !include.showFiles {
+			continue
+		}
+
+		// Create a new File struct and fill it with information about the file
 		var this File
 		this.Name = strings.Trim(file.Name(), " ")
 		this.Path = dir + pathSeparator + file.Name()
@@ -194,24 +215,33 @@ func GetFolderList(dir string, include flagger) ([]File, error) {
 		} else {
 			this.Icon = lang.TxtFileIcon
 		}
+		// Check if the file is a symbolic link
 		if isSymLink(this.Mode) {
 			this.Icon = lang.TxtSymLinkIcon
 		}
 		this.Icon = this.Icon + " "
 		this.Seq = itemNo
-		//fmt.Printf("this: %v\n", this)
+		// Add the file to the list of directories
 		directories = append(directories, this)
 		itemNo++
 	}
-	//spew.Dump(directories, include, All)
-	//os.Exit(0)
 	return directories, nil
 }
 
+// isSymLink returns true if the input string can be converted to an integer.
 func isSymLink(mode string) bool {
 	return mode[0] == 'L' || mode[0] == 'l'
 }
 
+// ChooseDirectory is a function to choose a directory using the file chooser.
+//
+// Parameters:
+//
+//	root (string): The root directory to start browsing from.
+//
+// Returns:
+//
+//	(string, error): The chosen directory, or an error if one occurred.
 func ChooseDirectory(root string) (string, error) {
 	// Function to choose a directory using the file chooser
 	item, _, err := FileChooser(root, DirectoriesOnly)
@@ -221,15 +251,17 @@ func ChooseDirectory(root string) (string, error) {
 	return item, err
 }
 
+// isInt returns true if the input string can be converted to an integer.
 func isInt(s string) bool {
-	//_, err := crt.New().Helpers.IsInt(s)
 	return crt.New().Helpers.IsInt(s)
 }
 
+// upcase returns the input string with all characters converted to uppercase.
 func upcase(s string) string {
 	return crt.New().Formatters.Upcase(s)
 }
 
+// UserHome returns the home directory of the current user, or an error if it cannot be determined.
 func UserHome() (string, error) {
 	// Function gets the home directory of the current user, or returns an error if it cant.
 	//
@@ -238,11 +270,14 @@ func UserHome() (string, error) {
 	return os.UserHomeDir()
 }
 
+// UserName returns the name of the current user, or an error if it cannot be determined.
 func UserName() (string, error) {
-	// Function gets the name of the current user, or returns an error if it cant.
-	//
-	// Returns:
-	// The name of the current user, or an error if it cant.
+	// Get the current user
 	currentUser, err := user.Current()
-	return currentUser.Name, err
+	if err != nil {
+		return "", err
+	}
+
+	// Return the username
+	return currentUser.Name, nil
 }
