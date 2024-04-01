@@ -276,7 +276,9 @@ func (p *Page) AddColumns(columns ...string) {
 			noToAdd := colSize - (len(op) + 1)
 
 			// Add the spaces to the column
-			op = op + strings.Repeat(lang.Space, noToAdd)
+			if noToAdd > 0 {
+				op = op + strings.Repeat(lang.Space, noToAdd)
+			}
 		}
 
 		// Add the column to the output slice
@@ -307,7 +309,9 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 			op = op[0:colSize]
 		} else {
 			noToAdd := colSize - (len(op) + 1)
-			op = op + strings.Repeat(lang.Space, noToAdd)
+			if noToAdd > 0 {
+				op = op + strings.Repeat(lang.Space, noToAdd)
+			}
 		}
 
 		noChars := len(op)
@@ -751,7 +755,7 @@ func (p *Page) Confirmation(msg string) (bool, error) {
 		p.prompt = msg
 		p.AddAction("Y")
 		p.AddAction("N")
-		p.displayIt()
+		drawScreen(p)
 		choice := p.Input(msg, "Y/N")
 		if upcase(choice) == "Y" {
 			return true, nil
