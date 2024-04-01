@@ -524,7 +524,7 @@ func (p *Page) getUserInput() (string, error) {
 }
 
 func (p *Page) Dump(in ...string) {
-	return
+
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
@@ -743,16 +743,21 @@ func remove(s []string, r string) []string {
 }
 
 func (p *Page) Confirmation(msg string) (bool, error) {
+
 	if msg == "" {
 		msg = "Proceed"
 	}
 	for {
+		p.prompt = msg
+		p.AddAction("Y")
+		p.AddAction("N")
+		p.displayIt()
 		choice := p.Input(msg, "Y/N")
 		if upcase(choice) == "Y" {
 			return true, nil
-		} else if choice == "N" {
+		} else if upcase(choice) == "N" {
 			return false, nil
 		}
 	}
-	return true, nil
+	//return true, nil
 }
