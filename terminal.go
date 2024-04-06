@@ -88,7 +88,7 @@ func (t *ViewPort) row() string {
 		displayChar = boxr.StartLeft
 		t.firstRow = false
 	}
-	return displayChar + strings.Repeat(boxr.Horizontal, t.width-2)
+	return displayChar + strings.Repeat(boxr.Horizontal, t.width-3)
 }
 
 // The `Close()` function is a method of the `Crt` struct. It is used to print a closing line on the
@@ -417,14 +417,18 @@ func (t *ViewPort) Spool(msg []byte) {
 // The `Banner` function is a method of the `Crt` struct. It is responsible for printing a banner
 // message to the console.
 func (t *ViewPort) Banner(msg string) {
-	t.PrintIt(t.row() + lang.SymNewline)
+	fmt.Println(t.row())
+	//gtrm.Flush()
 	for _, line := range lang.ApplicationHeader {
-		t.PrintIt(t.Format(line+lang.SymNewline, ""))
+		fmt.Println(t.Format(line, ""))
+		//	gtrm.Flush()
 	}
-	t.PrintIt(t.row() + lang.SymNewline)
+	fmt.Println(t.row())
+	//gtrm.Flush()
 	display := fmt.Sprintf(lang.TxtApplicationVersion, msg)
-	t.PrintIt(t.Format(display+lang.SymNewline, ""))
-	t.Break()
+	fmt.Println(t.Format(display+lang.SymNewline, ""))
+	//t.Break()
+	//gtrm.Flush()
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
@@ -505,7 +509,7 @@ func (t *ViewPort) PrintIt(msg string) {
 	if len(rowString) < t.width {
 		rowString = rowString + strings.Repeat(".", t.width-(len(rowString)+1))
 	} else {
-		rowString = rowString[0 : t.width+1]
+		rowString = rowString[0:t.width]
 	}
 	//t.Print(rowString + msg
 	rowString = rowString + boxr.Upright
@@ -571,4 +575,8 @@ func (t *ViewPort) newPageContent(cols, rows int) {
 	v.rows = rows
 	v.row = make(map[int]string)
 	t.visibleContent = &v
+}
+
+func (t *ViewPort) Wait() {
+	time.Sleep(time.Duration(t.delay) * time.Millisecond)
 }
