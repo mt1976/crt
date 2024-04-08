@@ -109,7 +109,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Display the file chooser with actions
-	na, _ := page.DisplayWithActions()
+	na, _ := page.Display_Actions()
 	if na == lang.SymActionQuit {
 		return "", false, nil
 	}

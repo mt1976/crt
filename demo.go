@@ -25,5 +25,5 @@ func Sample() {
 	pg.AddFieldValuePair("Field15", "Value15")
 	pg.AddFieldValuePair("Field16", "Value16")
 	pg.AddAction("K")
-	pg.DisplayWithActions()
+	pg.Display_Actions()
 }

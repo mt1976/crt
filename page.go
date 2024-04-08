@@ -376,7 +376,7 @@ func (p *Page) AddParagraph(msg []string) {
 	}
 }
 
-func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
+func (p *Page) Display_Actions() (nextAction string, selected pageRow) {
 	disp.Clear()
 	exit := false
 	for !exit {
@@ -412,7 +412,7 @@ func (p *Page) Clear() {
 	p.Footer()
 }
 
-func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
+func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pageRow) {
 	if p.prompt == "" {
 		p.Error(errs.ErrNoPromptSpecified, lang.TxtSetPrompt)
 		os.Exit(1)
@@ -421,7 +421,7 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 		//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
 		p.Add(lang.SymBlank, "", "")
 		p.Add(lang.HelpHint, "", "")
-		p.Add(p.MinMaxHint(minLen, maxLen), "", "")
+		p.Add(p.minMaxHint(minLen, maxLen), "", "")
 	}
 	drawScreen(p)
 
@@ -474,10 +474,8 @@ func drawScreen(p *Page) {
 			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
 		}
 	}
-
 	p.Footer()
 	p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
-
 }
 
 // The `Header` function is a method of the `Crt` struct. It is responsible for printing a banner
@@ -651,7 +649,7 @@ func (p *Page) InputHintInfo(msg string) {
 	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
-func (p *Page) MinMaxHint(min, max int) string {
+func (p *Page) minMaxHint(min, max int) string {
 	if min <= 0 && max <= 0 {
 		return ""
 	}
@@ -797,11 +795,7 @@ func removeOption(s []string, r string) []string {
 	return s
 }
 
-func (p *Page) Confirmation(msg string) (bool, error) {
-	return p.DisplayConfirmation(msg)
-}
-
-func (p *Page) DisplayConfirmation(msg string) (bool, error) {
+func (p *Page) Display_Confirmation(msg string) (bool, error) {
 
 	if msg == "" {
 		msg = lang.TxtProceed
@@ -881,7 +875,7 @@ func (p *Page) Help() {
 	}
 
 	for {
-		ok, err := help.DisplayConfirmation(prompt)
+		ok, err := help.Display_Confirmation(prompt)
 		if err != nil {
 			p.Error(err)
 		}
