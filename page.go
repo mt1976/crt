@@ -39,6 +39,7 @@ type Page struct {
 	showOptions      bool      // The text to be displayed to the user in the case options are possible
 	actions          []string  // The available actions on the page.
 	actionLen        int       // The maximum length of an action.
+	blockedActions   []string  // The available actions on the page
 	noPages          int       // The total number of pages.
 	ActivePageIndex  int       // The index of the active page.
 	counter          int       // A counter used for tracking.
@@ -104,6 +105,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.footerBarBottom = t.height
 	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
 	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
+	p.blockedActions = []string{}           // No Blocked Actions
 	p.ResetSetHelp()
 	p.Clear()
 
@@ -179,9 +181,39 @@ func (p *Page) AddAction(validAction string) {
 	}
 }
 
-// AddAction_int adds an action to the page with the given integer value
-func (p *Page) AddAction_int(validAction int) {
+// AddIntAction adds an action to the page with the given integer value
+func (p *Page) AddIntAction(validAction int) {
 	p.AddAction(fmt.Sprintf("%v", validAction))
+}
+
+func (p *Page) GetActions() []string {
+	return p.actions
+}
+
+func (p *Page) BlockAction(action string) {
+	p.blockedActions = append(p.blockedActions, action)
+}
+
+func (p *Page) BlockIntAction(action int) {
+	p.BlockAction(fmt.Sprintf("%v", action))
+}
+
+func (p *Page) UnblockAction(action string) {
+	newList := []string{}
+	for _, v := range p.blockedActions {
+		if v != action {
+			newList = append(newList, v)
+		}
+	}
+	p.blockedActions = newList
+}
+
+func (p *Page) GetBlockedActions() []string {
+	return p.blockedActions
+}
+
+func (p *Page) IsBlockedAction(action string) bool {
+	return slices.Contains(p.blockedActions, action)
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
@@ -218,7 +250,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 	mi.Title = rowContent
 	mi.DateTime = dateTime
 	mi.RowContent = p.formatNumberedOptionText(mi)
-	p.AddAction_int(id)
+	p.AddIntAction(id)
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 }
@@ -356,9 +388,9 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 			exit = true
 			return lang.SymActionQuit, pageRow{}
 		case nextAction == lang.SymActionForward:
-			p.NextPage()
+			p.Forward()
 		case nextAction == lang.SymActionBack:
-			p.PreviousPage()
+			p.Back()
 		case isInList(nextAction, p.actions):
 			// upcase the action
 			exit = true
@@ -379,6 +411,7 @@ func (p *Page) Clear() {
 	p.Body()
 	p.Footer()
 }
+
 func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected pageRow) {
 	if p.prompt == "" {
 		p.Error(errs.ErrNoPromptSpecified, lang.TxtSetPrompt)
@@ -626,9 +659,9 @@ func (p *Page) MinMaxHint(min, max int) string {
 	return msg
 }
 
-// NextPage moves to the next page.
+// Forward moves to the next page.
 // If the current page is the last page, it returns an error.
-func (p *Page) NextPage() {
+func (p *Page) Forward() {
 	if p.ActivePageIndex == p.noPages {
 		p.Error(errs.ErrNoMorePages)
 		return
@@ -636,9 +669,9 @@ func (p *Page) NextPage() {
 	p.ActivePageIndex++
 }
 
-// PreviousPage moves to the previous page.
+// Back moves to the previous page.
 // If the current page is the first page, it returns an error.
-func (p *Page) PreviousPage() {
+func (p *Page) Back() {
 	if p.ActivePageIndex == 0 {
 		p.Error(errs.ErrNoMorePages)
 		return
@@ -670,7 +703,7 @@ func (p *Page) ResetPrompt() {
 
 func (p *Page) Error(err error, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
-	pp := p.SENotice(err.Error(), red(lang.TxtWarning), msg...)
+	pp := p.formatMessage(err.Error(), red(lang.TxtWarning), msg...)
 	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
@@ -684,20 +717,20 @@ func (p *Page) Error(err error, msg ...string) {
 func (p *Page) Info(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(info, white(lang.TxtInfo), msg...)
+	pp := p.formatMessage(info, white(lang.TxtInfo), msg...)
 	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(info, cyan(lang.TxtHint), msg...)
+	pp := p.formatMessage(info, cyan(lang.TxtHint), msg...)
 	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
-	pp := p.SENotice(warning, yellow(lang.TxtWarning), msg...)
+	pp := p.formatMessage(warning, yellow(lang.TxtWarning), msg...)
 	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
@@ -710,11 +743,11 @@ func (p *Page) Warning(warning string, msg ...string) {
 func (p *Page) Success(message string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.SENotice(message, bold(lang.TxtSuccess), msg...)
+	pp := p.formatMessage(message, bold(lang.TxtSuccess), msg...)
 	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
 }
 
-func (p *Page) SENotice(errText, promptTxt string, msg ...string) string {
+func (p *Page) formatMessage(errText, promptTxt string, msg ...string) string {
 
 	if len(msg) > 0 {
 		// check for enough %v strings in the error
@@ -746,15 +779,15 @@ func (p *Page) GetOptions(includeDefaults bool) string {
 
 	xx := p.actions
 	if !includeDefaults {
-		xx = remove(xx, lang.SymActionQuit)
-		xx = remove(xx, lang.SymActionForward)
-		xx = remove(xx, lang.SymActionBack)
+		xx = removeOption(xx, lang.SymActionQuit)
+		xx = removeOption(xx, lang.SymActionForward)
+		xx = removeOption(xx, lang.SymActionBack)
 	}
 
 	return qQuote(strings.Join(xx, ","))
 }
 
-func remove(s []string, r string) []string {
+func removeOption(s []string, r string) []string {
 	var rtn []string
 	for _, v := range s {
 		if v != r {
@@ -786,11 +819,15 @@ func (p *Page) DisplayConfirmation(msg string) (bool, error) {
 		case upcase(choice) == lang.SymActionNo:
 			return false, nil
 		case upcase(choice) == lang.SymActionForward && isInList(lang.SymActionForward, p.actions):
-			p.NextPage()
+			p.Forward()
 		case upcase(choice) == lang.SymActionBack && isInList(lang.SymActionBack, p.actions):
-			p.PreviousPage()
+			p.Back()
 		case choice == lang.SymActionHelp:
-			p.Help()
+			if !p.IsBlockedAction(lang.SymActionHelp) {
+				p.Help()
+				continue
+			}
+			fallthrough
 		default:
 			p.Error(errs.ErrInvalidAction, choice)
 		}
@@ -833,6 +870,7 @@ func (p *Page) Help() {
 	help.Footer()
 	help.AddParagraph(p.GetHelp())
 	help.AddAction(lang.SymActionYes)
+	help.BlockAction(lang.SymActionHelp)
 	//help.SetPrompt("Press Y when done")
 	prompt := lang.HelpPromptSinglePage
 
