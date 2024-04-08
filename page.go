@@ -85,13 +85,15 @@ func (t *ViewPort) NewPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p.viewPort = t
+	// Now for the more complex setup
 	p.SetTitle(title)
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
 	p.showOptions = false
 	p.pageRowCounter = 0
-	p.viewPort = t
+
 	// Setup viewport page info
 	p.height = t.height
 	p.width = t.width
@@ -838,7 +840,6 @@ func (p *Page) SetHelp(msg []string) {
 }
 
 func (p *Page) GetHelp() []string {
-	// TODO: if helptext is null then generate some helptext based on options etc.
 	if p.helpText == nil {
 		var rtn []string
 		rtn = append(rtn, lang.SymBlank)
