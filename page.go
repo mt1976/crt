@@ -805,6 +805,15 @@ func (p *Page) SetHelp(msg []string) {
 
 func (p *Page) GetHelp() []string {
 	// TODO: if helptext is null then generate some helptext based on options etc.
+	if p.helpText[0] == "" || p.helpText == nil {
+		var rtn []string
+		rtn = append(rtn, "The following actions are supported:")
+		rtn = append(rtn, "")
+		for _, v := range p.actions {
+			rtn = append(rtn, "· "+v)
+		}
+		return rtn
+	}
 	return p.helpText
 }
 
