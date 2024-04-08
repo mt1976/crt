@@ -782,9 +782,9 @@ func (p *Page) DisplayConfirmation(msg string) (bool, error) {
 		drawScreen(p)
 		choice := p.Input(msg, "Y/N")
 		switch {
-		case choice == "Y":
+		case upcase(choice) == "Y":
 			return true, nil
-		case choice == "N":
+		case upcase(choice) == "N":
 			return false, nil
 		case choice == lang.SymActionHelp:
 			p.Help()
