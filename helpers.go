@@ -3,6 +3,8 @@ package crt
 import (
 	"time"
 
+	gtrm "github.com/buger/goterm"
+	colr "github.com/fatih/color"
 	styl "github.com/mt1976/crt/styles"
 )
 
@@ -44,17 +46,29 @@ type Formatters struct {
 
 type Styles struct {
 	Reset     string
-	Red       string
-	Green     string
-	Yellow    string
-	Blue      string
-	Purple    string
-	Cyan      string
-	Gray      string
-	White     string
-	Bold      string
-	Underline string
+	RED       string
+	GREEN     string
+	YELLOW    string
+	BLUE      string
+	MAGENTA   string
+	CYAN      string
+	GREY      string
+	GRAY      string
+	WHITE     string
+	BOLD      string
+	UNDERLINE string
 	ClearLine string
+	Red       func(s string) string
+	Green     func(s string) string
+	Yellow    func(s string) string
+	Blue      func(s string) string
+	Magenta   func(s string) string
+	Cyan      func(s string) string
+	Grey      func(s string) string
+	Gray      func(s string) string
+	White     func(s string) string
+	Bold      func(s string) string
+	Underline func(s string) string
 }
 
 func initHelpers() *Helpers {
@@ -102,17 +116,76 @@ func initFormatters() *Formatters {
 func initStyles() *Styles {
 	s := Styles{
 		Reset:     styl.Reset,
-		Red:       styl.Red,
-		Green:     styl.Green,
-		Yellow:    styl.Yellow,
-		Blue:      styl.Blue,
-		Purple:    styl.Purple,
-		Cyan:      styl.Cyan,
-		Gray:      styl.Gray,
-		White:     styl.White,
-		Bold:      styl.Bold,
-		Underline: styl.Underline,
+		RED:       styl.Red,
+		GREEN:     styl.Green,
+		YELLOW:    styl.Yellow,
+		BLUE:      styl.Blue,
+		MAGENTA:   styl.Purple,
+		CYAN:      styl.Cyan,
+		GREY:      styl.White,
+		WHITE:     styl.White,
+		BOLD:      styl.Bold,
+		UNDERLINE: styl.Underline,
 		ClearLine: styl.ClearLine,
+		Red:       red,
+		Green:     green,
+		Yellow:    yellow,
+		Blue:      blue,
+		Magenta:   magenta,
+		Cyan:      cyan,
+		Grey:      grey,
+		Gray:      gray,
+		White:     white,
+		Bold:      bold,
+		Underline: underline,
 	}
+	//fmt.Printf("ansi.Green: %v\n", ansi.Green)
 	return &s
+}
+
+func red(s string) string {
+	return gtrm.Color(s, gtrm.RED)
+}
+
+func green(s string) string {
+	return gtrm.Color(s, gtrm.GREEN)
+}
+
+func yellow(s string) string {
+	return gtrm.Color(s, gtrm.YELLOW)
+}
+
+func blue(s string) string {
+	return gtrm.Color(s, gtrm.BLUE)
+}
+
+func magenta(s string) string {
+	return gtrm.Color(s, gtrm.MAGENTA)
+}
+
+func cyan(s string) string {
+	return gtrm.Color(s, gtrm.CYAN)
+}
+
+func grey(s string) string {
+	return gray(s)
+}
+
+func gray(s string) string {
+	gr := colr.New(colr.FgWhite, colr.Faint)
+	return gr.Sprint(s)
+}
+
+func white(s string) string {
+	return gtrm.Color(s, gtrm.WHITE)
+}
+
+func bold(s string) string {
+	return gtrm.Bold(s)
+}
+
+func underline(s string) string {
+	und := colr.New(colr.Underline)
+	return und.Sprint(s)
+	//return colr.UnderlineString(s)
 }

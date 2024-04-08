@@ -37,44 +37,9 @@ func trimRepeatingCharacters(s string, c string) string {
 	return result
 }
 
-func bold(s string) string {
-	embolden := colour.New(colour.Bold)
-	return embolden.Sprintf("%v", s)
-}
-
-func cyan(s string) string {
-	return colour.CyanString(s)
-}
-
-func red(s string) string {
-	return colour.New(colour.FgRed).Sprintf("%v", s)
-}
-
-func green(s string) string {
-	return colour.New(colour.FgGreen).Sprintf("%v", s)
-}
-
-func yellow(s string) string {
-	return colour.New(colour.FgYellow).Sprintf("%v", s)
-}
-
-func blue(s string) string {
-	return colour.New(colour.FgBlue).Sprintf("%v", s)
-}
-
-// magenta returns a string with the magenta color applied to it.
-func magenta(s string) string {
-	return colour.New(colour.FgMagenta).Sprintf("%v", s)
-}
-
 // italic returns a string with the italic style applied to it.
 func italic(s string) string {
 	return colour.New(colour.Italic).Sprintf("%v", s)
-}
-
-// white returns a string with the white color applied to it.
-func white(s string) string {
-	return colour.New(colour.FgWhite).Sprintf("%v", s)
 }
 
 // boldInt returns a bolded string representation of an integer.

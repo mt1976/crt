@@ -268,7 +268,7 @@ func (t *ViewPort) InfoMessage(msg string) {
 	gtrm.Print(t.Format(blanks, ""))
 	gtrm.MoveCursor(startColumn, 23)
 	gtrm.Print(
-		t.Format(gtrm.Color(gtrm.Bold(lang.TxtInfo), gtrm.CYAN)+msg, ""))
+		t.Format(t.Styles.Cyan(msg), ""))
 	//T.Print(msg + t.SymNewline)
 	gtrm.Flush()
 	//beeep.Beep(defaultBeepFrequency, defaultBeepDuration)
@@ -293,7 +293,7 @@ func (t *ViewPort) InputPagingInfo(page, ofPages int) {
 	gtrm.MoveCursor(t.width-lmsg-1, 22)
 	//gT.MoveCursor(col, 23)
 	gtrm.Print(
-		t.Format(gtrm.Color(msg, gtrm.YELLOW), ""))
+		t.Format(t.Styles.Yellow(msg), ""))
 	//T.Print(msg + t.SymNewline)
 	gtrm.Flush()
 }
@@ -333,7 +333,7 @@ func (t *ViewPort) Clear() {
 // prints a formatted message to the terminal.
 func (t *ViewPort) Shout(msg string) {
 	t.PrintIt(t.row() + lang.SymNewline)
-	t.PrintIt(t.Format(t.Styles.Bold+t.Styles.Reset+msg, "") + lang.SymNewline)
+	t.PrintIt(t.Format(t.Styles.Bold(msg), "") + lang.SymNewline)
 	t.PrintIt(t.lineBreakEnd() + lang.SymNewline)
 }
 
@@ -347,11 +347,11 @@ func (t *ViewPort) Error(err error, msg ...string) {
 
 func (t *ViewPort) SError(err error, msg ...string) string {
 	errText := err.Error()
-	colour := t.Styles.Red
-	return t.SENotice(errText, lang.TxtError, colour, msg...)
+	msgr := t.Styles.Red(lang.TxtError)
+	return t.fmtMessage(errText, msgr, "", msg...)
 }
 
-func (t *ViewPort) SENotice(errText, promptTxt, colour string, msg ...string) string {
+func (t *ViewPort) fmtMessage(errText, promptTxt, colour string, msg ...string) string {
 
 	if len(msg) > 0 {
 		// check for enough %v strings in the error
@@ -385,7 +385,7 @@ func (t *ViewPort) SENotice(errText, promptTxt, colour string, msg ...string) st
 // concatenate the escape characters and the `msg` string. This method is used to create an underlined
 // text effect when printing to the terminal.
 func (t *ViewPort) Underline(msg string) string {
-	return fmt.Sprintf(lang.TextLineConstructor, t.Styles.Underline, msg, t.Styles.Reset)
+	return t.Styles.Underline(msg)
 }
 
 // Spool prints the contents of a byte slice to the terminal.
