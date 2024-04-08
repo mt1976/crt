@@ -85,6 +85,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 		title = title[:config.TitleLength] + lang.SymTruncate
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p.SetTitle(title)
 	p.AddAction(lang.SymActionQuit)    // Add Quit action
 	p.AddAction(lang.SymActionForward) // Add Next action
 	p.AddAction(lang.SymActionBack)    // Add Previous action
@@ -110,6 +111,10 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.Clear()
 
 	return &p
+}
+
+func (p *Page) SetTitle(title string) {
+	p.title = p.viewPort.Styles.Bold(title)
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
