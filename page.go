@@ -157,6 +157,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
 func (p *Page) AddAction(validAction string) {
 
+	if validAction == "?" {
+		p.Error(errs.ErrInvalidAction, validAction)
+		return
+	}
+
 	validAction = strings.ReplaceAll(validAction, lang.Space, "")
 
 	if validAction == "" {
@@ -345,6 +350,8 @@ func (p *Page) DisplayWithActions() (nextAction string, selected pageRow) {
 	for !exit {
 		nextAction, _ := p.displayIt()
 		switch {
+		case nextAction == lang.SymActionHelp:
+			p.Help()
 		case nextAction == lang.SymActionQuit:
 			exit = true
 			return lang.SymActionQuit, pageRow{}
@@ -396,6 +403,10 @@ func (p *Page) DisplayAndInput(minLen, maxLen int) (nextAction string, selected 
 
 		if isActionIn(out, lang.SymActionExit) {
 			os.Exit(0)
+		}
+
+		if isActionIn(out, lang.SymActionHelp) {
+			p.Help()
 		}
 
 		if minLen > 0 && len(out) < minLen {
@@ -749,6 +760,10 @@ func remove(s []string, r string) []string {
 }
 
 func (p *Page) Confirmation(msg string) (bool, error) {
+	return p.DisplayConfirmation(msg)
+}
+
+func (p *Page) DisplayConfirmation(msg string) (bool, error) {
 
 	if msg == "" {
 		msg = "Proceed"
@@ -757,13 +772,29 @@ func (p *Page) Confirmation(msg string) (bool, error) {
 		p.prompt = msg
 		p.AddAction("Y")
 		p.AddAction("N")
+		p.actions = append(p.actions, lang.SymActionHelp)
 		drawScreen(p)
 		choice := p.Input(msg, "Y/N")
-		if upcase(choice) == "Y" {
+		switch {
+		case choice == "Y":
 			return true, nil
-		} else if upcase(choice) == "N" {
+		case choice == "N":
 			return false, nil
+		case choice == lang.SymActionHelp:
+			p.Help()
+		default:
+			p.Error(errs.ErrInvalidAction, choice)
 		}
+		// if choice == lang.SymActionHelp {
+		// 	p.Help()
+		// 	continue
+		// } else {
+		// 	if upcase(choice) == "Y" {
+		// 		return true, nil
+		// 	} else if upcase(choice) == "N" {
+		// 		return false, nil
+		// 	}
+		// }
 	}
 	//return true, nil
 }
@@ -790,7 +821,7 @@ func (p *Page) Help() {
 	help.AddParagraph(p.GetHelp())
 	//help.SetPrompt("Press Y when done")
 	for {
-		ok, err := help.Confirmation("Press Y when done")
+		ok, err := help.DisplayConfirmation("Press Y when done")
 		if err != nil {
 			p.Error(err)
 		}

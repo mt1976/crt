@@ -135,6 +135,7 @@ const (
 	SymActionBack    string = "B"
 	SymActionExit    string = "EX"
 	SymTruncate      string = "..."
+	SymActionHelp    string = "?" // Help
 	SymWildcardBlank string = "{{blank}}"
 )
 
