@@ -786,7 +786,11 @@ func (p *Page) DisplayConfirmation(msg string) (bool, error) {
 			return true, nil
 		case upcase(choice) == "N":
 			return false, nil
-		case choice == lang.SymActionHelp:
+		case upcase(choice) == "F" && isInList("F", p.actions):
+			p.NextPage()
+		case upcase(choice) == "B" && isInList("B", p.actions):
+			p.PreviousPage()
+		case choice == "?":
 			p.Help()
 		default:
 			p.Error(errs.ErrInvalidAction, choice)
@@ -840,9 +844,18 @@ func (p *Page) Help() {
 	help.Body()
 	help.Footer()
 	help.AddParagraph(p.GetHelp())
+	help.AddAction("Y")
 	//help.SetPrompt("Press Y when done")
+	prompt := "Choose (Y)es when done"
+
+	if len(p.actions) > 10 {
+		prompt = "Choose (F)orward, (B)ack or (Y)es when done"
+		help.AddAction(lang.SymActionBack)
+		help.AddAction(lang.SymActionForward)
+	}
+
 	for {
-		ok, err := help.DisplayConfirmation("Press Y when done")
+		ok, err := help.DisplayConfirmation(prompt)
 		if err != nil {
 			p.Error(err)
 		}
