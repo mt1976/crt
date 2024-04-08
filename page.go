@@ -56,6 +56,7 @@ type Page struct {
 	height           int       // The height of the page
 	width            int       // The width of the page
 	maxContentRows   int       // The maximum number of rows available for content on the page.
+	helpText         []string  // The help text to be displayed to the user
 }
 
 // pageRow represents a row of content on a page.
@@ -103,6 +104,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.footerBarBottom = t.height
 	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
 	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
+	p.ResetSetHelp()
 	p.Clear()
 
 	return &p
@@ -764,4 +766,38 @@ func (p *Page) Confirmation(msg string) (bool, error) {
 		}
 	}
 	//return true, nil
+}
+
+func (p *Page) SetHelp(msg []string) {
+	p.helpText = msg
+}
+
+func (p *Page) GetHelp() []string {
+	// TODO: if helptext is null then generate some helptext based on options etc.
+	return p.helpText
+}
+
+func (p *Page) ResetSetHelp() {
+	p.SetHelp(nil)
+}
+
+func (p *Page) Help() {
+	help := p.viewPort.NewPage("Help")
+	help.Clear()
+	help.Header("Help for " + p.title)
+	help.Body()
+	help.Footer()
+	help.AddParagraph(p.GetHelp())
+	//help.SetPrompt("Press Y when done")
+	for {
+		ok, err := help.Confirmation("Press Y when done")
+		if err != nil {
+			p.Error(err)
+		}
+		if ok {
+			help.ResetSetHelp()
+			p.displayIt() // Re Display the originating page
+			return
+		}
+	}
 }
