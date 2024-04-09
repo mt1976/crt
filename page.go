@@ -402,7 +402,7 @@ func (p *Page) Display_Actions() (nextAction string, selected pageRow) {
 			// upcase the action
 			exit = true
 			if isInt(nextAction) {
-				return nextAction, p.pageRows[toInt(nextAction)-1]
+				return nextAction, p.pageRows[toInt(nextAction)]
 			}
 			return upcase(nextAction), pageRow{}
 		default:
