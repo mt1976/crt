@@ -383,6 +383,13 @@ func (p *Page) AddParagraph(msg []string) {
 	}
 }
 
+func (p *Page) AddParagraphString(msg string) {
+	// make sure the lines are no longer than the screen width and wrap them if they are.
+	var msgSlice []string
+	msgSlice = append(msgSlice, msg)
+	p.AddParagraph(msgSlice)
+}
+
 func (p *Page) Display_Actions() (nextAction string, selected pageRow) {
 	disp.Clear()
 	exit := false
