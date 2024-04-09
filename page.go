@@ -282,7 +282,8 @@ func (p *Page) formatNumberedOptionText(row pageRow) string {
 //	page.AddFieldValuePair("Field Name", "Field Value")
 func (p *Page) AddFieldValuePair(key string, value string) {
 	// format the field value pair
-	format := "%-20s : %s"
+	format := "%-25s : %s"
+	key = bold(key)
 	//+ disp.Printewline
 	p.Add(fmt.Sprintf(format, key, value), "", "")
 }
@@ -343,7 +344,9 @@ func (p *Page) calcColSize(cols []string) int {
 
 // AddColumnsTitle adds a ruler to the page, separating the columns
 func (p *Page) AddColumnsTitle(columns ...string) {
+
 	p.AddColumns(columns...)
+
 	var output []string
 
 	colSize := p.calcColSize(columns)
