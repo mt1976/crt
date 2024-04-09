@@ -393,33 +393,34 @@ func (p *Page) AddParagraphString(msg string) {
 	p.AddParagraph(msgSlice)
 }
 
-func (p *Page) Display_Actions() (nextAction string, selected pageRow) {
+func (p *Page) Display_Actions() (nextAction string) {
+	t := p.viewPort.Formatters.Upcase
 	disp.Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
 		switch {
-		case nextAction == lang.SymActionHelp:
+		case t(nextAction) == lang.SymActionHelp:
 			p.Help()
-		case nextAction == lang.SymActionQuit:
+		case t(nextAction) == lang.SymActionQuit:
 			exit = true
-			return lang.SymActionQuit, pageRow{}
-		case nextAction == lang.SymActionForward:
+			return lang.SymActionQuit
+		case t(nextAction) == lang.SymActionForward:
 			p.Forward()
-		case nextAction == lang.SymActionBack:
+		case t(nextAction) == lang.SymActionBack:
 			p.Back()
 		case isInList(nextAction, p.actions):
 			// upcase the action
 			exit = true
-			if isInt(nextAction) {
-				return nextAction, p.pageRows[toInt(nextAction)]
-			}
-			return upcase(nextAction), pageRow{}
+			// if isInt(nextAction) {
+			// 	return nextAction
+			// }
+			return t(nextAction)
 		default:
 			p.Error(errs.ErrInvalidAction, nextAction)
 		}
 	}
-	return "", pageRow{}
+	return ""
 }
 
 func (p *Page) Clear() {
