@@ -1,39 +1,44 @@
-#README.md
-- The first problem is a spelling error in the word "fuctions", which should be spelled "functions". To fix this, you can simply replace the word with the correct spelling.
-- The second problem is a grammar error in the sentence "Add F and b functions as functions that can be called by page". The word "functions" is being used in the wrong form, as it should be plural. To fix this, you can rewrite the sentence to properly use the plural form of the word "function".
-- The third problem is also a spelling error, this time in the word "function". To fix this, you can simply replace the word with the correct spelling.
-- The fourth problem is a suggestion from Grammarly to improve the word choice in the sentence "It stupid old fashioned menu thingy". While this is a valid suggestion, it is a matter of personal preference and may not be applicable to all contexts. You can choose to accept or reject this suggestion as you see fit.
+# crtHandler
 
-With these problems fixed, the resulting code should look like this:
+crtHandler is a function library used by my other projects to implement a 'crt' like page handler in goLang.
 
-```markdown
-It stupid old fashioned menu thingy
+## Installation
 
-Add F and b functions as functions that can be called by page.
+Here's a step-by-step guide on how to install and run a Go project on your local machine:
 
-# admin_me
+1. Clone the repository:
 
-Usage of admin_me:
-
-```text
-
-  -action string
-        Action to perform [clean message tidy catalog] (default "clean")
-
-  -debug
-        Debug Mode (default true)
-
-  -message string
-        Type of message [up, heartbeat, other, message]
-
-  -title string
-        Title of message
-
-  -body string
-        Body of message
-```
+```bash
+git clone https://github.com/m1976/crtHandler.git
 ```
 
-Is this the correct output? If not, please provide the correct output and I will fix the code again.
+2. Navigate to the project directory:
 
-TODO: UPDATE
+```bash
+cd crtHandler
+```
+
+3. Install the required dependencies:
+
+```bash
+go get -v ./...
+```
+
+4. Run the application:
+
+There is no application to run, this project is a library used by my other projects. Such as '[mockterm](https://github.com/mt1976/mockterm)'
+
+## Contributing
+
+We welcome contributions to `crtHandler`. If you'd like to contribute, please follow these guidelines:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and test them thoroughly.
+4. Commit your changes with a descriptive commit message.
+5. Push your branch to your fork.
+6. Submit a pull request to the main repository.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
