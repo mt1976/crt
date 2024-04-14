@@ -300,24 +300,33 @@ func (p *Page) AddFieldValuePair(key string, value string) {
 //
 //	page.AddColumns("Column 1", "Column 2", "Column 3")
 func (p *Page) AddColumns(columns ...string) {
-	// Check the number of columns
-	if len(columns) > 10 {
-		p.Error(errs.ErrAddColumns, strconv.Itoa(len(columns)), "10")
+
+	noColumns := len(columns)
+	maxCols := 12
+	colSize := p.calcColSize(len(columns))
+
+	// Check if the colsize will be wide enough
+	if colSize < 5 {
+		p.Error(errs.ErrAddColumns, strconv.Itoa(noColumns))
 		os.Exit(1)
 	}
 
-	// Calculate the column width
-	colSize := p.calcColSize(columns)
+	// Check the number of columns
+	if noColumns > maxCols {
+		p.Error(errs.ErrAddColumns, strconv.Itoa(len(columns)), strconv.Itoa(maxCols))
+		os.Exit(1)
+	}
+
 	// Loop through each column
 	var output []string
-	for i := 0; i < len(columns); i++ {
+	for i := 0; i < noColumns; i++ {
 		// Get the current column
 		op := columns[i]
 
 		// Check if the column is longer than the column width
 		if len(op) > colSize {
 			// Truncate the column to the column width
-			op = op[0:colSize]
+			op = op[0 : colSize-1]
 		} else {
 			// Calculate the number of spaces to add
 			noToAdd := colSize - (len(op) + 1)
@@ -336,9 +345,10 @@ func (p *Page) AddColumns(columns ...string) {
 	p.Add(strings.Join(output, lang.Space), "", "")
 }
 
-func (p *Page) calcColSize(cols []string) int {
+func (p *Page) calcColSize(nocols int) int {
 	// Calculate the column width
-	colSize := ((p.width - 2) / len(cols))
+	colSize := ((p.width - 4) / nocols)
+	//spew.Dump(".............", "colsize", colSize, "width", p.width, "nocols", nocols, ".............")
 	return colSize
 }
 
@@ -348,23 +358,24 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 	p.AddColumns(columns...)
 
 	var output []string
+	noCols := len(columns)
 
-	colSize := p.calcColSize(columns)
+	colSize := p.calcColSize(noCols)
 
-	for i := 0; i < len(columns); i++ {
+	for i := 0; i < noCols; i++ {
 
-		op := columns[i]
-		if len(op) > colSize {
-			op = op[0:colSize]
-		} else {
-			noToAdd := colSize - (len(op) + 1)
-			if noToAdd > 0 {
-				op = op + strings.Repeat(lang.Space, noToAdd)
-			}
-		}
+		// op := columns[i]
+		// if len(op) > colSize {
+		// 	op = op[0:colSize]
+		// } else {
+		// 	noToAdd := colSize
+		// 	if noToAdd > 0 {
+		// 		op = op + strings.Repeat(lang.Space, colSize)
+		// 	}
+		// }
 
-		noChars := len(op)
-		op = strings.Repeat(lang.TableCharacterUnderline, noChars)
+		// noChars := len(op)
+		op := strings.Repeat(lang.TableCharacterUnderline, colSize-1)
 
 		output = append(output, op)
 	}
