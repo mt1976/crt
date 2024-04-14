@@ -299,7 +299,7 @@ func (p *Page) AddFieldValuePair(key string, value string) {
 // Example:
 //
 //	page.AddColumns("Column 1", "Column 2", "Column 3")
-func (p *Page) AddColumns(columns ...string) {
+func (p *Page) addColumns(isBold bool, columns ...string) {
 
 	noColumns := len(columns)
 	maxCols := 12
@@ -341,8 +341,19 @@ func (p *Page) AddColumns(columns ...string) {
 		output = append(output, op)
 	}
 
+	dsp := strings.Join(output, lang.Space)
+	//if isBold {
+	//	dsp = p.viewPort.Styles.Bold(dsp)
+	//}
+
 	// Join the output slice into a single string and add it to the page
-	p.Add(strings.Join(output, lang.Space), "", "")
+	p.Add(dsp, "", "")
+}
+
+func (p *Page) AddColumns(columns ...string) {
+
+	p.addColumns(false, columns...)
+
 }
 
 func (p *Page) calcColSize(nocols int) int {
@@ -355,7 +366,7 @@ func (p *Page) calcColSize(nocols int) int {
 // AddColumnsTitle adds a ruler to the page, separating the columns
 func (p *Page) AddColumnsTitle(columns ...string) {
 
-	p.AddColumns(columns...)
+	p.addColumns(true, columns...)
 
 	var output []string
 	noCols := len(columns)
@@ -364,16 +375,6 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 
 	for i := 0; i < noCols; i++ {
 
-		// op := columns[i]
-		// if len(op) > colSize {
-		// 	op = op[0:colSize]
-		// } else {
-		// 	noToAdd := colSize
-		// 	if noToAdd > 0 {
-		// 		op = op + strings.Repeat(lang.Space, colSize)
-		// 	}
-		// }
-
 		// noChars := len(op)
 		op := strings.Repeat(lang.TableCharacterUnderline, colSize-1)
 
@@ -381,7 +382,9 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 	}
 
 	// turn string array into sigle string
-	p.Add(strings.Join(output, lang.Space), "", "")
+	rtn := strings.Join(output, lang.Space)
+	//rtn = p.viewPort.Styles.Bold(rtn)
+	p.Add(rtn, "", "")
 }
 
 // AddBlankRow adds a blank row to the page
