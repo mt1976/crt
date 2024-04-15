@@ -666,6 +666,11 @@ func (p *Page) Break(row int) {
 	disp.Print(p.boxPartDraw(middle))
 }
 
+func (p *Page) AddBreakRow() {
+	line := strings.Repeat("-", p.width-4)
+	p.Add(line, "", "")
+}
+
 func (p *Page) PagingInfo(page, ofPages int) {
 	msg := fmt.Sprintf(lang.TxtPaging, page+1, ofPages+1)
 	lmsg := len(msg)
