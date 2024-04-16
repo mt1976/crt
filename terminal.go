@@ -3,6 +3,7 @@ package crt
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -55,11 +56,12 @@ func New() ViewPort {
 	x.firstRow = true
 	x.currentCol = 0
 	x.currentRow = 0
-
-	width, height, err := term.GetSize(0)
+	width, height, err := getTerminalSize()
 	if err != nil {
-		return ViewPort{}
+		fmt.Println("ERROR: Unable to create new terminal")
+		os.Exit(1)
 	}
+
 	x.width = width
 	x.height = height
 
@@ -72,6 +74,17 @@ func New() ViewPort {
 	x.Formatters = initFormatters()
 	x.Styles = initStyles()
 	return x
+}
+
+func getTerminalSize() (int, int, error) {
+	var width, height int
+
+	if runtime.GOOS == "windows" {
+		return 80, 25, nil
+	} else {
+		return term.GetSize(0)
+	}
+	return width, height, nil
 }
 
 func NewWithSize(width, height int) ViewPort {
