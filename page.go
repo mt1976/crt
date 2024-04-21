@@ -610,12 +610,23 @@ func (p *Page) getUserInput() (string, error) {
 
 func (p *Page) Dump(in ...string) {
 
+	// Only proceed if page dumping is active in the config file
+	if !config.PageDumpActive {
+		return
+	}
+	// OK Proceed
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
 	filename := fmt.Sprintf("dump_%v.txt", seconds)
 	thisPath, _ := os.Getwd()
-	currentpath := filepath.Join(thisPath, "dumps", filename)
+	currentpath := filepath.Join(thisPath, filename)
+	if config.PageDumpPath != "" {
+		//thisPath = thisPath + config.PageDumpPath
+		currentpath = filepath.Join(thisPath, config.PageDumpPath, filename)
+	} else {
+		currentpath = filepath.Join(thisPath, filename)
+	}
 	f, err := os.Create(currentpath)
 	if err != nil {
 		panic(err)

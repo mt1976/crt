@@ -30,6 +30,8 @@ type Config struct {
 	DefaultBeepFrequency       float64
 	ValidBaudRates             []int
 	ValidFileNameCharacters    []string
+	PageDumpActive             bool   `mapstructure:"PageDumpActive"`
+	PageDumpPath               string `mapstructure:"PageDumpPath"`
 }
 
 var Configuration = Config{}
