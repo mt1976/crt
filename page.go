@@ -614,21 +614,24 @@ func (p *Page) Dump(in ...string) {
 	if !config.PageDumpActive {
 		return
 	}
-	// OK Proceed
+	// OK Proceed - Sleep for a second to stop dumping multiple files with same timestamp
 	time.Sleep(1 * time.Second)
 
 	seconds := strings.ReplaceAll(time.Now().Format(time.RFC3339), ":", "")
+
 	filename := fmt.Sprintf("dump_%v.txt", seconds)
+
 	thisPath, _ := os.Getwd()
 	currentpath := filepath.Join(thisPath, filename)
+
 	if config.PageDumpPath != "" {
 		//thisPath = thisPath + config.PageDumpPath
 		currentpath = filepath.Join(thisPath, config.PageDumpPath, filename)
-	} else {
-		currentpath = filepath.Join(thisPath, filename)
 	}
+
 	f, err := os.Create(currentpath)
 	if err != nil {
+		fmt.Printf("FAILED to create file %v", currentpath)
 		panic(err)
 		//p.Error(err, "Unable to create file")
 	}
