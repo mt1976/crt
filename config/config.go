@@ -38,7 +38,7 @@ var Configuration = Config{}
 func init() {
 	// add the path to the configuration file to the list of paths to search
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("/config")
+	viper.AddConfigPath("config")
 	// set the name of the configuration file to be loaded
 	viper.SetConfigName("terminal")
 	// set the type of the configuration file (in this case, it is an environment file)
