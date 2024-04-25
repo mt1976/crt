@@ -77,14 +77,13 @@ func New() ViewPort {
 }
 
 func getTerminalSize() (int, int, error) {
-	var width, height int
 
 	if runtime.GOOS == "windows" {
 		return 80, 25, nil
 	} else {
 		return term.GetSize(0)
 	}
-	return width, height, nil
+
 }
 
 func NewWithSize(width, height int) ViewPort {
