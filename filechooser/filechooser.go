@@ -73,21 +73,25 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	page.AddFieldValuePair("Directory", searchPath)
 
 	// Add a blank row to separate the header from the file list
-	page.AddBlankRow()
+	//page.AddBreakRow()
+	brk(page, "-")
 
 	// Add columns for the file list
-	page.AddColumnsTitle("Icon", "Name", "Mode", "Size", "Modified")
+	//page.AddColumnsTitle("Icon", "Name", "Mode", "Size", "Modified")
 
+	//sufx := "%1s| %-30s | %-10s | %-12s | %-15s"
+	format := "%-4s) %-1s  %-30s | %-10s | %-12s | %-15s"
+	head := "%-4s| %-1s| %-30s | %-10s | %-12s | %-15s"
 	// Add a title row for the file list
-	title := fmt.Sprintf("%-5s %-1s| %-30s | %-10s | %-12s | %-15s", " ", "T", " Name", "Mode", "Modified", "Size")
+	title := fmt.Sprintf(head, " ", "T", "Name", "Mode", "Modified", "Size")
 	page.Add(title, "", "")
 
 	// Add a row for a separator between the header and the file list
-	breaker := fmt.Sprintf("%-5s %-1s| %-30s | %-10s | %-12s | %-15s", strings.Repeat(" ", 5), strings.Repeat("-", 1), strings.Repeat("-", 30), strings.Repeat("-", 10), strings.Repeat("-", 12), strings.Repeat("-", 15))
-	page.Add(breaker, "", "")
+	brk(page, "+")
+	//page.AddBreakRow()
 
 	// Add an option for the parent directory
-	up := fmt.Sprintf("%-1s %-30s | %-10s | %-12s | %-15s", actionUp, "..", "", "", "")
+	up := fmt.Sprintf(format, actionUp, "", "..", "", "", "")
 	page.Add(up, "", "")
 
 	// Add actions for the parent directory, up arrow, and select
@@ -109,13 +113,13 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Display the file chooser with actions
-	na := page.Display_Actions()
-	if na == lang.SymActionQuit {
+	nextAction := page.Display_Actions()
+	if nextAction == lang.SymActionQuit {
 		return "", false, nil
 	}
 
 	// Handle actions for the parent directory, up arrow, and select
-	if na == actionUp || na == actionUpArrow || na == actionUpDoubleDot {
+	if nextAction == actionUp || nextAction == actionUpArrow || nextAction == actionUpDoubleDot {
 		upPath := strings.Split(searchPath, pathSeparator)
 		if len(upPath) > 1 {
 			upPath = upPath[:len(upPath)-1]
@@ -126,8 +130,8 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Split the action into its first character and the remaining characters
-	first := upcase(na[:1])
-	remainder := na[1:]
+	first := upcase(nextAction[:1])
+	remainder := nextAction[1:]
 
 	// Handle actions for selecting a directory or file
 	if first == actionGo || isInt(remainder) {
@@ -140,8 +144,8 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Handle selection of a specific file or directory
-	if term.Helpers.IsInt(na) {
-		r := files[term.Helpers.ToInt(na)-1]
+	if term.Helpers.IsInt(nextAction) {
+		r := files[term.Helpers.ToInt(nextAction)-1]
 		if !r.IsDir && flags.directory {
 			page.Error(errs.ErrNotAFile, r.Path)
 			return FileChooser(searchPath, flags)
@@ -153,12 +157,20 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		return r.Path, r.IsDir, nil
 	}
 
-	if upcase(na) == upcase(actionSelect) {
+	if upcase(nextAction) == upcase(actionSelect) {
 		// The current folder has been selected
 		return searchPath, true, nil
 	}
 
 	return FileChooser(searchPath, flags)
+}
+
+func brk(page *crt.Page, breakChar string) {
+	brk := "%-4s+%-2s+%-31s-+-%-10s-+-%-12s-+-%-5s"
+	//replace + char with the breakChar
+	brk = strings.Replace(brk, "+", breakChar, -1)
+	breaker := fmt.Sprintf(brk, strings.Repeat("-", 4), strings.Repeat("-", 2), strings.Repeat("-", 31), strings.Repeat("-", 10), strings.Repeat("-", 12), strings.Repeat("-", 5))
+	page.Add(breaker, "", "")
 }
 
 // GetFolderList gets a list of files in the specified directory.
