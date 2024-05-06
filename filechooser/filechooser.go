@@ -25,17 +25,18 @@ type File struct {
 }
 
 type flagger struct {
-	directory bool
-	file      bool
-	dotfile   bool
-	showFiles bool
+	allowDirs    bool
+	allowFiles   bool
+	showDotFiles bool
+	showFiles    bool
+	showDirs     bool
 }
 
-var All = flagger{directory: true, file: true, dotfile: true, showFiles: true}
-var DirectoriesOnly = flagger{directory: true, file: false, dotfile: false, showFiles: false}
-var FilesOnly = flagger{directory: false, file: true, dotfile: false, showFiles: true}
-var DirectoriesAll = flagger{directory: true, file: false, dotfile: true, showFiles: false}
-var FilesAll = flagger{directory: false, file: true, dotfile: true, showFiles: true}
+var All = flagger{allowDirs: true, allowFiles: true, showDotFiles: true, showFiles: true, showDirs: true}
+var DirectoriesOnly = flagger{allowDirs: true, allowFiles: false, showDotFiles: false, showFiles: false, showDirs: true}
+var FilesOnly = flagger{allowDirs: false, allowFiles: true, showDotFiles: false, showFiles: true, showDirs: true}
+var DirectoriesAll = flagger{allowDirs: true, allowFiles: false, showDotFiles: true, showFiles: false, showDirs: true}
+var FilesAll = flagger{allowDirs: false, allowFiles: true, showDotFiles: true, showFiles: true, showDirs: true}
 
 var actionUp = "U"
 var actionUpDoubleDot = ".."
@@ -55,12 +56,25 @@ var actionSelect = "S"
 //
 //	(string, bool, error): The chosen file or directory, a boolean indicating whether it is a directory, and an error if one occurred.
 func FileChooser(searchPath string, flags flagger) (string, bool, error) {
+
+	if searchPath == "" {
+		return "", false, errs.ErrInvalidPathSpecialDirectory
+	}
+	if searchPath == "." {
+		// get the real wd directory
+		usr, err := user.Current()
+		if err != nil {
+			return "", false, err
+		}
+		searchPath = usr.HomeDir
+	}
+
 	// Function to choose a file or directory using the file chooser
 	term := crt.New()
 	page := term.NewPage(lang.TxtFileChooserTitle)
 
 	// Get a list of files in the specified directory
-	files, err := GetFolderList(searchPath, flags)
+	files, err := GetFolderContent(searchPath, flags)
 	if err != nil {
 		return "", false, err
 	}
@@ -117,15 +131,23 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	if nextAction == lang.SymActionQuit {
 		return "", false, nil
 	}
-
+	if upcase(nextAction) == upcase(actionSelect) {
+		// The current folder has been selected
+		return searchPath, true, nil
+	}
+	page.Dump(nextAction, actionUp, actionUpArrow, actionUpDoubleDot)
 	// Handle actions for the parent directory, up arrow, and select
 	if nextAction == actionUp || nextAction == actionUpArrow || nextAction == actionUpDoubleDot {
+		page.Dump("Up One Directory", searchPath, pathSeparator)
 		upPath := strings.Split(searchPath, pathSeparator)
+		page.Dump(fmt.Sprintf("b4 upPath: %v\n", upPath))
+
 		if len(upPath) > 1 {
 			upPath = upPath[:len(upPath)-1]
 		}
+		page.Dump(fmt.Sprintf("af upPath: %v\n", upPath))
 		toPath := strings.Join(upPath, pathSeparator)
-
+		page.Dump("Relaunch FileChooser", toPath, actionUp, actionUpArrow)
 		return FileChooser(toPath, flags)
 	}
 
@@ -140,26 +162,22 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 			page.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
+		page.Dump("Drilldown", r.Path, first, actionGo)
 		return FileChooser(r.Path, flags)
 	}
 
 	// Handle selection of a specific file or directory
 	if term.Helpers.IsInt(nextAction) {
 		r := files[term.Helpers.ToInt(nextAction)-1]
-		if !r.IsDir && flags.directory {
+		if !r.IsDir && flags.allowDirs {
 			page.Error(errs.ErrNotAFile, r.Path)
 			return FileChooser(searchPath, flags)
 		}
-		if r.IsDir && flags.file {
+		if r.IsDir && flags.allowFiles {
 			page.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
 		return r.Path, r.IsDir, nil
-	}
-
-	if upcase(nextAction) == upcase(actionSelect) {
-		// The current folder has been selected
-		return searchPath, true, nil
 	}
 
 	return FileChooser(searchPath, flags)
@@ -173,10 +191,10 @@ func brk(page *crt.Page, breakChar string) {
 	page.Add(breaker, "", "")
 }
 
-// GetFolderList gets a list of files in the specified directory.
+// GetFolderContent gets a list of files in the specified directory.
 // It filters the list of files to only include directories that match the include flags.
 // It returns a slice of File structs that contain information about each file or directory.
-func GetFolderList(dir string, include flagger) ([]File, error) {
+func GetFolderContent(dir string, include flagger) ([]File, error) {
 	// Get a list of files in the specified directory
 	files, err := os.ReadDir(dir)
 	if err != nil {
@@ -191,17 +209,17 @@ func GetFolderList(dir string, include flagger) ([]File, error) {
 	for _, file := range files {
 
 		// Check if the file is a directory and should be included
-		if file.IsDir() && !include.directory {
+		if file.IsDir() && !include.showDirs {
 			continue
 		}
 
 		// Check if the file is a hidden file and should be included
-		if file.Name()[0] == '.' && !include.dotfile {
+		if file.Name()[0] == '.' && !include.showDotFiles {
 			continue
 		}
 
 		// Check if the file is a regular file and should be included
-		if !file.IsDir() && !include.file {
+		if !file.IsDir() && !include.allowFiles {
 			continue
 		}
 
