@@ -2,10 +2,12 @@ package crt
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -280,12 +282,36 @@ func (p *Page) formatNumberedOptionText(row pageRow) string {
 // Example:
 //
 //	page.AddFieldValuePair("Field Name", "Field Value")
-func (p *Page) AddFieldValuePair(key string, value string) {
+func (p *Page) AddFieldValuePair(key any, value string) {
+
+	keyString, err := translate(key)
+	if err != nil {
+		p.Error(err, keyString)
+		return
+	}
+
 	// format the field value pair
 	format := "%-25s : %s"
-	key = bold(key)
+	keyString = bold(keyString)
 	//+ disp.Printewline
-	p.Add(fmt.Sprintf(format, key, value), "", "")
+	p.Add(fmt.Sprintf(format, keyString, value), "", "")
+}
+
+func translate(key any) (string, error) {
+	var keyString string
+
+	switch t := key.(type) {
+	case string:
+		keyString = key.(string)
+	case lang.Text:
+		keyText := key.(lang.Text)
+		keyString = keyText.String()
+	default:
+		errTxt := fmt.Sprintf("invalid object type [%v]", reflect.TypeOf(t).String())
+		err := errors.New(errTxt)
+		return "", err
+	}
+	return keyString, nil
 }
 
 // AddColumns adds columns of data to the page
