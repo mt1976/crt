@@ -1,5 +1,7 @@
 package language
 
+import "strings"
+
 type Text struct {
 	// General
 	content string
@@ -36,10 +38,10 @@ func NewSymbol(content string) *Symbol {
 }
 
 func NewAction(message string) *Action {
-	return &Action{
-		content: message,
-		len:     len(message),
-	}
+	action := &Action{}
+	action.content = strings.ReplaceAll(message, Space.Symbol(), "")
+	action.len = len(message)
+	return action
 }
 
 func NewParagraph(message []string) *Paragraph {
@@ -74,6 +76,26 @@ func (a *Action) Action() string {
 
 func (a *Action) Len() int {
 	return a.len
+}
+
+func (a *Action) Equals(b string) bool {
+	sideA := strings.ToUpper(a.content)
+	sideB := strings.ToUpper(b)
+	return sideA == sideB
+}
+
+func (a *Action) Is(b *Action) bool {
+
+	sideA := strings.ToUpper(a.content)
+	sideB := strings.ToUpper(b.content)
+	if sideA != sideB {
+		return false
+	}
+
+	if a.len != b.len {
+		return false
+	}
+	return true
 }
 func (p *Paragraph) Len() int {
 	return p.len

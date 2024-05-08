@@ -11,20 +11,28 @@ var (
 	CloseBracket     *Symbol = NewSymbol(")")
 	SquareQuoteOpen  *Symbol = NewSymbol("[")
 	SquareQuoteClose *Symbol = NewSymbol("]")
-	ActionYes        *Symbol = NewSymbol("Y")
-	ActionNo         *Symbol = NewSymbol("N")
+	WildcardBlank    *Symbol = NewSymbol("{{blank}}")
 	Blank            *Symbol = NewSymbol("-")
 	Degree           *Symbol = NewSymbol("°")
 	Break            *Symbol = NewSymbol(" ━━ ")
 	Space            *Symbol = NewSymbol(" ")
 	PromptSymbol     *Symbol = NewSymbol("? ")
-	ActionQuit       *Symbol = NewSymbol("Q")
-	ActionForward    *Symbol = NewSymbol("F")
-	ActionBack       *Symbol = NewSymbol("B")
-	ActionExit       *Symbol = NewSymbol("EX")
 	Truncate         *Symbol = NewSymbol("...")
-	ActionHelp       *Symbol = NewSymbol("?") // Help
-	WildcardBlank    *Symbol = NewSymbol("{{blank}}")
+)
+var (
+	// Actions
+	Yes         *Action = NewAction("Y")
+	No          *Action = NewAction("N")
+	Quit        *Action = NewAction("Q")
+	Forward     *Action = NewAction("F")
+	Back        *Action = NewAction("B")
+	Exit        *Action = NewAction("EX")
+	Help        *Action = NewAction("?") // Help
+	Up          *Action = NewAction("U")
+	UpDoubleDot *Action = NewAction("..")
+	UpArrow     *Action = NewAction("^")
+	Go          *Action = NewAction("G")
+	Select      *Action = NewAction("S")
 )
 
 const (

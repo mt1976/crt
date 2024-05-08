@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -34,32 +33,32 @@ const (
 
 // Page represents a page in a document or a user interface.
 type Page struct {
-	title            string    // The title of the page.
-	pageRows         []pageRow // The rows of content on the page.
-	noRows           int       // The number of rows on the page.
-	prompt           string    // The prompt displayed to the user.
-	showOptions      bool      // The text to be displayed to the user in the case options are possible
-	actions          []string  // The available actions on the page.
-	actionLen        int       // The maximum length of an action.
-	blockedActions   []string  // The available actions on the page
-	noPages          int       // The total number of pages.
-	ActivePageIndex  int       // The index of the active page.
-	counter          int       // A counter used for tracking.
-	pageRowCounter   int       // A counter used for tracking the page rows.
-	viewPort         *ViewPort // The viewPort object used for displaying the page.
-	headerBarTop     int       // The header row top row
-	headerBarContent int       // The header row content row
-	headerBarBotton  int       // The header row bottom row
-	footerBarTop     int       // The row where the input box starts
-	footerBarInput   int       // The row where the input box is
-	footerBarMessage int       // The row where the info box is
-	footerBarBottom  int       // The last row of the page
-	textAreaStart    int       // The row where the text area starts
-	textAreaEnd      int       // The row where the text area ends
-	height           int       // The height of the page
-	width            int       // The width of the page
-	maxContentRows   int       // The maximum number of rows available for content on the page.
-	helpText         []string  // The help text to be displayed to the user
+	title            string         // The title of the page.
+	pageRows         []pageRow      // The rows of content on the page.
+	noRows           int            // The number of rows on the page.
+	prompt           string         // The prompt displayed to the user.
+	showOptions      bool           // The text to be displayed to the user in the case options are possible
+	actions          []*lang.Action // The available actions on the page.
+	actionLen        int            // The maximum length of an action.
+	blockedActions   []string       // The available actions on the page
+	noPages          int            // The total number of pages.
+	ActivePageIndex  int            // The index of the active page.
+	counter          int            // A counter used for tracking.
+	pageRowCounter   int            // A counter used for tracking the page rows.
+	viewPort         *ViewPort      // The viewPort object used for displaying the page.
+	headerBarTop     int            // The header row top row
+	headerBarContent int            // The header row content row
+	headerBarBotton  int            // The header row bottom row
+	footerBarTop     int            // The row where the input box starts
+	footerBarInput   int            // The row where the input box is
+	footerBarMessage int            // The row where the info box is
+	footerBarBottom  int            // The last row of the page
+	textAreaStart    int            // The row where the text area starts
+	textAreaEnd      int            // The row where the text area ends
+	height           int            // The height of the page
+	width            int            // The width of the page
+	maxContentRows   int            // The maximum number of rows available for content on the page.
+	helpText         []string       // The help text to be displayed to the user
 }
 
 // pageRow represents a row of content on a page.
@@ -86,13 +85,13 @@ func (t *ViewPort) NewPage(title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.Truncate.Symbol()
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []*lang.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
 	p.SetTitle(title)
-	p.AddAction(lang.ActionQuit.Symbol())    // Add Quit action
-	p.AddAction(lang.ActionForward.Symbol()) // Add Next action
-	p.AddAction(lang.ActionBack.Symbol())    // Add Previous action
+	p.AddAction(lang.Quit)    // Add Quit action
+	p.AddAction(lang.Forward) // Add Next action
+	p.AddAction(lang.Back)    // Add Previous action
 	p.showOptions = false
 	p.pageRowCounter = 0
 
@@ -157,8 +156,8 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 	if p.noRows > p.maxContentRows {
-		p.AddAction(lang.ActionForward.Symbol()) // Add Next action
-		p.AddAction(lang.ActionBack.Symbol())    // Add Previous action
+		p.AddAction(lang.Forward) // Add Next action
+		p.AddAction(lang.Back)    // Add Previous action
 	}
 	if remainder != "" {
 		p.Add(remainder, altID, dateTime)
@@ -166,36 +165,36 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 }
 
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
-func (p *Page) AddAction(validAction string) {
+func (p *Page) AddAction(validAction *lang.Action) {
 
-	if validAction == "?" {
-		p.Error(errs.ErrInvalidAction, validAction)
+	if validAction.Equals("?") {
+		p.Error(errs.ErrInvalidAction, validAction.Action())
 		return
 	}
 
-	validAction = strings.ReplaceAll(validAction, lang.Space.Symbol(), "")
+	//validAction = strings.ReplaceAll(validAction, lang.Space.Symbol(), "")
 
-	if validAction == "" {
-		log.Fatal(errs.ErrNoActionSpecified)
-		return
-	}
+	// if validAction == "" {
+	// 	log.Fatal(errs.ErrNoActionSpecified)
+	// 	return
+	// }
 	//If the validAction is already in the list of actions, return
 	if slices.Contains(p.actions, validAction) {
 		//do nothing
 		return
 	}
 	p.actions = append(p.actions, validAction)
-	if len(validAction) > p.actionLen {
-		p.actionLen = len(validAction)
+	if validAction.Len() > p.actionLen {
+		p.actionLen = validAction.Len()
 	}
 }
 
 // AddIntAction adds an action to the page with the given integer value
-func (p *Page) AddIntAction(validAction int) {
-	p.AddAction(fmt.Sprintf("%v", validAction))
+func (p *Page) AddIntAction(num int) {
+	p.AddAction(lang.NewAction(fmt.Sprintf("%v", num)))
 }
 
-func (p *Page) GetActions() []string {
+func (p *Page) GetActions() []*lang.Action {
 	return p.actions
 }
 
@@ -433,34 +432,34 @@ func (p *Page) AddParagraphString(msg string) {
 	p.AddParagraph(msgSlice)
 }
 
-func (p *Page) Display_Actions() (nextAction string) {
-	t := p.viewPort.Formatters.Upcase
+func (p *Page) Display_Actions() (nextAction *lang.Action) {
+	//t := p.viewPort.Formatters.Upcase
 	disp.Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
 		switch {
-		case t(nextAction) == lang.ActionHelp.Symbol():
+		case nextAction.Is(lang.Help):
 			p.Help()
-		case t(nextAction) == lang.ActionQuit.Symbol():
+		case nextAction.Is(lang.Quit):
 			exit = true
-			return lang.ActionQuit.Symbol()
-		case t(nextAction) == lang.ActionForward.Symbol():
+			return lang.Quit
+		case nextAction.Is(lang.Forward):
 			p.Forward()
-		case t(nextAction) == lang.ActionBack.Symbol():
+		case nextAction.Is(lang.Back):
 			p.Back()
-		case isInList(nextAction, p.actions):
+		case isInActions(&nextAction, p.actions):
 			// upcase the action
 			exit = true
 			// if isInt(nextAction) {
 			// 	return nextAction
 			// }
-			return t(nextAction)
+			return &nextAction
 		default:
-			p.Error(errs.ErrInvalidAction, nextAction)
+			p.Error(errs.ErrInvalidAction, nextAction.Action())
 		}
 	}
-	return ""
+	return &lang.Action{}
 }
 
 func (p *Page) Clear() {
@@ -488,15 +487,15 @@ func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pa
 		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 		out := p.Input(p.prompt, "")
-		if isActionIn(out, lang.ActionQuit.Symbol()) {
-			return lang.ActionQuit.Symbol(), pageRow{}
+		if isActionIn(out, lang.Quit) {
+			return lang.Quit.Action(), pageRow{}
 		}
 
-		if isActionIn(out, lang.ActionExit.Symbol()) {
+		if isActionIn(out, lang.Exit) {
 			os.Exit(0)
 		}
 
-		if isActionIn(out, lang.ActionHelp.Symbol()) {
+		if isActionIn(out, lang.Help) {
 			p.Help()
 		}
 
@@ -563,7 +562,7 @@ func (p *Page) Footer() {
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt() (string, pageRow) {
+func (p *Page) displayIt() (lang.Action, pageRow) {
 
 	drawScreen(p)
 
@@ -577,7 +576,7 @@ func (p *Page) displayIt() (string, pageRow) {
 			continue
 		}
 
-		if inputAction == lang.ActionHelp.Symbol() {
+		if inputAction == lang.Help.Action() {
 			p.Help()
 			continue
 		}
@@ -590,13 +589,14 @@ func (p *Page) displayIt() (string, pageRow) {
 	// if nextAction is a numnber, find the menu item
 	if isInt(inputAction) {
 		pos, _ := strconv.Atoi(inputAction)
-		return upcase(inputAction), p.pageRows[pos-1]
+		rtnAction := lang.NewAction(inputAction)
+		return *rtnAction, p.pageRows[pos-1]
 	}
 
-	if upcase(inputAction) == lang.ActionExit.Symbol() {
+	if lang.Exit.Equals(inputAction) {
 		os.Exit(0)
 	}
-	return upcase(inputAction), pageRow{}
+	return *lang.NewAction(inputAction), pageRow{}
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -852,12 +852,31 @@ func (p *Page) ClearContent(row int) {
 
 func (p *Page) GetOptions(includeDefaults bool) string {
 
-	xx := p.actions
-	if !includeDefaults {
-		xx = removeOption(xx, lang.ActionQuit.Symbol())
-		xx = removeOption(xx, lang.ActionForward.Symbol())
-		xx = removeOption(xx, lang.ActionBack.Symbol())
+	var xx []string
+	for _, option := range p.actions {
+		switch option {
+		case lang.Help:
+			continue
+		case lang.Quit:
+			continue
+		case lang.Forward:
+			continue
+		case lang.Back:
+			continue
+		case lang.Yes:
+			continue
+		case lang.No:
+			continue
+		default:
+			xx = append(xx, option.Action())
+		}
 	}
+	// xx := p.actions
+	// if !includeDefaults {
+	// 	xx = removeOption(xx, lang.Quit.Action())
+	// 	xx = removeOption(xx, lang.Forward.Action())
+	// 	xx = removeOption(xx, lang.Back.Action())
+	// }
 
 	return qQuote(strings.Join(xx, ","))
 }
@@ -879,22 +898,22 @@ func (p *Page) Display_Confirmation(msg string) (bool, error) {
 	}
 	for {
 		p.prompt = msg
-		p.AddAction(lang.ActionYes.Symbol())
-		p.AddAction(lang.ActionNo.Symbol())
-		p.actions = append(p.actions, lang.ActionHelp.Symbol())
+		p.AddAction(lang.Yes)
+		p.AddAction(lang.No)
+		p.actions = append(p.actions, lang.Help)
 		drawScreen(p)
-		choice := p.Input(msg, lang.ActionYes.Symbol()+lang.ActionNo.Symbol())
+		choice := p.Input(msg, lang.Yes.Action()+lang.No.Action())
 		switch {
-		case upcase(choice) == lang.ActionYes.Symbol():
+		case upcase(choice) == lang.Yes.Action():
 			return true, nil
-		case upcase(choice) == lang.ActionNo.Symbol():
+		case upcase(choice) == lang.No.Action():
 			return false, nil
-		case upcase(choice) == lang.ActionForward.Symbol() && isInList(lang.ActionForward.Symbol(), p.actions):
+		case upcase(choice) == lang.Forward.Action() && isInActions(lang.Forward, p.actions):
 			p.Forward()
-		case upcase(choice) == lang.ActionBack.Symbol() && isInList(lang.ActionBack.Symbol(), p.actions):
+		case upcase(choice) == lang.Back.Action() && isInActions(lang.Back, p.actions):
 			p.Back()
-		case choice == lang.ActionHelp.Symbol():
-			if !p.IsBlockedAction(lang.ActionHelp.Symbol()) {
+		case choice == lang.Help.Action():
+			if !p.IsBlockedAction(lang.Help.Action()) {
 				p.Help()
 				continue
 			}
@@ -918,7 +937,7 @@ func (p *Page) GetHelp() []string {
 		rtn = append(rtn, lang.HelpSupportedActions)
 		rtn = append(rtn, lang.Blank.Symbol())
 		for _, v := range p.actions {
-			rtn = append(rtn, lang.HelpBullet+upcase(v))
+			rtn = append(rtn, lang.HelpBullet+upcase(v.Action()))
 		}
 		rtn = append(rtn, lang.Blank.Symbol())
 		rtn = append(rtn, lang.HelpAutoGenerated+time.Now().Format(time.RFC822))
@@ -939,15 +958,15 @@ func (p *Page) Help() {
 	help.Body()
 	help.Footer()
 	help.AddParagraph(p.GetHelp())
-	help.AddAction(lang.ActionYes.Symbol())
-	help.BlockAction(lang.ActionHelp.Symbol())
+	help.AddAction(lang.Yes)
+	help.BlockAction(lang.Help.Action())
 	//help.SetPrompt("Press Y when done")
 	prompt := lang.HelpPromptSinglePage
 
 	if len(p.actions) > 10 {
 		prompt = lang.HelpPromptMultiPage
-		help.AddAction(lang.ActionBack.Symbol())
-		help.AddAction(lang.ActionForward.Symbol())
+		help.AddAction(lang.Back)
+		help.AddAction(lang.Forward)
 	}
 
 	for {

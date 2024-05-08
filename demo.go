@@ -1,5 +1,7 @@
 package crt
 
+import lang "github.com/mt1976/crt/language"
+
 func Sample() {
 	vp := NewWithSize(80, 25)
 	pg := vp.NewPage("Testing testing 123")
@@ -24,6 +26,6 @@ func Sample() {
 	pg.AddFieldValuePair("Field14", "Value14")
 	pg.AddFieldValuePair("Field15", "Value15")
 	pg.AddFieldValuePair("Field16", "Value16")
-	pg.AddAction("K")
+	pg.AddAction(lang.NewAction("K"))
 	pg.Display_Actions()
 }

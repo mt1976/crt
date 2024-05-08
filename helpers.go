@@ -5,6 +5,7 @@ import (
 
 	gtrm "github.com/buger/goterm"
 	colr "github.com/fatih/color"
+	lang "github.com/mt1976/crt/language"
 	styl "github.com/mt1976/crt/styles"
 )
 
@@ -21,7 +22,7 @@ type Helpers struct {
 	GetUsername        func() string
 	GetSytemInfo       func() string
 	RoundFloatToTwoDPS func(f float64) float64
-	IsActionIn         func(action string, actionToCheck ...string) bool
+	IsActionIn         func(action string, actionToCheck ...*lang.Action) bool
 }
 
 type Formatters struct {

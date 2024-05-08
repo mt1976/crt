@@ -51,6 +51,18 @@ func isInList(value string, list []string) bool {
 	return false
 }
 
+func isInActions(value *lang.Action, list []*lang.Action) bool {
+	// loop through each action in the list
+	for i := range list {
+		// if the given action matches an action in the list, return true
+		if list[i].Is(value) {
+			return true
+		}
+	}
+	// if no match was found, return false
+	return false
+}
+
 // The function "format" takes a pointer to a Crt object and a menuItem object, and returns a
 // formatted string containing the menu item's ID, title, and date.
 func (p *Page) formatOption(row pageRow) string {

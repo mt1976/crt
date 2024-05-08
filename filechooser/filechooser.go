@@ -38,12 +38,13 @@ var FilesOnly = flagger{allowDirs: false, allowFiles: true, showDotFiles: false,
 var DirectoriesAll = flagger{allowDirs: true, allowFiles: false, showDotFiles: true, showFiles: false, showDirs: true}
 var FilesAll = flagger{allowDirs: false, allowFiles: true, showDotFiles: true, showFiles: true, showDirs: true}
 
-var actionUp = "U"
-var actionUpDoubleDot = ".."
-var actionUpArrow = "^"
-var actionGo = "G"
+// var actionUp = "U"
+// var actionUpDoubleDot = ".."
+// var actionUpArrow = "^"
+// var actionGo = "G"
 var pathSeparator = string(os.PathSeparator)
-var actionSelect = "S"
+
+// var actionSelect = "S"
 
 // FileChooser is a function to choose a file or directory using the file chooser.
 //
@@ -105,14 +106,14 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	//page.AddBreakRow()
 
 	// Add an option for the parent directory
-	up := fmt.Sprintf(format, actionUp, "", "..", "", "", "")
+	up := fmt.Sprintf(format, lang.Up.Action(), "", "..", "", "", "")
 	page.Add(up, "", "")
 
 	// Add actions for the parent directory, up arrow, and select
-	page.AddAction(actionUp)
-	page.AddAction(actionUpArrow)
-	page.AddAction(actionUpDoubleDot)
-	page.AddAction(actionSelect)
+	page.AddAction(lang.Up)
+	page.AddAction(lang.UpArrow)
+	page.AddAction(lang.UpDoubleDot)
+	page.AddAction(lang.Select)
 
 	// Add options for each file or directory in the list
 	for _, file := range files {
@@ -122,22 +123,23 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 		// Add an action for selecting the directory if it is a directory
 		if file.IsDir {
-			page.AddAction(actionGo + fmt.Sprintf("%v", file.Seq+1))
+			act := lang.NewAction(lang.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
+			page.AddAction(act)
 		}
 	}
 
 	// Display the file chooser with actions
 	nextAction := page.Display_Actions()
-	if nextAction == lang.ActionQuit.Symbol() {
+	if nextAction.Is(lang.Quit) {
 		return "", false, nil
 	}
-	if upcase(nextAction) == upcase(actionSelect) {
+	if nextAction.Is(lang.Select) {
 		// The current folder has been selected
 		return searchPath, true, nil
 	}
-	page.Dump(nextAction, actionUp, actionUpArrow, actionUpDoubleDot)
+	page.Dump(nextAction.Action(), lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
 	// Handle actions for the parent directory, up arrow, and select
-	if nextAction == actionUp || nextAction == actionUpArrow || nextAction == actionUpDoubleDot {
+	if nextAction.Is(lang.Up) || nextAction.Is(lang.UpArrow) || nextAction.Is(lang.UpDoubleDot) {
 		page.Dump("Up One Directory", searchPath, pathSeparator)
 		upPath := strings.Split(searchPath, pathSeparator)
 		page.Dump(fmt.Sprintf("b4 upPath: %v\n", upPath))
@@ -147,28 +149,28 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		}
 		page.Dump(fmt.Sprintf("af upPath: %v\n", upPath))
 		toPath := strings.Join(upPath, pathSeparator)
-		page.Dump("Relaunch FileChooser", toPath, actionUp, actionUpArrow)
+		page.Dump("Relaunch FileChooser", toPath, lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
 		return FileChooser(toPath, flags)
 	}
 
 	// Split the action into its first character and the remaining characters
-	first := upcase(nextAction[:1])
-	remainder := nextAction[1:]
+	first := upcase(nextAction.Action()[:1])
+	remainder := nextAction.Action()[1:]
 
 	// Handle actions for selecting a directory or file
-	if first == actionGo || isInt(remainder) {
+	if upcase(first) == upcase(lang.Go.Action()) && isInt(remainder) {
 		r := files[term.Helpers.ToInt(remainder)-1]
 		if !r.IsDir {
 			page.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
-		page.Dump("Drilldown", r.Path, first, actionGo)
+		page.Dump("Drilldown", r.Path, first, lang.Go.Action())
 		return FileChooser(r.Path, flags)
 	}
 
 	// Handle selection of a specific file or directory
-	if term.Helpers.IsInt(nextAction) {
-		r := files[term.Helpers.ToInt(nextAction)-1]
+	if term.Helpers.IsInt(nextAction.Action()) {
+		r := files[term.Helpers.ToInt(nextAction.Action())-1]
 		if !r.IsDir && flags.allowDirs {
 			page.Error(errs.ErrNotAFile, r.Path)
 			return FileChooser(searchPath, flags)

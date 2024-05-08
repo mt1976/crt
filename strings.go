@@ -76,9 +76,9 @@ func qQuote(s string) string {
 //
 // Returns:
 // A boolean indicating whether the input string contains any of the specified actions.
-func isActionIn(in string, check ...string) bool {
+func isActionIn(in string, check ...*lang.Action) bool {
 	for i := 0; i < len(check); i++ {
-		if strings.Contains(upcase(in), check[i]) {
+		if strings.Contains(upcase(in), check[i].Action()) {
 			return true
 		}
 	}
