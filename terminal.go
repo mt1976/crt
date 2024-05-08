@@ -300,7 +300,7 @@ func (t *ViewPort) InfoMessage(msg string) {
 // Returns:
 // None.
 func (t *ViewPort) InputPagingInfo(page, ofPages int) {
-	msg := fmt.Sprintf(lang.TxtPaging, page, ofPages)
+	msg := fmt.Sprintf(lang.Paging.Text(), page, ofPages)
 	lmsg := len(msg)
 	gtrm.MoveCursor(t.width-lmsg-1, 22)
 	//gT.MoveCursor(col, 23)
@@ -317,7 +317,7 @@ func (t *ViewPort) lineBreakEnd() string {
 
 // lineBreakJunction returns a string that represents a line break with the end character.
 func (t *ViewPort) lineBreakJunction(displayChar string) string {
-	return fmt.Sprintf(lang.TextLineConstructor, displayChar, strings.Repeat(boxr.Horizontal, t.width+1), boxr.Horizontal)
+	return fmt.Sprintf(lang.TextLineConstructor.Text(), displayChar, strings.Repeat(boxr.Horizontal, t.width+1), boxr.Horizontal)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
@@ -359,7 +359,7 @@ func (t *ViewPort) Error(err error, msg ...string) {
 
 func (t *ViewPort) SError(err error, msg ...string) string {
 	errText := err.Error()
-	msgr := t.Styles.Red(lang.TxtError)
+	msgr := t.Styles.Red(lang.Error.Text())
 	return t.fmtMessage(errText, msgr, "", msg...)
 }
 
@@ -437,7 +437,7 @@ func (t *ViewPort) Banner(msg string) {
 	}
 	fmt.Println(t.row())
 	//gtrm.Flush()
-	display := fmt.Sprintf(lang.TxtApplicationVersion, msg)
+	display := fmt.Sprintf(lang.ApplicationVersion.Text(), msg)
 	fmt.Println(t.Format(display+lang.Newline.Symbol(), ""))
 	//t.Break()
 	//gtrm.Flush()
@@ -452,8 +452,8 @@ func (t *ViewPort) Header(msg string) {
 	gtrm.MoveCursor(startColumn, 2)
 	var line map[int]string = make(map[int]string)
 	midway := (t.width - len(msg)) / 2
-	for i := 0; i < len(lang.TxtApplicationName); i++ {
-		line[i] = lang.TxtApplicationName[i : i+1]
+	for i := 0; i < len(lang.ApplicationName.Text()); i++ {
+		line[i] = lang.ApplicationName.Text()[i : i+1]
 	}
 	for i := 0; i < len(msg); i++ {
 		line[midway+i] = msg[i : i+1]

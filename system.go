@@ -25,7 +25,7 @@ func randomIP() string {
 	ip3 := randomNumber(config.DefaultRandomIPMin, config.DefaultRandomIPMax)
 	ip4 := randomNumber(config.DefaultRandomIPMin, config.DefaultRandomIPMax)
 
-	return fmt.Sprintf(lang.IPAddressConstructor, ip1, ip2, ip3, ip4)
+	return fmt.Sprintf(lang.IPAddressConstructor.Text(), ip1, ip2, ip3, ip4)
 }
 
 // The randomMAC function generates a random MAC address in the format of 00:00:00:00:00:00.
@@ -46,7 +46,7 @@ func randomMAC() string {
 	mac5 := fmt.Sprintf("%02x", randomNumber(config.DefaultRandomMACMin, config.DefaultRandomMACMax))
 	mac6 := fmt.Sprintf("%02x", randomNumber(config.DefaultRandomMACMin, config.DefaultRandomMACMax))
 
-	return fmt.Sprintf(lang.MACAddressConstructor, mac1, mac2, mac3, mac4, mac5, mac6)
+	return fmt.Sprintf(lang.MACAddressConstructor.Text(), mac1, mac2, mac3, mac4, mac5, mac6)
 }
 
 // The randomPort function generates a random port number between 1 and 65535.

@@ -72,7 +72,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 	// Function to choose a file or directory using the file chooser
 	term := crt.New()
-	page := term.NewPage(lang.TxtFileChooserTitle)
+	page := term.NewPage(lang.TxtFileChooserTitle.Text())
 
 	// Get a list of files in the specified directory
 	files, err := GetFolderContent(searchPath, flags)
@@ -243,13 +243,13 @@ func GetFolderContent(dir string, include flagger) ([]File, error) {
 		this.Mode = inf.Mode().String()
 		this.IsDir = file.IsDir()
 		if this.IsDir {
-			this.Icon = lang.TxtFolderIcon
+			this.Icon = lang.TxtFolderIcon.Text()
 		} else {
-			this.Icon = lang.TxtFileIcon
+			this.Icon = lang.TxtFileIcon.Text()
 		}
 		// Check if the file is a symbolic link
 		if isSymLink(this.Mode) {
-			this.Icon = lang.TxtSymLinkIcon
+			this.Icon = lang.TxtSymLinkIcon.Text()
 		}
 		this.Icon = this.Icon + " "
 		this.Seq = itemNo

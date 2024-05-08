@@ -56,9 +56,9 @@ func timeAgo(t string) string {
 	if t != "" {
 		mdt, _ := time.Parse(time.RFC1123Z, t)
 		rtn := timeago.English.Format(mdt)
-		rtn = strings.Replace(rtn, lang.TxtOneWord, lang.TxtOneNumeric, -1)
-		rtn = strings.Replace(rtn, lang.TxtMinutes, lang.TxtMinutesShort, -1)
-		rtn = strings.Replace(rtn, lang.TxtHour, lang.TxtHourShort, -1)
+		rtn = strings.Replace(rtn, lang.OneWord.Text(), lang.OneNumeric.Text(), -1)
+		rtn = strings.Replace(rtn, lang.Minutes.Text(), lang.MinutesShort.Text(), -1)
+		rtn = strings.Replace(rtn, lang.Hour.Text(), lang.HourShort.Text(), -1)
 		//fix len to 10 chars
 		if len(rtn) > 10 {
 			rtn = rtn[:10]
