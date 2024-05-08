@@ -158,7 +158,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	remainder := nextAction.Action()[1:]
 
 	// Handle actions for selecting a directory or file
-	if upcase(first) == upcase(lang.Go.Action()) && isInt(remainder) {
+	if lang.Go.Equals(first) && isInt(remainder) {
 		r := files[term.Helpers.ToInt(remainder)-1]
 		if !r.IsDir {
 			page.Error(errs.ErrNotADirectory, r.Path)
@@ -169,7 +169,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Handle selection of a specific file or directory
-	if term.Helpers.IsInt(nextAction.Action()) {
+	if nextAction.IsInt() {
 		r := files[term.Helpers.ToInt(nextAction.Action())-1]
 		if !r.IsDir && flags.allowDirs {
 			page.Error(errs.ErrNotAFile, r.Path)
