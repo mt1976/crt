@@ -5,6 +5,7 @@ import (
 	"unicode"
 
 	lang "github.com/mt1976/crt/language"
+	numb "github.com/mt1976/crt/numbers"
 )
 
 type Action struct {
@@ -82,4 +83,15 @@ func IsActionIn(in string, check ...*Action) bool {
 
 func upcase(in string) string {
 	return strings.ToUpper(in)
+}
+
+func (a *Action) Int() int {
+	if a.IsInt() {
+		return toInt(a.content)
+	}
+	return 0
+}
+
+func toInt(in string) int {
+	return numb.ToInt(in)
 }
