@@ -125,7 +125,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 		// Add an action for selecting the directory if it is a directory
 		if file.IsDir {
-			act := actn.NewAction(actn.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
+			act := actn.New(actn.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
 			p.AddAction(act)
 		}
 	}

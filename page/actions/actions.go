@@ -2,16 +2,16 @@ package actions
 
 var (
 	// Actions
-	Yes         *Action = NewAction("Y")
-	No          *Action = NewAction("N")
-	Quit        *Action = NewAction("Q")
-	Forward     *Action = NewAction("F")
-	Back        *Action = NewAction("B")
-	Exit        *Action = NewAction("EX")
-	Help        *Action = NewAction("?") // Help
-	Up          *Action = NewAction("U")
-	UpDoubleDot *Action = NewAction("..")
-	UpArrow     *Action = NewAction("^")
-	Go          *Action = NewAction("G")
-	Select      *Action = NewAction("S")
+	Yes         *Action = New("Y")
+	No          *Action = New("N")
+	Quit        *Action = New("Q")
+	Forward     *Action = New("F")
+	Back        *Action = New("B")
+	Exit        *Action = New("EX")
+	Help        *Action = New("?") // Help
+	Up          *Action = New("U")
+	UpDoubleDot *Action = New("..")
+	UpArrow     *Action = New("^")
+	Go          *Action = New("G")
+	Select      *Action = New("S")
 )

@@ -18,7 +18,6 @@ import (
 	boxr "github.com/mt1976/crt/box"
 	conf "github.com/mt1976/crt/config"
 	dttm "github.com/mt1976/crt/datesTimes"
-	disp "github.com/mt1976/crt/display"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 	numb "github.com/mt1976/crt/numbers"
@@ -196,7 +195,7 @@ func (p *Page) AddAction(validAction *actn.Action) {
 
 // AddIntAction adds an action to the page with the given integer value
 func (p *Page) AddIntAction(num int) {
-	p.AddAction(actn.NewAction(fmt.Sprintf("%v", num)))
+	p.AddAction(actn.New(fmt.Sprintf("%v", num)))
 }
 
 func (p *Page) GetActions() []*actn.Action {
@@ -297,7 +296,7 @@ func (p *Page) AddFieldValuePair(key any, value string) {
 	// format the field value pair
 	format := "%-25s : %s"
 	keyString = bold(keyString)
-	//+ disp.Printewline
+	//+ Printewline
 	p.Add(fmt.Sprintf(format, keyString, value), "", "")
 }
 
@@ -439,7 +438,7 @@ func (p *Page) AddParagraphString(msg string) {
 
 func (p *Page) Display_Actions() (nextAction *actn.Action) {
 	//t := p.viewPort.Formatters.Upcase
-	disp.Clear()
+	Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
@@ -468,7 +467,7 @@ func (p *Page) Display_Actions() (nextAction *actn.Action) {
 }
 
 func (p *Page) Clear() {
-	disp.Clear()
+	Clear()
 	p.Header(p.title)
 	p.Body()
 	p.Footer()
@@ -522,7 +521,7 @@ func drawScreen(p *Page) {
 
 	rowsDisplayed := 0
 
-	disp.Clear()
+	Clear()
 	p.Header(p.title)
 	p.Body()
 
@@ -533,7 +532,7 @@ func drawScreen(p *Page) {
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.Blank.Symbol() {
 				continue
 			}
-			disp.PrintAt(p.pageRows[i].RowContent, term.InputColumn, lineNumber)
+			PrintAt(p.pageRows[i].RowContent, term.InputColumn, lineNumber)
 		}
 	}
 	p.Footer()
@@ -544,26 +543,26 @@ func drawScreen(p *Page) {
 // message to the console.
 func (p *Page) Header(msg string) {
 	// Print Header Line
-	disp.PrintAt(p.boxPartDraw(first), term.StartColumn, p.headerBarTop)
+	PrintAt(p.boxPartDraw(first), term.StartColumn, p.headerBarTop)
 	width := p.width
-	disp.PrintAt(p.boxPartDraw(99), term.StartColumn, p.headerBarContent)
-	disp.PrintAt(lang.ApplicationName.Text(), term.InputColumn, p.headerBarContent)
+	PrintAt(p.boxPartDraw(99), term.StartColumn, p.headerBarContent)
+	PrintAt(lang.ApplicationName.Text(), term.InputColumn, p.headerBarContent)
 	midway := (width - len(msg)) / 2
-	disp.PrintAt(msg, midway, p.headerBarContent)
-	disp.PrintAt(dttm.DateTimeString(), width-(len(dttm.DateTimeString())+1), p.headerBarContent)
-	disp.PrintAt(p.boxPartDraw(middle), term.StartColumn, p.headerBarBotton)
+	PrintAt(msg, midway, p.headerBarContent)
+	PrintAt(dttm.DateTimeString(), width-(len(dttm.DateTimeString())+1), p.headerBarContent)
+	PrintAt(p.boxPartDraw(middle), term.StartColumn, p.headerBarBotton)
 }
 func (p *Page) Body() {
 	for x := 4; x < p.footerBarMessage; x++ {
-		disp.PrintAt(p.FormatRowOutput(""), 0, x)
+		PrintAt(p.FormatRowOutput(""), 0, x)
 	}
 }
 
 func (p *Page) Footer() {
-	disp.PrintAt(p.boxPartDraw(middle), term.StartColumn, p.footerBarTop)
-	disp.PrintAt(p.boxPartDraw(99), term.StartColumn, p.footerBarInput)
-	disp.PrintAt(p.FormatRowOutput(p.prompt), term.StartColumn, p.footerBarMessage)
-	disp.PrintAt(p.boxPartDraw(last), term.StartColumn, p.footerBarBottom)
+	PrintAt(p.boxPartDraw(middle), term.StartColumn, p.footerBarTop)
+	PrintAt(p.boxPartDraw(99), term.StartColumn, p.footerBarInput)
+	PrintAt(p.FormatRowOutput(p.prompt), term.StartColumn, p.footerBarMessage)
+	PrintAt(p.boxPartDraw(last), term.StartColumn, p.footerBarBottom)
 }
 
 // Display displays the page content to the user and handles user input.
@@ -594,14 +593,14 @@ func (p *Page) displayIt() (actn.Action, pageRow) {
 	// if nextAction is a numnber, find the menu item
 	if numb.IsInt(inputAction) {
 		pos, _ := strconv.Atoi(inputAction)
-		rtnAction := actn.NewAction(inputAction)
+		rtnAction := actn.New(inputAction)
 		return *rtnAction, p.pageRows[pos-1]
 	}
 
 	if actn.Exit.Equals(inputAction) {
 		os.Exit(0)
 	}
-	return *actn.NewAction(inputAction), pageRow{}
+	return *actn.New(inputAction), pageRow{}
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -613,7 +612,7 @@ func (p *Page) Input(msg string, options string) string {
 		p.showOptions = false
 	}
 
-	disp.PrintAt(mesg, term.InputColumn, p.footerBarMessage)
+	PrintAt(mesg, term.InputColumn, p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 
 	input, err := p.getUserInput()
@@ -629,7 +628,7 @@ func (p *Page) ShowOptions() {
 }
 
 func (p *Page) getUserInput() (string, error) {
-	disp.MoveCursor(term.InputColumn, p.footerBarInput)
+	MoveCursor(term.InputColumn, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		return "", errs.ErrInputScannerFailure
@@ -707,8 +706,8 @@ func (p *Page) boxPartDraw(which int) string {
 }
 
 func (p *Page) Break(row int) {
-	disp.MoveCursor(term.StartColumn, row)
-	disp.Print(p.boxPartDraw(middle))
+	MoveCursor(term.StartColumn, row)
+	Print(p.boxPartDraw(middle))
 }
 
 func (p *Page) AddBreakRow() {
@@ -723,12 +722,12 @@ func (p *Page) PagingInfo(page, ofPages int) {
 		msg = strings.Repeat(" ", lmsg)
 	}
 	msg = p.viewPort.Styles.Yellow(msg)
-	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
+	PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) InputHintInfo(msg string) {
 	lmsg := len(msg)
-	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
+	PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
 func (p *Page) minMaxHint(min, max int) string {
@@ -784,7 +783,7 @@ func (p *Page) ResetPrompt() {
 func (p *Page) Error(err error, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	pp := p.formatMessage(err.Error(), p.viewPort.Styles.Red(lang.Warning.Text()), msg...)
-	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
+	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -798,20 +797,20 @@ func (p *Page) Info(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.formatMessage(info, p.viewPort.Styles.White(lang.Info.Text()), msg...)
-	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
+	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.formatMessage(info, p.viewPort.Styles.Cyan(lang.Hint.Text()), msg...)
-	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
+	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	pp := p.formatMessage(warning, p.viewPort.Styles.Yellow(lang.Warning.Text()), msg...)
-	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
+	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -824,7 +823,7 @@ func (p *Page) Success(message string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.formatMessage(message, bold(lang.Success.Text()), msg...)
-	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
+	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) formatMessage(errText, promptTxt string, msg ...string) string {
@@ -847,12 +846,12 @@ func (p *Page) formatMessage(errText, promptTxt string, msg ...string) string {
 }
 
 func (p *Page) Clearline(row int) {
-	//disp.MoveCursor(term.StartColumn, row)
-	disp.ClearLine(row)
+	//MoveCursor(term.StartColumn, row)
+	ClearLine(row)
 }
 
 func (p *Page) ClearContent(row int) {
-	disp.PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), term.InputColumn, row)
+	PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), term.InputColumn, row)
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {

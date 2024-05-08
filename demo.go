@@ -30,6 +30,6 @@ func Sample() {
 	pg.AddFieldValuePair("Field14", "Value14")
 	pg.AddFieldValuePair("Field15", "Value15")
 	pg.AddFieldValuePair("Field16", "Value16")
-	pg.AddAction(actn.NewAction("K"))
+	pg.AddAction(actn.New("K"))
 	pg.Display_Actions()
 }

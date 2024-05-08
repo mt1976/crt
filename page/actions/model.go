@@ -13,7 +13,7 @@ type Action struct {
 	isNum   bool
 }
 
-func NewAction(message string) *Action {
+func New(message string) *Action {
 	action := &Action{}
 	action.content = strings.ReplaceAll(message, lang.Space.Symbol(), "")
 	action.len = len(message)

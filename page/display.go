@@ -1,4 +1,4 @@
-package display
+package page
 
 import (
 	ansi "github.com/bit101/go-ansi"
