@@ -904,15 +904,15 @@ func (p *Page) Display_Confirmation(msg string) (bool, error) {
 		drawScreen(p)
 		choice := p.Input(msg, lang.Yes.Action()+lang.No.Action())
 		switch {
-		case upcase(choice) == lang.Yes.Action():
+		case lang.Yes.Equals(choice):
 			return true, nil
-		case upcase(choice) == lang.No.Action():
+		case lang.No.Equals(choice):
 			return false, nil
-		case upcase(choice) == lang.Forward.Action() && isInActions(lang.Forward, p.actions):
+		case lang.Forward.Equals(choice) && isInActions(lang.Forward, p.actions):
 			p.Forward()
-		case upcase(choice) == lang.Back.Action() && isInActions(lang.Back, p.actions):
+		case lang.Back.Equals(choice) && isInActions(lang.Back, p.actions):
 			p.Back()
-		case choice == lang.Help.Action():
+		case lang.Help.Equals(choice):
 			if !p.IsBlockedAction(lang.Help.Action()) {
 				p.Help()
 				continue

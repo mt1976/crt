@@ -1,6 +1,9 @@
 package language
 
-import "strings"
+import (
+	"strings"
+	"unicode"
+)
 
 type Text struct {
 	// General
@@ -16,6 +19,7 @@ type Symbol struct {
 type Action struct {
 	content string
 	len     int
+	isNum   bool
 }
 
 type Paragraph struct {
@@ -41,6 +45,7 @@ func NewAction(message string) *Action {
 	action := &Action{}
 	action.content = strings.ReplaceAll(message, Space.Symbol(), "")
 	action.len = len(message)
+	action.isNum = isMessageInt(message)
 	return action
 }
 
@@ -97,6 +102,20 @@ func (a *Action) Is(b *Action) bool {
 	}
 	return true
 }
+
+func isMessageInt(message string) bool {
+	for _, c := range message {
+		if !unicode.IsDigit(c) {
+			return false
+		}
+	}
+	return true
+}
+
+func (a *Action) IsInt() bool {
+	return a.isNum
+}
+
 func (p *Paragraph) Len() int {
 	return p.len
 }
