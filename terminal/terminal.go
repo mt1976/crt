@@ -25,7 +25,7 @@ import (
 const StartColumn int = 1
 const InputColumn int = StartColumn + 2
 
-var config conf.Config
+var config = conf.Configuration
 
 // The "visibleContent" type represents a visibleContent with a map of rows and columns.
 // @property row - The "row" property is a map that stores the values of each row in the visibleContent. The keys

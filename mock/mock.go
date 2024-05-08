@@ -8,7 +8,7 @@ import (
 	lang "github.com/mt1976/crt/language"
 )
 
-var config *conf.Config
+var config = conf.Configuration
 
 // The randomIP function generates a random IP address in IPv4 format.
 func RandomIP() string {

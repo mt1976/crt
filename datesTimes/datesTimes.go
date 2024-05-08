@@ -11,7 +11,7 @@ import (
 	"github.com/xeonx/timeago"
 )
 
-var config conf.Config
+var config = conf.Configuration
 
 func UnixDateToHuman(unixTime int64) string {
 	// golang date from unixTime
