@@ -20,15 +20,15 @@ func GetSystemInfo() string {
 	return strings.TrimSpace(string(output))
 }
 
-func GetUsername() string {
+func GetUserName() (string, error) {
 	whoamiCmd := exec.Command("whoami")
 	output, err := whoamiCmd.Output()
 	if err != nil {
 		//log.Fatal(fmt.Sprintf("%s Unable to get username: %v", CHspecial, err))
 		fmt.Println(errs.ErrUserName.Error(), err.Error())
-		return ""
+		return "", errs.ErrUserName
 	}
-	return strings.TrimSpace(string(output))
+	return strings.TrimSpace(string(output)), nil
 }
 
 // The function getHostName retrieves the hostname of the current machine.
@@ -40,4 +40,12 @@ func GetHostName() string {
 		return ""
 	}
 	return hostName
+}
+
+func GetUserHome() (string, error) {
+	// Function gets the home directory of the current user, or returns an error if it cant.
+	//
+	// Returns:
+	// The home directory of the current user, or an error if it cant.
+	return os.UserHomeDir()
 }

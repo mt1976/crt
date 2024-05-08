@@ -8,8 +8,11 @@ import (
 
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
+	numb "github.com/mt1976/crt/numbers"
 	page "github.com/mt1976/crt/page"
 	actn "github.com/mt1976/crt/page/actions"
+	strg "github.com/mt1976/crt/strings"
+	sppt "github.com/mt1976/crt/support"
 	term "github.com/mt1976/crt/terminal"
 )
 
@@ -287,12 +290,12 @@ func ChooseDirectory(root string) (string, error) {
 
 // isInt returns true if the input string can be converted to an integer.
 func isInt(s string) bool {
-	return term.New().Helpers.IsInt(s)
+	return numb.IsInt(s)
 }
 
 // upcase returns the input string with all characters converted to uppercase.
 func upcase(s string) string {
-	return term.New().Formatters.Upcase(s)
+	return strg.Upcase(s)
 }
 
 // UserHome returns the home directory of the current user, or an error if it cannot be determined.
@@ -301,17 +304,13 @@ func UserHome() (string, error) {
 	//
 	// Returns:
 	// The home directory of the current user, or an error if it cant.
-	return os.UserHomeDir()
+	return sppt.GetUserHome()
+	//return os.UserHomeDir()
 }
 
 // UserName returns the name of the current user, or an error if it cannot be determined.
 func UserName() (string, error) {
-	// Get the current user
-	currentUser, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-
+	// Get the current user name
 	// Return the username
-	return currentUser.Name, nil
+	return sppt.GetUserName()
 }

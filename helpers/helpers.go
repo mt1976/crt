@@ -24,7 +24,7 @@ type Helpers struct {
 	CoinToss           func() bool
 	IsInt              func(i string) bool
 	GetHostName        func() string
-	GetUsername        func() string
+	GetUserName        func() (string, error)
 	GetSytemInfo       func() string
 	RoundFloatToTwoDPS func(f float64) float64
 	IsActionIn         func(action string, actionToCheck ...*actn.Action) bool
@@ -88,7 +88,7 @@ func InitHelpers() *Helpers {
 		IsInt:              numb.IsInt,
 		RandomFloat:        mock.RandomFloat,
 		GetHostName:        supt.GetHostName,
-		GetUsername:        supt.GetUsername,
+		GetUserName:        supt.GetUserName,
 		GetSytemInfo:       supt.GetSystemInfo,
 		RoundFloatToTwoDPS: numb.RoundFloatToTwoDPS,
 		IsActionIn:         actn.IsActionIn,
