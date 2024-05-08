@@ -2,7 +2,7 @@ package language
 
 // General Symbols
 var (
-	SymNewline *Text = New("\n")
+	Newline *Text = New("\n")
 )
 
 const (
