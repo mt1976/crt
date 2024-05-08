@@ -85,7 +85,7 @@ func (t *ViewPort) NewPage(title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.Truncate.Symbol()
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []*lang.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt.Text(), actions: []*lang.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
 	p.SetTitle(title)
@@ -773,7 +773,7 @@ func (p *Page) SetPrompt(prompt string) {
 
 // ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
-	p.prompt = lang.TxtPagingPrompt
+	p.prompt = lang.TxtPagingPrompt.Text()
 }
 
 func (p *Page) Error(err error, msg ...string) {

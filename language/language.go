@@ -58,7 +58,7 @@ const (
 )
 
 // Page - Paging
-const TxtPagingPrompt string = "Choose (F)orward, (B)ack or (Q)uit"
+var TxtPagingPrompt *Text = NewText("Choose (F)orward, (B)ack or (Q)uit")
 
 // Support DatesTimes
 var (
@@ -81,13 +81,13 @@ var (
 	ValidActions       *Text = NewText("valid actions [%v]")
 )
 
-var ApplicationHeader []string = []string{
+var ApplicationHeader *Paragraph = NewParagraph([]string{
 	"███████ ████████  █████  ██████  ████████ ███████ ██████  ███    ███ ",
 	"██         ██    ██   ██ ██   ██    ██    ██      ██   ██ ████  ████ ",
 	"███████    ██    ███████ ██████     ██    █████   ██████  ██ ████ ██ ",
 	"     ██    ██    ██   ██ ██   ██    ██    ██      ██   ██ ██  ██  ██ ",
 	"███████    ██    ██   ██ ██   ██    ██    ███████ ██   ██ ██      ██ ",
-}
+})
 
 // General
 var (
@@ -102,14 +102,13 @@ var (
 
 // FileChooser
 var (
-	TxtFileChooserTitle *Text = NewText("File Chooser")
-	TxtFolderIcon       *Text = NewText("+")
-	TxtFileIcon         *Text = NewText("#")
-	TxtSymLinkIcon      *Text = NewText("~")
-	//TODO: Convert to *Paragaph
-	TxtFileChooserDescription  []string = []string{"This menu shows the list of files available for maintenance.", "Select the file you wish to use. PLEASE BE CAREFUL!"}
-	TxtFileChooserPrompt       *Text    = NewText("Choose a file to use")
-	TxtFileChooserConfirmation *Text    = NewText("Choose (S)end or (Q)uit")
+	TxtFileChooserTitle        *Text      = NewText("File Chooser")
+	TxtFolderIcon              *Text      = NewText("+")
+	TxtFileIcon                *Text      = NewText("#")
+	TxtSymLinkIcon             *Text      = NewText("~")
+	TxtFileChooserDescription  *Paragraph = NewParagraph([]string{"This menu shows the list of files available for maintenance.", "Select the file you wish to use. PLEASE BE CAREFUL!"})
+	TxtFileChooserPrompt       *Text      = NewText("Choose a file to use")
+	TxtFileChooserConfirmation *Text      = NewText("Choose (S)end or (Q)uit")
 )
 
 // Help Messages

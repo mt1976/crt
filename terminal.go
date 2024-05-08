@@ -431,7 +431,7 @@ func (t *ViewPort) Spool(msg []byte) {
 func (t *ViewPort) Banner(msg string) {
 	fmt.Println(t.row())
 	//gtrm.Flush()
-	for _, line := range lang.ApplicationHeader {
+	for _, line := range lang.ApplicationHeader.String() {
 		fmt.Println(t.Format(line, ""))
 		//	gtrm.Flush()
 	}
