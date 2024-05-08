@@ -1,4 +1,4 @@
-package crt
+package terminal
 
 import (
 	"fmt"
@@ -12,13 +12,41 @@ import (
 	gtrm "github.com/buger/goterm"
 	beep "github.com/gen2brain/beeep"
 	boxr "github.com/mt1976/crt/box"
+	conf "github.com/mt1976/crt/config"
+	dttm "github.com/mt1976/crt/datesTimes"
 	errs "github.com/mt1976/crt/errors"
+	hlpr "github.com/mt1976/crt/helpers"
 	lang "github.com/mt1976/crt/language"
+	strg "github.com/mt1976/crt/strings"
+
 	"golang.org/x/term"
 )
 
-const startColumn int = 1
-const inputColumn int = startColumn + 2
+const StartColumn int = 1
+const InputColumn int = StartColumn + 2
+
+var config conf.Config
+
+// The "visibleContent" type represents a visibleContent with a map of rows and columns.
+// @property row - The "row" property is a map that stores the values of each row in the visibleContent. The keys
+// of the map are integers representing the row numbers, and the values are strings representing the
+// content of each row.
+// @property {int} cols - The "cols" property represents the number of columns in the visibleContent.
+// @property {int} rows - The "rows" property represents the number of rows in the visibleContent.
+type visibleContent struct {
+	row    map[int]string
+	cols   int
+	rows   int
+	prompt string
+}
+
+func (v *visibleContent) SetPrompt(prompt string) {
+	v.prompt = prompt
+}
+
+func (v *visibleContent) GetPrompt() string {
+	return v.prompt
+}
 
 // The ViewPort type represents a terminal screen with properties such as whether it is a terminal, its
 // width and height, and whether it is the first row.
@@ -32,18 +60,18 @@ const inputColumn int = startColumn + 2
 // @property {bool} firstRow - The `firstRow` property is a boolean value that indicates whether the
 // current row is the first row of the terminal screen.
 type ViewPort struct {
-	isTerminal     bool            // true if running in terminal mode
-	width          int             // the width of the terminal
-	height         int             // the height of the terminal
-	firstRow       bool            // true if the current row is the first row
-	delay          int             // delay in milliseconds
-	baudRate       int             // baud rate, which simulates the speed of a terminal
-	currentRow     int             // the current row of the terminal
-	currentCol     int             // the current column of the terminal
-	visibleContent *visibleContent // the current screen content
-	Helpers        *Helpers        // Helper functions
-	Formatters     *Formatters     // Formatter functions
-	Styles         *Styles         // Colour functions
+	isTerminal     bool             // true if running in terminal mode
+	width          int              // the width of the terminal
+	height         int              // the height of the terminal
+	firstRow       bool             // true if the current row is the first row
+	delay          int              // delay in milliseconds
+	baudRate       int              // baud rate, which simulates the speed of a terminal
+	currentRow     int              // the current row of the terminal
+	currentCol     int              // the current column of the terminal
+	visibleContent *visibleContent  // the current screen content
+	Helpers        *hlpr.Helpers    // Helper functions
+	Formatters     *hlpr.Formatters // Formatter functions
+	Styles         *hlpr.Styles     // Colour functions
 }
 
 // The function `New` initializes a new `Crt` struct with information about the terminal size and
@@ -70,9 +98,9 @@ func New() ViewPort {
 	x.defaultBaud()  // set baud to 9600
 
 	x.newPageContent(x.width, x.height)
-	x.Helpers = initHelpers()
-	x.Formatters = initFormatters()
-	x.Styles = initStyles()
+	x.Helpers = hlpr.InitHelpers()
+	x.Formatters = hlpr.InitFormatters()
+	x.Styles = hlpr.InitStyles()
 	return x
 }
 
@@ -241,13 +269,13 @@ func (t *ViewPort) Special(msg string) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (t *ViewPort) Input(msg string, options string) (output string) {
-	gtrm.MoveCursor(startColumn, 21)
+	gtrm.MoveCursor(StartColumn, 21)
 	gtrm.Print(t.row())
-	gtrm.MoveCursor(startColumn, 22)
+	gtrm.MoveCursor(StartColumn, 22)
 	mesg := msg
 	//T.Format(msg, "")
 	if options != "" {
-		mesg = (t.Format(msg, "") + pQuote(bold(options)))
+		mesg = (t.Format(msg, "") + strg.PQuote(t.Styles.Bold(options)))
 	}
 	mesg = mesg + lang.PromptSymbol.Symbol()
 	mesg = t.Format(mesg, "")
@@ -262,7 +290,7 @@ func (t *ViewPort) Input(msg string, options string) (output string) {
 
 // The `InputError` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and prints an error message to the terminal. It uses the `Format` method of the `Crt` struct to format the message with the bold red color and the special character (`chSpecial`). Then, it prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) InputError(err error, msg ...string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(StartColumn, 23)
 	pp := t.SError(err, msg...)
 	gtrm.Print(pp)
 	gtrm.Flush()
@@ -274,11 +302,11 @@ func (t *ViewPort) InputError(err error, msg ...string) {
 }
 
 func (t *ViewPort) InfoMessage(msg string) {
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(StartColumn, 23)
 	//Print a line that clears the entire line
 	blanks := strings.Repeat(lang.Space.Symbol(), t.width)
 	gtrm.Print(t.Format(blanks, ""))
-	gtrm.MoveCursor(startColumn, 23)
+	gtrm.MoveCursor(StartColumn, 23)
 	gtrm.Print(
 		t.Format(t.Styles.Cyan(msg), ""))
 	//T.Print(msg + t.SymNewline)
@@ -337,7 +365,7 @@ func (t *ViewPort) Clear() {
 	t.firstRow = true
 	t.currentRow = 0
 	gtrm.Clear()
-	gtrm.MoveCursor(startColumn, 1)
+	gtrm.MoveCursor(StartColumn, 1)
 	gtrm.Flush()
 }
 
@@ -449,7 +477,7 @@ func (t *ViewPort) Header(msg string) {
 	// Print Header Line
 	gtrm.MoveCursor(1, 1)
 	gtrm.Println(t.row()) // + lang.SymNewline.String())
-	gtrm.MoveCursor(startColumn, 2)
+	gtrm.MoveCursor(StartColumn, 2)
 	var line map[int]string = make(map[int]string)
 	midway := (t.width - len(msg)) / 2
 	for i := 0; i < len(lang.ApplicationName.Text()); i++ {
@@ -460,8 +488,8 @@ func (t *ViewPort) Header(msg string) {
 	}
 
 	// Add DateTimeStamp to end of string
-	for i := 0; i < len(dateTimeString()); i++ {
-		line[t.width-len(dateTimeString())+i] = dateTimeString()[i : i+1]
+	for i := 0; i < len(dttm.DateTimeString()); i++ {
+		line[t.width-len(dttm.DateTimeString())+i] = dttm.DateTimeString()[i : i+1]
 	}
 
 	//map to string
@@ -473,7 +501,7 @@ func (t *ViewPort) Header(msg string) {
 		headerRowString = headerRowString + line[i]
 	}
 
-	gtrm.Print(bold(headerRowString) + lang.Newline.Symbol())
+	gtrm.Print(t.Styles.Bold(headerRowString) + lang.Newline.Symbol())
 	gtrm.Flush()
 	t.Break()
 }
@@ -512,7 +540,7 @@ func (t *ViewPort) defaultBaud() {
 func (t *ViewPort) PrintIt(msg string) {
 	t.currentRow++
 	rowString := msg
-	gtrm.MoveCursor(startColumn, t.currentRow)
+	gtrm.MoveCursor(StartColumn, t.currentRow)
 	//truncate rowString to length-1 and add a | character to the end
 	//log.Printf("len(rowString): %v\n", len(rowString))
 	//log.Printf("t.width: %v\n", t.width)

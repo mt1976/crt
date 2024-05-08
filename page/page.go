@@ -1,4 +1,4 @@
-package crt
+package page
 
 import (
 	"bufio"
@@ -17,9 +17,13 @@ import (
 	beep "github.com/gen2brain/beeep"
 	boxr "github.com/mt1976/crt/box"
 	conf "github.com/mt1976/crt/config"
+	dttm "github.com/mt1976/crt/datesTimes"
 	disp "github.com/mt1976/crt/display"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
+	numb "github.com/mt1976/crt/numbers"
+	strg "github.com/mt1976/crt/strings"
+	term "github.com/mt1976/crt/terminal"
 )
 
 var config = conf.Configuration
@@ -45,7 +49,7 @@ type Page struct {
 	ActivePageIndex  int            // The index of the active page.
 	counter          int            // A counter used for tracking.
 	pageRowCounter   int            // A counter used for tracking the page rows.
-	viewPort         *ViewPort      // The viewPort object used for displaying the page.
+	viewPort         *term.ViewPort // The viewPort object used for displaying the page.
 	headerBarTop     int            // The header row top row
 	headerBarContent int            // The header row content row
 	headerBarBotton  int            // The header row bottom row
@@ -71,7 +75,7 @@ type pageRow struct {
 	DateTime    string // The date and time of the page row.
 }
 
-func (p *Page) ViewPort() ViewPort {
+func (p *Page) ViewPort() term.ViewPort {
 	return *p.viewPort
 }
 
@@ -80,7 +84,7 @@ func (p *Page) ViewPort() ViewPort {
 //}
 
 // The NewPage function creates a new page with a truncated title and initializes other properties.
-func (t *ViewPort) NewPage(title string) *Page {
+func NewPage(t *term.ViewPort, title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.Truncate.Symbol()
@@ -96,18 +100,18 @@ func (t *ViewPort) NewPage(title string) *Page {
 	p.pageRowCounter = 0
 
 	// Setup viewport page info
-	p.height = t.height
-	p.width = t.width
+	p.height = t.Height()
+	p.width = t.Width()
 	p.headerBarTop = 1
 	p.headerBarContent = 2
 	p.headerBarBotton = 3
 	p.textAreaStart = 4
-	p.textAreaEnd = t.height - 4
-	p.footerBarTop = t.height - 3
-	p.footerBarInput = t.height - 2
-	p.footerBarMessage = t.height - 1
-	p.footerBarBottom = t.height
-	p.maxContentRows = (t.height - 4)       // Remove the number of rows used for the footer
+	p.textAreaEnd = t.Height() - 4
+	p.footerBarTop = t.Height() - 3
+	p.footerBarInput = t.Height() - 2
+	p.footerBarMessage = t.Height() - 1
+	p.footerBarBottom = t.Height()
+	p.maxContentRows = (t.Height() - 4)     // Remove the number of rows used for the footer
 	p.maxContentRows = p.maxContentRows - 3 // Remove the number of rows used for the header
 	p.blockedActions = []string{}           // No Blocked Actions
 	p.ResetSetHelp()
@@ -124,7 +128,7 @@ func (p *Page) SetTitle(title string) {
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	//lets clean the rowContent
-	rowContent = cleanContent(rowContent)
+	rowContent = strg.CleanContent(rowContent)
 
 	if rowContent == "" {
 		return
@@ -228,7 +232,7 @@ func (p *Page) IsBlockedAction(action string) bool {
 // `pageRowNumber`, `rowContent`, `altID`, and `dateTime`.
 func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime string) {
 	// lets clean the rowContent
-	rowContent = cleanContent(rowContent)
+	rowContent = strg.CleanContent(rowContent)
 
 	if rowContent == "" {
 		return
@@ -420,7 +424,7 @@ func (p *Page) AddBlankRow() {
 func (p *Page) AddParagraph(msg []string) {
 	// make sure the lines are no longer than the screen width and wrap them if they are.
 	for _, s := range msg {
-		s = trimRepeatingCharacters(s, lang.Space.Symbol())
+		s = strg.TrimRepeatingCharacters(s, lang.Space.Symbol())
 		p.Add(s, "", "")
 	}
 }
@@ -487,15 +491,15 @@ func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pa
 		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 		out := p.Input(p.prompt, "")
-		if isActionIn(out, lang.Quit) {
+		if lang.IsActionIn(out, lang.Quit) {
 			return lang.Quit.Action(), pageRow{}
 		}
 
-		if isActionIn(out, lang.Exit) {
+		if lang.IsActionIn(out, lang.Exit) {
 			os.Exit(0)
 		}
 
-		if isActionIn(out, lang.Help) {
+		if lang.IsActionIn(out, lang.Help) {
 			p.Help()
 		}
 
@@ -528,7 +532,7 @@ func drawScreen(p *Page) {
 			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.Blank.Symbol() {
 				continue
 			}
-			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
+			disp.PrintAt(p.pageRows[i].RowContent, term.InputColumn, lineNumber)
 		}
 	}
 	p.Footer()
@@ -539,14 +543,14 @@ func drawScreen(p *Page) {
 // message to the console.
 func (p *Page) Header(msg string) {
 	// Print Header Line
-	disp.PrintAt(p.boxPartDraw(first), startColumn, p.headerBarTop)
+	disp.PrintAt(p.boxPartDraw(first), term.StartColumn, p.headerBarTop)
 	width := p.width
-	disp.PrintAt(p.boxPartDraw(99), startColumn, p.headerBarContent)
-	disp.PrintAt(lang.ApplicationName.Text(), inputColumn, p.headerBarContent)
+	disp.PrintAt(p.boxPartDraw(99), term.StartColumn, p.headerBarContent)
+	disp.PrintAt(lang.ApplicationName.Text(), term.InputColumn, p.headerBarContent)
 	midway := (width - len(msg)) / 2
 	disp.PrintAt(msg, midway, p.headerBarContent)
-	disp.PrintAt(dateTimeString(), width-(len(dateTimeString())+1), p.headerBarContent)
-	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.headerBarBotton)
+	disp.PrintAt(dttm.DateTimeString(), width-(len(dttm.DateTimeString())+1), p.headerBarContent)
+	disp.PrintAt(p.boxPartDraw(middle), term.StartColumn, p.headerBarBotton)
 }
 func (p *Page) Body() {
 	for x := 4; x < p.footerBarMessage; x++ {
@@ -555,10 +559,10 @@ func (p *Page) Body() {
 }
 
 func (p *Page) Footer() {
-	disp.PrintAt(p.boxPartDraw(middle), startColumn, p.footerBarTop)
-	disp.PrintAt(p.boxPartDraw(99), startColumn, p.footerBarInput)
-	disp.PrintAt(p.FormatRowOutput(p.prompt), startColumn, p.footerBarMessage)
-	disp.PrintAt(p.boxPartDraw(last), startColumn, p.footerBarBottom)
+	disp.PrintAt(p.boxPartDraw(middle), term.StartColumn, p.footerBarTop)
+	disp.PrintAt(p.boxPartDraw(99), term.StartColumn, p.footerBarInput)
+	disp.PrintAt(p.FormatRowOutput(p.prompt), term.StartColumn, p.footerBarMessage)
+	disp.PrintAt(p.boxPartDraw(last), term.StartColumn, p.footerBarBottom)
 }
 
 // Display displays the page content to the user and handles user input.
@@ -581,13 +585,13 @@ func (p *Page) displayIt() (lang.Action, pageRow) {
 			continue
 		}
 
-		ok = p.viewPort.Helpers.IsActionIn(upcase(inputAction), p.actions...)
+		ok = p.viewPort.Helpers.IsActionIn(strg.Upcase(inputAction), p.actions...)
 		if !ok {
 			p.Error(errs.ErrInvalidAction, inputAction)
 		}
 	}
 	// if nextAction is a numnber, find the menu item
-	if isInt(inputAction) {
+	if numb.IsInt(inputAction) {
 		pos, _ := strconv.Atoi(inputAction)
 		rtnAction := lang.NewAction(inputAction)
 		return *rtnAction, p.pageRows[pos-1]
@@ -604,11 +608,11 @@ func (p *Page) displayIt() (lang.Action, pageRow) {
 func (p *Page) Input(msg string, options string) string {
 	mesg := msg + lang.PromptSymbol.Symbol() + lang.Space.Symbol()
 	if p.showOptions {
-		mesg = msg + lang.Space.Symbol() + italic(p.GetOptions(true))
+		mesg = msg + lang.Space.Symbol() + strg.Italic(p.GetOptions(true))
 		p.showOptions = false
 	}
 
-	disp.PrintAt(mesg, inputColumn, p.footerBarMessage)
+	disp.PrintAt(mesg, term.InputColumn, p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 
 	input, err := p.getUserInput()
@@ -624,7 +628,7 @@ func (p *Page) ShowOptions() {
 }
 
 func (p *Page) getUserInput() (string, error) {
-	disp.MoveCursor(inputColumn, p.footerBarInput)
+	disp.MoveCursor(term.InputColumn, p.footerBarInput)
 	scanner := bufio.NewScanner(os.Stdin)
 	if !scanner.Scan() {
 		return "", errs.ErrInputScannerFailure
@@ -702,7 +706,7 @@ func (p *Page) boxPartDraw(which int) string {
 }
 
 func (p *Page) Break(row int) {
-	disp.MoveCursor(startColumn, row)
+	disp.MoveCursor(term.StartColumn, row)
 	disp.Print(p.boxPartDraw(middle))
 }
 
@@ -717,7 +721,7 @@ func (p *Page) PagingInfo(page, ofPages int) {
 	if ofPages == 0 {
 		msg = strings.Repeat(" ", lmsg)
 	}
-	msg = yellow(msg)
+	msg = p.viewPort.Styles.Yellow(msg)
 	disp.PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
@@ -778,8 +782,8 @@ func (p *Page) ResetPrompt() {
 
 func (p *Page) Error(err error, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
-	pp := p.formatMessage(err.Error(), red(lang.Warning.Text()), msg...)
-	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
+	pp := p.formatMessage(err.Error(), p.viewPort.Styles.Red(lang.Warning.Text()), msg...)
+	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -792,21 +796,21 @@ func (p *Page) Error(err error, msg ...string) {
 func (p *Page) Info(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.formatMessage(info, white(lang.Info.Text()), msg...)
-	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
+	pp := p.formatMessage(info, p.viewPort.Styles.White(lang.Info.Text()), msg...)
+	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Hint(info string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.formatMessage(info, cyan(lang.Hint.Text()), msg...)
-	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
+	pp := p.formatMessage(info, p.viewPort.Styles.Cyan(lang.Hint.Text()), msg...)
+	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) Warning(warning string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
-	pp := p.formatMessage(warning, yellow(lang.Warning.Text()), msg...)
-	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
+	pp := p.formatMessage(warning, p.viewPort.Styles.Yellow(lang.Warning.Text()), msg...)
+	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
 	p.viewPort.SetDelayInSec(config.DefaultErrorDelay)
@@ -819,7 +823,7 @@ func (p *Page) Success(message string, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
 	pp := p.formatMessage(message, bold(lang.Success.Text()), msg...)
-	disp.PrintAt(pp, inputColumn, p.footerBarMessage)
+	disp.PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
 func (p *Page) formatMessage(errText, promptTxt string, msg ...string) string {
@@ -842,12 +846,12 @@ func (p *Page) formatMessage(errText, promptTxt string, msg ...string) string {
 }
 
 func (p *Page) Clearline(row int) {
-	//disp.MoveCursor(startColumn, row)
+	//disp.MoveCursor(term.StartColumn, row)
 	disp.ClearLine(row)
 }
 
 func (p *Page) ClearContent(row int) {
-	disp.PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), inputColumn, row)
+	disp.PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), term.InputColumn, row)
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
@@ -878,7 +882,7 @@ func (p *Page) GetOptions(includeDefaults bool) string {
 	// 	xx = removeOption(xx, lang.Back.Action())
 	// }
 
-	return qQuote(strings.Join(xx, ","))
+	return strg.QQuote(strings.Join(xx, ","))
 }
 
 func removeOption(s []string, r string) []string {
@@ -937,7 +941,7 @@ func (p *Page) GetHelp() []string {
 		rtn = append(rtn, lang.HelpSupportedActions.Text())
 		rtn = append(rtn, lang.Blank.Symbol())
 		for _, v := range p.actions {
-			rtn = append(rtn, lang.HelpBullet.Text()+upcase(v.Action()))
+			rtn = append(rtn, lang.HelpBullet.Text()+strg.Upcase(v.Action()))
 		}
 		rtn = append(rtn, lang.Blank.Symbol())
 		rtn = append(rtn, lang.HelpAutoGenerated.Text()+time.Now().Format(time.RFC822))
@@ -952,7 +956,7 @@ func (p *Page) ResetSetHelp() {
 }
 
 func (p *Page) Help() {
-	help := p.viewPort.NewPage(lang.HelpPageTitle.Text())
+	help := NewPage(p.viewPort, lang.HelpPageTitle.Text())
 	help.Clear()
 	help.Header(lang.HelpFor.Text() + p.title)
 	help.Body()
@@ -980,4 +984,8 @@ func (p *Page) Help() {
 			return
 		}
 	}
+}
+
+func bold(s string) string {
+	return s
 }

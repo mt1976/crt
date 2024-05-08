@@ -6,9 +6,10 @@ import (
 	"os/user"
 	"strings"
 
-	"github.com/mt1976/crt"
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
+	page "github.com/mt1976/crt/page"
+	term "github.com/mt1976/crt/terminal"
 )
 
 type File struct {
@@ -71,8 +72,8 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	}
 
 	// Function to choose a file or directory using the file chooser
-	term := crt.New()
-	page := term.NewPage(lang.TxtFileChooserTitle.Text())
+	t := term.New()
+	p := page.NewPage(&t, lang.TxtFileChooserTitle.Text())
 
 	// Get a list of files in the specified directory
 	files, err := GetFolderContent(searchPath, flags)
@@ -83,13 +84,13 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	// Add information about the current user and directory to the page
 	uh, _ := UserHome()
 	un, _ := UserName()
-	page.AddFieldValuePair("User Name", un)
-	page.AddFieldValuePair("User Home", uh)
-	page.AddFieldValuePair("Directory", searchPath)
+	p.AddFieldValuePair("User Name", un)
+	p.AddFieldValuePair("User Home", uh)
+	p.AddFieldValuePair("Directory", searchPath)
 
 	// Add a blank row to separate the header from the file list
 	//page.AddBreakRow()
-	brk(page, "-")
+	brk(p, "-")
 
 	// Add columns for the file list
 	//page.AddColumnsTitle("Icon", "Name", "Mode", "Size", "Modified")
@@ -99,37 +100,37 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	head := "%-4s| %-1s| %-30s | %-10s | %-12s | %-15s"
 	// Add a title row for the file list
 	title := fmt.Sprintf(head, " ", "T", "Name", "Mode", "Modified", "Size")
-	page.Add(title, "", "")
+	p.Add(title, "", "")
 
 	// Add a row for a separator between the header and the file list
-	brk(page, "+")
+	brk(p, "+")
 	//page.AddBreakRow()
 
 	// Add an option for the parent directory
 	up := fmt.Sprintf(format, lang.Up.Action(), "", "..", "", "", "")
-	page.Add(up, "", "")
+	p.Add(up, "", "")
 
 	// Add actions for the parent directory, up arrow, and select
-	page.AddAction(lang.Up)
-	page.AddAction(lang.UpArrow)
-	page.AddAction(lang.UpDoubleDot)
-	page.AddAction(lang.Select)
+	p.AddAction(lang.Up)
+	p.AddAction(lang.UpArrow)
+	p.AddAction(lang.UpDoubleDot)
+	p.AddAction(lang.Select)
 
 	// Add options for each file or directory in the list
 	for _, file := range files {
 		// Create a row for the file or directory
 		row := fmt.Sprintf("%-1s %-30s | %-10s | %-12s | %-15s", file.Icon, file.Name, file.Mode, file.Modified, file.SizeTxt)
-		page.AddMenuOption(file.Seq+1, row, "", "")
+		p.AddMenuOption(file.Seq+1, row, "", "")
 
 		// Add an action for selecting the directory if it is a directory
 		if file.IsDir {
 			act := lang.NewAction(lang.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
-			page.AddAction(act)
+			p.AddAction(act)
 		}
 	}
 
 	// Display the file chooser with actions
-	nextAction := page.Display_Actions()
+	nextAction := p.Display_Actions()
 	if nextAction.Is(lang.Quit) {
 		return "", false, nil
 	}
@@ -137,19 +138,19 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		// The current folder has been selected
 		return searchPath, true, nil
 	}
-	page.Dump(nextAction.Action(), lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
+	p.Dump(nextAction.Action(), lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
 	// Handle actions for the parent directory, up arrow, and select
 	if nextAction.Is(lang.Up) || nextAction.Is(lang.UpArrow) || nextAction.Is(lang.UpDoubleDot) {
-		page.Dump("Up One Directory", searchPath, pathSeparator)
+		p.Dump("Up One Directory", searchPath, pathSeparator)
 		upPath := strings.Split(searchPath, pathSeparator)
-		page.Dump(fmt.Sprintf("b4 upPath: %v\n", upPath))
+		p.Dump(fmt.Sprintf("b4 upPath: %v\n", upPath))
 
 		if len(upPath) > 1 {
 			upPath = upPath[:len(upPath)-1]
 		}
-		page.Dump(fmt.Sprintf("af upPath: %v\n", upPath))
+		p.Dump(fmt.Sprintf("af upPath: %v\n", upPath))
 		toPath := strings.Join(upPath, pathSeparator)
-		page.Dump("Relaunch FileChooser", toPath, lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
+		p.Dump("Relaunch FileChooser", toPath, lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
 		return FileChooser(toPath, flags)
 	}
 
@@ -159,24 +160,24 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 	// Handle actions for selecting a directory or file
 	if lang.Go.Equals(first) && isInt(remainder) {
-		r := files[term.Helpers.ToInt(remainder)-1]
+		r := files[t.Helpers.ToInt(remainder)-1]
 		if !r.IsDir {
-			page.Error(errs.ErrNotADirectory, r.Path)
+			p.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
-		page.Dump("Drilldown", r.Path, first, lang.Go.Action())
+		p.Dump("Drilldown", r.Path, first, lang.Go.Action())
 		return FileChooser(r.Path, flags)
 	}
 
 	// Handle selection of a specific file or directory
 	if nextAction.IsInt() {
-		r := files[term.Helpers.ToInt(nextAction.Action())-1]
+		r := files[t.Helpers.ToInt(nextAction.Action())-1]
 		if !r.IsDir && flags.allowDirs {
-			page.Error(errs.ErrNotAFile, r.Path)
+			p.Error(errs.ErrNotAFile, r.Path)
 			return FileChooser(searchPath, flags)
 		}
 		if r.IsDir && flags.allowFiles {
-			page.Error(errs.ErrNotADirectory, r.Path)
+			p.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
 		return r.Path, r.IsDir, nil
@@ -185,7 +186,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	return FileChooser(searchPath, flags)
 }
 
-func brk(page *crt.Page, breakChar string) {
+func brk(page *page.Page, breakChar string) {
 	brk := "%-4s+%-2s+%-31s-+-%-10s-+-%-12s-+-%-5s"
 	//replace + char with the breakChar
 	brk = strings.Replace(brk, "+", breakChar, -1)
@@ -236,7 +237,7 @@ func GetFolderContent(dir string, include flagger) ([]File, error) {
 		this.Path = dir + pathSeparator + file.Name()
 		inf, _ := file.Info()
 		this.Created = "N/A"
-		this.Modified = crt.New().Formatters.HumanFromUnixDate(inf.ModTime().Local().Unix())
+		this.Modified = term.New().Formatters.HumanFromUnixDate(inf.ModTime().Local().Unix())
 		this.Size = inf.Size()
 		yy := fmt.Sprintf("%v", this.Size)
 		this.SizeTxt = yy
@@ -285,12 +286,12 @@ func ChooseDirectory(root string) (string, error) {
 
 // isInt returns true if the input string can be converted to an integer.
 func isInt(s string) bool {
-	return crt.New().Helpers.IsInt(s)
+	return term.New().Helpers.IsInt(s)
 }
 
 // upcase returns the input string with all characters converted to uppercase.
 func upcase(s string) string {
-	return crt.New().Formatters.Upcase(s)
+	return term.New().Formatters.Upcase(s)
 }
 
 // UserHome returns the home directory of the current user, or an error if it cannot be determined.

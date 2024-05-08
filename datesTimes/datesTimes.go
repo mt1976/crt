@@ -1,4 +1,4 @@
-package crt
+package datestimes
 
 import (
 	"fmt"
@@ -6,11 +6,14 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize"
+	conf "github.com/mt1976/crt/config"
 	lang "github.com/mt1976/crt/language"
 	"github.com/xeonx/timeago"
 )
 
-func unixDateToHuman(unixTime int64) string {
+var config conf.Config
+
+func UnixDateToHuman(unixTime int64) string {
 	// golang date from unixTime
 	t := time.Unix(unixTime, 0)
 	h := humanize.Time(t)
@@ -18,7 +21,7 @@ func unixDateToHuman(unixTime int64) string {
 }
 
 // The function dateString returns the current date in the format "dd/mm/yy".
-func dateString() string {
+func DateString() string {
 	// spew.Dump(c.ApplicationDateFormatShort)
 	// spew.Dump(c)
 	// os.Exit(1)
@@ -27,26 +30,26 @@ func dateString() string {
 }
 
 // The timeString function returns the current time in the format "15:04:05".
-func timeString() string {
+func TimeString() string {
 	now := time.Now()
 	return fmt.Sprintf("%v", now.Format(config.ApplicationTimeFormat))
 }
 
 // The dateTimeString function returns a string that combines the time and date strings.
-func dateTimeString() string {
-	return timeString() + lang.Space.Symbol() + dateString()
+func DateTimeString() string {
+	return TimeString() + lang.Space.Symbol() + DateString()
 }
 
 // formatDate returns a formatted date string based on the given time.Time value.
-func formatDate(t time.Time) string {
+func FormatDate(t time.Time) string {
 	return t.Format(config.ApplicationDateFormat)
 }
 
-func formatDuration(t time.Duration) string {
+func FormatDuration(t time.Duration) string {
 	return t.String()
 }
 
-func timeAgo(t string) string {
+func TimeAgo(t string) string {
 	// Example time Thu, 25 Jan 2024 09:56:00 +0000
 	// Setup a time format and parse the time
 	if t == "" {

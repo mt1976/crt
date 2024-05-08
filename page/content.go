@@ -1,4 +1,4 @@
-package crt
+package page
 
 import (
 	"fmt"
@@ -6,27 +6,6 @@ import (
 
 	lang "github.com/mt1976/crt/language"
 )
-
-// The "visibleContent" type represents a visibleContent with a map of rows and columns.
-// @property row - The "row" property is a map that stores the values of each row in the visibleContent. The keys
-// of the map are integers representing the row numbers, and the values are strings representing the
-// content of each row.
-// @property {int} cols - The "cols" property represents the number of columns in the visibleContent.
-// @property {int} rows - The "rows" property represents the number of rows in the visibleContent.
-type visibleContent struct {
-	row    map[int]string
-	cols   int
-	rows   int
-	prompt string
-}
-
-func (v *visibleContent) SetPrompt(prompt string) {
-	v.prompt = prompt
-}
-
-func (v *visibleContent) GetPrompt() string {
-	return v.prompt
-}
 
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(msg string) string {

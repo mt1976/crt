@@ -1,12 +1,17 @@
-package crt
+package helpers
 
 import (
 	"time"
 
 	gtrm "github.com/buger/goterm"
 	colr "github.com/fatih/color"
+	dttm "github.com/mt1976/crt/datesTimes"
 	lang "github.com/mt1976/crt/language"
+	mock "github.com/mt1976/crt/mock"
+	numb "github.com/mt1976/crt/numbers"
+	strg "github.com/mt1976/crt/strings"
 	styl "github.com/mt1976/crt/styles"
+	supt "github.com/mt1976/crt/support"
 )
 
 type Helpers struct {
@@ -72,49 +77,49 @@ type Styles struct {
 	Underline func(s string) string
 }
 
-func initHelpers() *Helpers {
+func InitHelpers() *Helpers {
 	help := Helpers{
-		RandomIP:           randomIP,
-		RandomMAC:          randomMAC,
-		RandomPort:         randomPort,
-		ToInt:              toInt,
-		ToString:           toString,
-		CoinToss:           coinToss,
-		IsInt:              isInt,
-		RandomFloat:        randomFloat,
-		GetHostName:        getHostName,
-		GetUsername:        getUsername,
-		GetSytemInfo:       getSystemInfo,
-		RoundFloatToTwoDPS: roundFloatToTwoDPS,
-		IsActionIn:         isActionIn,
+		RandomIP:           mock.RandomIP,
+		RandomMAC:          mock.RandomMAC,
+		RandomPort:         mock.RandomPort,
+		ToInt:              numb.ToInt,
+		ToString:           numb.ToString,
+		CoinToss:           numb.CoinToss,
+		IsInt:              numb.IsInt,
+		RandomFloat:        mock.RandomFloat,
+		GetHostName:        supt.GetHostName,
+		GetUsername:        supt.GetUsername,
+		GetSytemInfo:       supt.GetSystemInfo,
+		RoundFloatToTwoDPS: numb.RoundFloatToTwoDPS,
+		IsActionIn:         lang.IsActionIn,
 	}
 	return &help
 }
 
-func initFormatters() *Formatters {
+func InitFormatters() *Formatters {
 	fmts := Formatters{
-		HumanFromUnixDate:       unixDateToHuman,
-		HumanDiskSize:           humanDiskSize,
-		Human:                   human,
-		DateString:              dateString,
-		TimeString:              timeString,
-		Upcase:                  upcase,
-		Downcase:                downcase,
+		HumanFromUnixDate:       dttm.UnixDateToHuman,
+		HumanDiskSize:           strg.HumanDiskSize,
+		Human:                   strg.Human,
+		DateString:              dttm.DateString,
+		TimeString:              dttm.TimeString,
+		Upcase:                  strg.Upcase,
+		Downcase:                strg.Downcase,
 		Bold:                    bold,
-		SQuote:                  sQuote,
-		PQuote:                  pQuote,
-		DQuote:                  dQuote,
-		QQuote:                  qQuote,
-		TrimRepeatingCharacters: trimRepeatingCharacters,
-		DateTimeString:          dateTimeString,
-		TimeAgo:                 timeAgo,
-		FormatDate:              formatDate,
-		FormatDuration:          formatDuration,
+		SQuote:                  strg.SQuote,
+		PQuote:                  strg.PQuote,
+		DQuote:                  strg.DQuote,
+		QQuote:                  strg.QQuote,
+		TrimRepeatingCharacters: strg.TrimRepeatingCharacters,
+		DateTimeString:          dttm.DateTimeString,
+		TimeAgo:                 dttm.TimeAgo,
+		FormatDate:              dttm.FormatDate,
+		FormatDuration:          dttm.FormatDuration,
 	}
 	return &fmts
 }
 
-func initStyles() *Styles {
+func InitStyles() *Styles {
 	s := Styles{
 		Reset:     styl.Reset,
 		RED:       styl.Red,

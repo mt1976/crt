@@ -21,7 +21,7 @@ func Test_isInt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isInt(tt.args.in); got != tt.want {
+			if got := IsInt(tt.args.in); got != tt.want {
 				t.Errorf("isInt() = %v, want %v", got, tt.want)
 			}
 		})
@@ -48,7 +48,7 @@ func Test_ToInt(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotOut := toInt(tt.in)
+			gotOut := ToInt(tt.in)
 			if gotOut != tt.wantOut {
 				t.Errorf("toInt() = %v, want %v", gotOut, tt.wantOut)
 			}
@@ -70,7 +70,7 @@ func Test_ToString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := toString(tt.in); got != tt.want {
+			if got := ToString(tt.in); got != tt.want {
 				t.Errorf("toString() = %v, want %v", got, tt.want)
 			}
 		})
