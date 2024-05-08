@@ -31,7 +31,7 @@ func (v *visibleContent) GetPrompt() string {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(msg string) string {
 	// replace \n, \r, \t, and " with empty strings
-	msg = strings.Replace(msg, lang.SymNewline, "", -1)
+	msg = strings.Replace(msg, lang.SymNewline.String(), "", -1)
 	msg = strings.Replace(msg, lang.SymCarridgeReturn, "", -1)
 	msg = strings.Replace(msg, lang.SymTab, "", -1)
 	msg = strings.Replace(msg, lang.SymDoubleQuote, lang.Space, -1)

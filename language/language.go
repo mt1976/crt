@@ -1,8 +1,11 @@
 package language
 
 // General Symbols
+var (
+	SymNewline *Text = New("\n")
+)
+
 const (
-	SymNewline          string = "\n"
 	SymCarridgeReturn   string = "\r"
 	SymTab              string = "\t"
 	SymDoubleQuote      string = "\""

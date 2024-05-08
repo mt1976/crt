@@ -43,7 +43,7 @@ func (p *Paragraph) Len() int {
 func (p *Paragraph) String() []string {
 	out := []string{}
 	for _, t := range p.content {
-		out = append(out, t.String()+SymNewline)
+		out = append(out, t.String()+SymNewline.String())
 	}
 	return out
 }
@@ -54,6 +54,6 @@ func (p *Paragraph) Add(message string) {
 }
 
 func (p *Paragraph) AddBlankRow() {
-	p.content = append(p.content, *New(SymNewline))
+	p.content = append(p.content, *New(SymNewline.String()))
 	p.len++
 }
