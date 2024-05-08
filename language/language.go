@@ -2,32 +2,51 @@ package language
 
 // General Symbols
 var (
-	Newline *Text = New("\n")
+	Newline          *Symbol = NewSymbol("\n")
+	CarridgeReturn   *Symbol = NewSymbol("\r")
+	Tab              *Symbol = NewSymbol("\t")
+	DoubleQuote      *Symbol = NewSymbol("\"")
+	SingleQuote      *Symbol = NewSymbol("'")
+	OpenBracket      *Symbol = NewSymbol("(")
+	CloseBracket     *Symbol = NewSymbol(")")
+	SquareQuoteOpen  *Symbol = NewSymbol("[")
+	SquareQuoteClose *Symbol = NewSymbol("]")
+	ActionYes        *Symbol = NewSymbol("Y")
+	ActionNo         *Symbol = NewSymbol("N")
+	Blank            *Symbol = NewSymbol("-")
+	Degree           *Symbol = NewSymbol("°")
+	Break            *Symbol = NewSymbol(" ━━ ")
+	Space            *Symbol = NewSymbol(" ")
+	PromptSymbol     *Symbol = NewSymbol("? ")
+	ActionQuit       *Symbol = NewSymbol("Q")
+	ActionForward    *Symbol = NewSymbol("F")
+	ActionBack       *Symbol = NewSymbol("B")
+	ActionExit       *Symbol = NewSymbol("EX")
+	Truncate         *Symbol = NewSymbol("...")
+	ActionHelp       *Symbol = NewSymbol("?") // Help
+	WildcardBlank    *Symbol = NewSymbol("{{blank}}")
 )
 
 const (
-	SymCarridgeReturn   string = "\r"
-	SymTab              string = "\t"
-	SymDoubleQuote      string = "\""
-	SymSingleQuote      string = "'"
-	SymOpenBracket      string = "("
-	SymCloseBracket     string = ")"
-	SymSquareQuoteOpen  string = "["
-	SymSquareQuoteClose string = "]"
-	SymActionYes        string = "Y"
-	SymActionNo         string = "N"
-	SymBlank            string = "-"
-	SymDegree           string = "°"
-	SymBreak            string = " ━━ "
-	Space               string = " "
-	SymPromptSymbol     string = "? "
-	SymActionQuit       string = "Q"
-	SymActionForward    string = "F"
-	SymActionBack       string = "B"
-	SymActionExit       string = "EX"
-	SymTruncate         string = "..."
-	SymActionHelp       string = "?" // Help
-	SymWildcardBlank    string = "{{blank}}"
+// SymSingleQuote      string = "'"
+// SymOpenBracket      string = "("
+// SymCloseBracket     string = ")"
+// SymSquareQuoteOpen  string = "["
+// SymSquareQuoteClose string = "]"
+// SymActionYes        string = "Y"
+// SymActionNo         string = "N"
+// SymBlank            string = "-"
+// SymDegree           string = "°"
+// SymBreak            string = " ━━ "
+// Space               string = " "
+// SymPromptSymbol     string = "? "
+// SymActionQuit       string = "Q"
+// SymActionForward    string = "F"
+// SymActionBack       string = "B"
+// SymActionExit       string = "EX"
+// SymTruncate         string = "..."
+// SymActionHelp       string = "?" // Help
+// SymWildcardBlank    string = "{{blank}}"
 )
 
 // Page - Paging

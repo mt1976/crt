@@ -49,22 +49,22 @@ func boldInt(s int) string {
 
 // sQuote returns a string with the single quote symbol around it.
 func sQuote(s string) string {
-	return lang.SymSingleQuote + s + lang.SymSingleQuote
+	return lang.SingleQuote.Symbol() + s + lang.SingleQuote.Symbol()
 }
 
 // pQuote returns a string with the square bracket symbol around it.
 func pQuote(s string) string {
-	return lang.SymSquareQuoteOpen + s + lang.SymSquareQuoteClose
+	return lang.SquareQuoteOpen.Symbol() + s + lang.SquareQuoteClose.Symbol()
 }
 
 // dQuote returns a string with the double quote symbol around it.
 func dQuote(s string) string {
-	return lang.SymDoubleQuote + s + lang.SymDoubleQuote
+	return lang.DoubleQuote.Symbol() + s + lang.DoubleQuote.Symbol()
 }
 
 // qQuote returns a string with the square quote symbol around it.
 func qQuote(s string) string {
-	return lang.SymSquareQuoteOpen + s + lang.SymSquareQuoteClose
+	return lang.SquareQuoteOpen.Symbol() + s + lang.SquareQuoteClose.Symbol()
 }
 
 // isActionIn determines if the input string contains any of the specified actions.

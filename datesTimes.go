@@ -34,7 +34,7 @@ func timeString() string {
 
 // The dateTimeString function returns a string that combines the time and date strings.
 func dateTimeString() string {
-	return timeString() + lang.Space + dateString()
+	return timeString() + lang.Space.Symbol() + dateString()
 }
 
 // formatDate returns a formatted date string based on the given time.Time value.
@@ -64,7 +64,7 @@ func timeAgo(t string) string {
 			rtn = rtn[:10]
 		}
 		if len(rtn) < 10 {
-			rtn = strings.Repeat(lang.Space, 10-len(rtn)) + rtn
+			rtn = strings.Repeat(lang.Space.Symbol(), 10-len(rtn)) + rtn
 		}
 		return rtn
 	}

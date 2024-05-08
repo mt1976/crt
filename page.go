@@ -84,15 +84,15 @@ func (p *Page) ViewPort() ViewPort {
 func (t *ViewPort) NewPage(title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > config.TitleLength {
-		title = title[:config.TitleLength] + lang.SymTruncate
+		title = title[:config.TitleLength] + lang.Truncate.Symbol()
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []string{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
 	p.SetTitle(title)
-	p.AddAction(lang.SymActionQuit)    // Add Quit action
-	p.AddAction(lang.SymActionForward) // Add Next action
-	p.AddAction(lang.SymActionBack)    // Add Previous action
+	p.AddAction(lang.ActionQuit.Symbol())    // Add Quit action
+	p.AddAction(lang.ActionForward.Symbol()) // Add Next action
+	p.AddAction(lang.ActionBack.Symbol())    // Add Previous action
 	p.showOptions = false
 	p.pageRowCounter = 0
 
@@ -131,11 +131,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if strings.Trim(rowContent, lang.Space) == "" {
+	if strings.Trim(rowContent, lang.Space.Symbol()) == "" {
 		return
 	}
 
-	if rowContent == lang.SymBlank {
+	if rowContent == lang.Blank.Symbol() {
 		rowContent = ""
 	}
 
@@ -157,8 +157,8 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 	if p.noRows > p.maxContentRows {
-		p.AddAction(lang.SymActionForward) // Add Next action
-		p.AddAction(lang.SymActionBack)    // Add Previous action
+		p.AddAction(lang.ActionForward.Symbol()) // Add Next action
+		p.AddAction(lang.ActionBack.Symbol())    // Add Previous action
 	}
 	if remainder != "" {
 		p.Add(remainder, altID, dateTime)
@@ -173,7 +173,7 @@ func (p *Page) AddAction(validAction string) {
 		return
 	}
 
-	validAction = strings.ReplaceAll(validAction, lang.Space, "")
+	validAction = strings.ReplaceAll(validAction, lang.Space.Symbol(), "")
 
 	if validAction == "" {
 		log.Fatal(errs.ErrNoActionSpecified)
@@ -235,7 +235,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 		return
 	}
 
-	if strings.Trim(rowContent, lang.Space) == "" {
+	if strings.Trim(rowContent, lang.Space.Symbol()) == "" {
 		return
 	}
 
@@ -267,7 +267,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 func (p *Page) formatNumberedOptionText(row pageRow) string {
 	si := strconv.Itoa(row.ID)
 	if len(si) < 4 {
-		si = si + strings.Repeat(lang.Space, 4-len(si))
+		si = si + strings.Repeat(lang.Space.Symbol(), 4-len(si))
 	}
 	seq := bold(si)
 
@@ -305,7 +305,7 @@ func translate(key any) (string, error) {
 		keyString = key.(string)
 	case lang.Text:
 		keyText := key.(lang.Text)
-		keyString = keyText.String()
+		keyString = keyText.Text()
 	default:
 		errTxt := fmt.Sprintf("invalid object type [%v]", reflect.TypeOf(t).String())
 		err := errors.New(errTxt)
@@ -359,7 +359,7 @@ func (p *Page) addColumns(isBold bool, columns ...string) {
 
 			// Add the spaces to the column
 			if noToAdd > 0 {
-				op = op + strings.Repeat(lang.Space, noToAdd)
+				op = op + strings.Repeat(lang.Space.Symbol(), noToAdd)
 			}
 		}
 
@@ -367,7 +367,7 @@ func (p *Page) addColumns(isBold bool, columns ...string) {
 		output = append(output, op)
 	}
 
-	dsp := strings.Join(output, lang.Space)
+	dsp := strings.Join(output, lang.Space.Symbol())
 	//if isBold {
 	//	dsp = p.viewPort.Styles.Bold(dsp)
 	//}
@@ -408,20 +408,20 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 	}
 
 	// turn string array into sigle string
-	rtn := strings.Join(output, lang.Space)
+	rtn := strings.Join(output, lang.Space.Symbol())
 	//rtn = p.viewPort.Styles.Bold(rtn)
 	p.Add(rtn, "", "")
 }
 
 // AddBlankRow adds a blank row to the page
 func (p *Page) AddBlankRow() {
-	p.Add(lang.SymBlank, "", "")
+	p.Add(lang.Blank.Symbol(), "", "")
 }
 
 func (p *Page) AddParagraph(msg []string) {
 	// make sure the lines are no longer than the screen width and wrap them if they are.
 	for _, s := range msg {
-		s = trimRepeatingCharacters(s, lang.Space)
+		s = trimRepeatingCharacters(s, lang.Space.Symbol())
 		p.Add(s, "", "")
 	}
 }
@@ -440,14 +440,14 @@ func (p *Page) Display_Actions() (nextAction string) {
 	for !exit {
 		nextAction, _ := p.displayIt()
 		switch {
-		case t(nextAction) == lang.SymActionHelp:
+		case t(nextAction) == lang.ActionHelp.Symbol():
 			p.Help()
-		case t(nextAction) == lang.SymActionQuit:
+		case t(nextAction) == lang.ActionQuit.Symbol():
 			exit = true
-			return lang.SymActionQuit
-		case t(nextAction) == lang.SymActionForward:
+			return lang.ActionQuit.Symbol()
+		case t(nextAction) == lang.ActionForward.Symbol():
 			p.Forward()
-		case t(nextAction) == lang.SymActionBack:
+		case t(nextAction) == lang.ActionBack.Symbol():
 			p.Back()
 		case isInList(nextAction, p.actions):
 			// upcase the action
@@ -477,7 +477,7 @@ func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pa
 	}
 	if minLen > 0 || maxLen > 0 {
 		//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
-		p.Add(lang.SymBlank, "", "")
+		p.Add(lang.Blank.Symbol(), "", "")
 		p.Add(lang.HelpHint, "", "")
 		p.Add(p.minMaxHint(minLen, maxLen), "", "")
 	}
@@ -488,15 +488,15 @@ func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pa
 		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 		out := p.Input(p.prompt, "")
-		if isActionIn(out, lang.SymActionQuit) {
-			return lang.SymActionQuit, pageRow{}
+		if isActionIn(out, lang.ActionQuit.Symbol()) {
+			return lang.ActionQuit.Symbol(), pageRow{}
 		}
 
-		if isActionIn(out, lang.SymActionExit) {
+		if isActionIn(out, lang.ActionExit.Symbol()) {
 			os.Exit(0)
 		}
 
-		if isActionIn(out, lang.SymActionHelp) {
+		if isActionIn(out, lang.ActionHelp.Symbol()) {
 			p.Help()
 		}
 
@@ -526,7 +526,7 @@ func drawScreen(p *Page) {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
-			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.SymBlank {
+			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.Blank.Symbol() {
 				continue
 			}
 			disp.PrintAt(p.pageRows[i].RowContent, inputColumn, lineNumber)
@@ -577,7 +577,7 @@ func (p *Page) displayIt() (string, pageRow) {
 			continue
 		}
 
-		if inputAction == lang.SymActionHelp {
+		if inputAction == lang.ActionHelp.Symbol() {
 			p.Help()
 			continue
 		}
@@ -593,7 +593,7 @@ func (p *Page) displayIt() (string, pageRow) {
 		return upcase(inputAction), p.pageRows[pos-1]
 	}
 
-	if upcase(inputAction) == lang.SymActionExit {
+	if upcase(inputAction) == lang.ActionExit.Symbol() {
 		os.Exit(0)
 	}
 	return upcase(inputAction), pageRow{}
@@ -602,9 +602,9 @@ func (p *Page) displayIt() (string, pageRow) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) string {
-	mesg := msg + lang.SymPromptSymbol + lang.Space
+	mesg := msg + lang.PromptSymbol.Symbol() + lang.Space.Symbol()
 	if p.showOptions {
-		mesg = msg + lang.Space + italic(p.GetOptions(true))
+		mesg = msg + lang.Space.Symbol() + italic(p.GetOptions(true))
 		p.showOptions = false
 	}
 
@@ -688,7 +688,7 @@ func (p *Page) FormatRowOutput(msg string) string {
 
 func (p *Page) boxPartDraw(which int) string {
 	bar := strings.Repeat(boxr.Horizontal, p.width-2)
-	space := strings.Repeat(lang.Space, p.width-2)
+	space := strings.Repeat(lang.Space.Symbol(), p.width-2)
 	switch which {
 	case first:
 		return boxr.StartLeft + bar + boxr.StartRight
@@ -847,16 +847,16 @@ func (p *Page) Clearline(row int) {
 }
 
 func (p *Page) ClearContent(row int) {
-	disp.PrintAt(strings.Repeat(lang.Space, p.width-4), inputColumn, row)
+	disp.PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), inputColumn, row)
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
 
 	xx := p.actions
 	if !includeDefaults {
-		xx = removeOption(xx, lang.SymActionQuit)
-		xx = removeOption(xx, lang.SymActionForward)
-		xx = removeOption(xx, lang.SymActionBack)
+		xx = removeOption(xx, lang.ActionQuit.Symbol())
+		xx = removeOption(xx, lang.ActionForward.Symbol())
+		xx = removeOption(xx, lang.ActionBack.Symbol())
 	}
 
 	return qQuote(strings.Join(xx, ","))
@@ -879,22 +879,22 @@ func (p *Page) Display_Confirmation(msg string) (bool, error) {
 	}
 	for {
 		p.prompt = msg
-		p.AddAction(lang.SymActionYes)
-		p.AddAction(lang.SymActionNo)
-		p.actions = append(p.actions, lang.SymActionHelp)
+		p.AddAction(lang.ActionYes.Symbol())
+		p.AddAction(lang.ActionNo.Symbol())
+		p.actions = append(p.actions, lang.ActionHelp.Symbol())
 		drawScreen(p)
-		choice := p.Input(msg, lang.SymActionYes+lang.SymActionNo)
+		choice := p.Input(msg, lang.ActionYes.Symbol()+lang.ActionNo.Symbol())
 		switch {
-		case upcase(choice) == lang.SymActionYes:
+		case upcase(choice) == lang.ActionYes.Symbol():
 			return true, nil
-		case upcase(choice) == lang.SymActionNo:
+		case upcase(choice) == lang.ActionNo.Symbol():
 			return false, nil
-		case upcase(choice) == lang.SymActionForward && isInList(lang.SymActionForward, p.actions):
+		case upcase(choice) == lang.ActionForward.Symbol() && isInList(lang.ActionForward.Symbol(), p.actions):
 			p.Forward()
-		case upcase(choice) == lang.SymActionBack && isInList(lang.SymActionBack, p.actions):
+		case upcase(choice) == lang.ActionBack.Symbol() && isInList(lang.ActionBack.Symbol(), p.actions):
 			p.Back()
-		case choice == lang.SymActionHelp:
-			if !p.IsBlockedAction(lang.SymActionHelp) {
+		case choice == lang.ActionHelp.Symbol():
+			if !p.IsBlockedAction(lang.ActionHelp.Symbol()) {
 				p.Help()
 				continue
 			}
@@ -912,15 +912,15 @@ func (p *Page) SetHelp(msg []string) {
 func (p *Page) GetHelp() []string {
 	if p.helpText == nil {
 		var rtn []string
-		rtn = append(rtn, lang.SymBlank)
+		rtn = append(rtn, lang.Blank.Symbol())
 		rtn = append(rtn, lang.HelpFor+p.title)
-		rtn = append(rtn, lang.SymBlank)
+		rtn = append(rtn, lang.Blank.Symbol())
 		rtn = append(rtn, lang.HelpSupportedActions)
-		rtn = append(rtn, lang.SymBlank)
+		rtn = append(rtn, lang.Blank.Symbol())
 		for _, v := range p.actions {
 			rtn = append(rtn, lang.HelpBullet+upcase(v))
 		}
-		rtn = append(rtn, lang.SymBlank)
+		rtn = append(rtn, lang.Blank.Symbol())
 		rtn = append(rtn, lang.HelpAutoGenerated+time.Now().Format(time.RFC822))
 		p.SetHelp(rtn)
 		return rtn
@@ -939,15 +939,15 @@ func (p *Page) Help() {
 	help.Body()
 	help.Footer()
 	help.AddParagraph(p.GetHelp())
-	help.AddAction(lang.SymActionYes)
-	help.BlockAction(lang.SymActionHelp)
+	help.AddAction(lang.ActionYes.Symbol())
+	help.BlockAction(lang.ActionHelp.Symbol())
 	//help.SetPrompt("Press Y when done")
 	prompt := lang.HelpPromptSinglePage
 
 	if len(p.actions) > 10 {
 		prompt = lang.HelpPromptMultiPage
-		help.AddAction(lang.SymActionBack)
-		help.AddAction(lang.SymActionForward)
+		help.AddAction(lang.ActionBack.Symbol())
+		help.AddAction(lang.ActionForward.Symbol())
 	}
 
 	for {

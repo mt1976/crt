@@ -31,10 +31,10 @@ func (v *visibleContent) GetPrompt() string {
 // cleanContent removes unwanted characters from the rowContent string
 func cleanContent(msg string) string {
 	// replace \n, \r, \t, and " with empty strings
-	msg = strings.Replace(msg, lang.Newline.String(), "", -1)
-	msg = strings.Replace(msg, lang.SymCarridgeReturn, "", -1)
-	msg = strings.Replace(msg, lang.SymTab, "", -1)
-	msg = strings.Replace(msg, lang.SymDoubleQuote, lang.Space, -1)
+	msg = strings.Replace(msg, lang.Newline.Symbol(), "", -1)
+	msg = strings.Replace(msg, lang.CarridgeReturn.Symbol(), "", -1)
+	msg = strings.Replace(msg, lang.Tab.Symbol(), "", -1)
+	msg = strings.Replace(msg, lang.DoubleQuote.Symbol(), lang.Space.Symbol(), -1)
 	return msg
 }
 
@@ -62,7 +62,7 @@ func (p *Page) formatOption(row pageRow) string {
 	width := p.width - 7
 	pad := width - (len(miTitle) + len(row.DateTime))
 	if pad > 0 {
-		miTitle = miTitle + strings.Repeat(lang.Space, pad)
+		miTitle = miTitle + strings.Repeat(lang.Space.Symbol(), pad)
 	} else {
 		miTitle = miTitle[:width-(len(row.DateTime)+1)] + " | " + row.DateTime
 	}

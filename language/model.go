@@ -6,21 +6,37 @@ type Text struct {
 	len     int
 }
 
+type Symbol struct {
+	content string
+	len     int
+}
+
+type Action struct {
+	content string
+	len     int
+}
+
 type Paragraph struct {
 	content []Text
 	len     int
 }
 
-func (t *Text) String() string {
-	return t.content
-}
-
-func (t *Text) Len() int {
-	return t.len
-}
-
-func New(message string) *Text {
+func NewText(message string) *Text {
 	return &Text{
+		content: message,
+		len:     len(message),
+	}
+}
+
+func NewSymbol(content string) *Symbol {
+	return &Symbol{
+		content: content,
+		len:     len(content),
+	}
+}
+
+func NewAction(message string) *Action {
+	return &Action{
 		content: message,
 		len:     len(message),
 	}
@@ -31,11 +47,34 @@ func NewParagraph(message []string) *Paragraph {
 		len: len(message),
 	}
 	for _, m := range message {
-		para.content = append(para.content, *New(m))
+		para.content = append(para.content, *NewText(m))
 	}
 	return para
 }
 
+func (t *Text) Text() string {
+	return t.content
+}
+
+func (t *Text) Len() int {
+	return t.len
+}
+
+func (s *Symbol) Symbol() string {
+	return s.content
+}
+
+func (s *Symbol) Len() int {
+	return s.len
+}
+
+func (a *Action) Action() string {
+	return a.content
+}
+
+func (a *Action) Len() int {
+	return a.len
+}
 func (p *Paragraph) Len() int {
 	return p.len
 }
@@ -43,17 +82,17 @@ func (p *Paragraph) Len() int {
 func (p *Paragraph) String() []string {
 	out := []string{}
 	for _, t := range p.content {
-		out = append(out, t.String()+Newline.String())
+		out = append(out, t.Text()+Newline.Symbol())
 	}
 	return out
 }
 
 func (p *Paragraph) Add(message string) {
-	p.content = append(p.content, *New(message))
+	p.content = append(p.content, *NewText(message))
 	p.len++
 }
 
 func (p *Paragraph) AddBlankRow() {
-	p.content = append(p.content, *New(Newline.String()))
+	p.content = append(p.content, *NewText(Newline.Symbol()))
 	p.len++
 }

@@ -128,7 +128,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 	// Display the file chooser with actions
 	nextAction := page.Display_Actions()
-	if nextAction == lang.SymActionQuit {
+	if nextAction == lang.ActionQuit.Symbol() {
 		return "", false, nil
 	}
 	if upcase(nextAction) == upcase(actionSelect) {
