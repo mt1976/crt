@@ -1,8 +1,8 @@
 package crt
 
 import (
-	lang "github.com/mt1976/crt/language"
 	page "github.com/mt1976/crt/page"
+	actn "github.com/mt1976/crt/page/actions"
 	term "github.com/mt1976/crt/terminal"
 )
 
@@ -30,6 +30,6 @@ func Sample() {
 	pg.AddFieldValuePair("Field14", "Value14")
 	pg.AddFieldValuePair("Field15", "Value15")
 	pg.AddFieldValuePair("Field16", "Value16")
-	pg.AddAction(lang.NewAction("K"))
+	pg.AddAction(actn.NewAction("K"))
 	pg.Display_Actions()
 }

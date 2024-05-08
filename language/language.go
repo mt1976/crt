@@ -19,43 +19,6 @@ var (
 	PromptSymbol     *Symbol = NewSymbol("? ")
 	Truncate         *Symbol = NewSymbol("...")
 )
-var (
-	// Actions
-	Yes         *Action = NewAction("Y")
-	No          *Action = NewAction("N")
-	Quit        *Action = NewAction("Q")
-	Forward     *Action = NewAction("F")
-	Back        *Action = NewAction("B")
-	Exit        *Action = NewAction("EX")
-	Help        *Action = NewAction("?") // Help
-	Up          *Action = NewAction("U")
-	UpDoubleDot *Action = NewAction("..")
-	UpArrow     *Action = NewAction("^")
-	Go          *Action = NewAction("G")
-	Select      *Action = NewAction("S")
-)
-
-const (
-// SymSingleQuote      string = "'"
-// SymOpenBracket      string = "("
-// SymCloseBracket     string = ")"
-// SymSquareQuoteOpen  string = "["
-// SymSquareQuoteClose string = "]"
-// SymActionYes        string = "Y"
-// SymActionNo         string = "N"
-// SymBlank            string = "-"
-// SymDegree           string = "°"
-// SymBreak            string = " ━━ "
-// Space               string = " "
-// SymPromptSymbol     string = "? "
-// SymActionQuit       string = "Q"
-// SymActionForward    string = "F"
-// SymActionBack       string = "B"
-// SymActionExit       string = "EX"
-// SymTruncate         string = "..."
-// SymActionHelp       string = "?" // Help
-// SymWildcardBlank    string = "{{blank}}"
-)
 
 // Page - Paging
 var TxtPagingPrompt *Text = NewText("Choose (F)orward, (B)ack or (Q)uit")

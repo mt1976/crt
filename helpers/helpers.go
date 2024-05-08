@@ -6,9 +6,9 @@ import (
 	gtrm "github.com/buger/goterm"
 	colr "github.com/fatih/color"
 	dttm "github.com/mt1976/crt/datesTimes"
-	lang "github.com/mt1976/crt/language"
 	mock "github.com/mt1976/crt/mock"
 	numb "github.com/mt1976/crt/numbers"
+	actn "github.com/mt1976/crt/page/actions"
 	strg "github.com/mt1976/crt/strings"
 	styl "github.com/mt1976/crt/styles"
 	supt "github.com/mt1976/crt/support"
@@ -27,7 +27,7 @@ type Helpers struct {
 	GetUsername        func() string
 	GetSytemInfo       func() string
 	RoundFloatToTwoDPS func(f float64) float64
-	IsActionIn         func(action string, actionToCheck ...*lang.Action) bool
+	IsActionIn         func(action string, actionToCheck ...*actn.Action) bool
 }
 
 type Formatters struct {
@@ -91,7 +91,7 @@ func InitHelpers() *Helpers {
 		GetUsername:        supt.GetUsername,
 		GetSytemInfo:       supt.GetSystemInfo,
 		RoundFloatToTwoDPS: numb.RoundFloatToTwoDPS,
-		IsActionIn:         lang.IsActionIn,
+		IsActionIn:         actn.IsActionIn,
 	}
 	return &help
 }

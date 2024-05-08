@@ -22,6 +22,7 @@ import (
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 	numb "github.com/mt1976/crt/numbers"
+	actn "github.com/mt1976/crt/page/actions"
 	strg "github.com/mt1976/crt/strings"
 	term "github.com/mt1976/crt/terminal"
 )
@@ -42,7 +43,7 @@ type Page struct {
 	noRows           int            // The number of rows on the page.
 	prompt           string         // The prompt displayed to the user.
 	showOptions      bool           // The text to be displayed to the user in the case options are possible
-	actions          []*lang.Action // The available actions on the page.
+	actions          []*actn.Action // The available actions on the page.
 	actionLen        int            // The maximum length of an action.
 	blockedActions   []string       // The available actions on the page
 	noPages          int            // The total number of pages.
@@ -89,13 +90,13 @@ func NewPage(t *term.ViewPort, title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + lang.Truncate.Symbol()
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt.Text(), actions: []*lang.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt.Text(), actions: []*actn.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
 	p.SetTitle(title)
-	p.AddAction(lang.Quit)    // Add Quit action
-	p.AddAction(lang.Forward) // Add Next action
-	p.AddAction(lang.Back)    // Add Previous action
+	p.AddAction(actn.Quit)    // Add Quit action
+	p.AddAction(actn.Forward) // Add Next action
+	p.AddAction(actn.Back)    // Add Previous action
 	p.showOptions = false
 	p.pageRowCounter = 0
 
@@ -160,8 +161,8 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 	p.pageRows = append(p.pageRows, mi)
 	p.noRows++
 	if p.noRows > p.maxContentRows {
-		p.AddAction(lang.Forward) // Add Next action
-		p.AddAction(lang.Back)    // Add Previous action
+		p.AddAction(actn.Forward) // Add Next action
+		p.AddAction(actn.Back)    // Add Previous action
 	}
 	if remainder != "" {
 		p.Add(remainder, altID, dateTime)
@@ -169,7 +170,7 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 }
 
 // AddAction takes a validAction string as a parameter. The function adds the validAction to the list of available actions on the page.
-func (p *Page) AddAction(validAction *lang.Action) {
+func (p *Page) AddAction(validAction *actn.Action) {
 
 	if validAction.Equals("?") {
 		p.Error(errs.ErrInvalidAction, validAction.Action())
@@ -195,10 +196,10 @@ func (p *Page) AddAction(validAction *lang.Action) {
 
 // AddIntAction adds an action to the page with the given integer value
 func (p *Page) AddIntAction(num int) {
-	p.AddAction(lang.NewAction(fmt.Sprintf("%v", num)))
+	p.AddAction(actn.NewAction(fmt.Sprintf("%v", num)))
 }
 
-func (p *Page) GetActions() []*lang.Action {
+func (p *Page) GetActions() []*actn.Action {
 	return p.actions
 }
 
@@ -436,23 +437,23 @@ func (p *Page) AddParagraphString(msg string) {
 	p.AddParagraph(msgSlice)
 }
 
-func (p *Page) Display_Actions() (nextAction *lang.Action) {
+func (p *Page) Display_Actions() (nextAction *actn.Action) {
 	//t := p.viewPort.Formatters.Upcase
 	disp.Clear()
 	exit := false
 	for !exit {
 		nextAction, _ := p.displayIt()
 		switch {
-		case nextAction.Is(lang.Help):
+		case nextAction.Is(actn.Help):
 			p.Help()
-		case nextAction.Is(lang.Quit):
+		case nextAction.Is(actn.Quit):
 			exit = true
-			return lang.Quit
-		case nextAction.Is(lang.Forward):
+			return actn.Quit
+		case nextAction.Is(actn.Forward):
 			p.Forward()
-		case nextAction.Is(lang.Back):
+		case nextAction.Is(actn.Back):
 			p.Back()
-		case isInActions(&nextAction, p.actions):
+		case actn.IsInActions(&nextAction, p.actions):
 			// upcase the action
 			exit = true
 			// if isInt(nextAction) {
@@ -463,7 +464,7 @@ func (p *Page) Display_Actions() (nextAction *lang.Action) {
 			p.Error(errs.ErrInvalidAction, nextAction.Action())
 		}
 	}
-	return &lang.Action{}
+	return &actn.Action{}
 }
 
 func (p *Page) Clear() {
@@ -491,15 +492,15 @@ func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pa
 		p.PagingInfo(p.ActivePageIndex+1, p.noPages+1)
 
 		out := p.Input(p.prompt, "")
-		if lang.IsActionIn(out, lang.Quit) {
-			return lang.Quit.Action(), pageRow{}
+		if actn.IsActionIn(out, actn.Quit) {
+			return actn.Quit.Action(), pageRow{}
 		}
 
-		if lang.IsActionIn(out, lang.Exit) {
+		if actn.IsActionIn(out, actn.Exit) {
 			os.Exit(0)
 		}
 
-		if lang.IsActionIn(out, lang.Help) {
+		if actn.IsActionIn(out, actn.Help) {
 			p.Help()
 		}
 
@@ -566,7 +567,7 @@ func (p *Page) Footer() {
 }
 
 // Display displays the page content to the user and handles user input.
-func (p *Page) displayIt() (lang.Action, pageRow) {
+func (p *Page) displayIt() (actn.Action, pageRow) {
 
 	drawScreen(p)
 
@@ -580,12 +581,12 @@ func (p *Page) displayIt() (lang.Action, pageRow) {
 			continue
 		}
 
-		if inputAction == lang.Help.Action() {
+		if inputAction == actn.Help.Action() {
 			p.Help()
 			continue
 		}
 
-		ok = p.viewPort.Helpers.IsActionIn(strg.Upcase(inputAction), p.actions...)
+		ok = actn.IsActionIn(strg.Upcase(inputAction), p.actions...)
 		if !ok {
 			p.Error(errs.ErrInvalidAction, inputAction)
 		}
@@ -593,14 +594,14 @@ func (p *Page) displayIt() (lang.Action, pageRow) {
 	// if nextAction is a numnber, find the menu item
 	if numb.IsInt(inputAction) {
 		pos, _ := strconv.Atoi(inputAction)
-		rtnAction := lang.NewAction(inputAction)
+		rtnAction := actn.NewAction(inputAction)
 		return *rtnAction, p.pageRows[pos-1]
 	}
 
-	if lang.Exit.Equals(inputAction) {
+	if actn.Exit.Equals(inputAction) {
 		os.Exit(0)
 	}
-	return *lang.NewAction(inputAction), pageRow{}
+	return *actn.NewAction(inputAction), pageRow{}
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -859,17 +860,17 @@ func (p *Page) GetOptions(includeDefaults bool) string {
 	var xx []string
 	for _, option := range p.actions {
 		switch option {
-		case lang.Help:
+		case actn.Help:
 			continue
-		case lang.Quit:
+		case actn.Quit:
 			continue
-		case lang.Forward:
+		case actn.Forward:
 			continue
-		case lang.Back:
+		case actn.Back:
 			continue
-		case lang.Yes:
+		case actn.Yes:
 			continue
-		case lang.No:
+		case actn.No:
 			continue
 		default:
 			xx = append(xx, option.Action())
@@ -902,22 +903,22 @@ func (p *Page) Display_Confirmation(msg string) (bool, error) {
 	}
 	for {
 		p.prompt = msg
-		p.AddAction(lang.Yes)
-		p.AddAction(lang.No)
-		p.actions = append(p.actions, lang.Help)
+		p.AddAction(actn.Yes)
+		p.AddAction(actn.No)
+		p.actions = append(p.actions, actn.Help)
 		drawScreen(p)
-		choice := p.Input(msg, lang.Yes.Action()+lang.No.Action())
+		choice := p.Input(msg, actn.Yes.Action()+actn.No.Action())
 		switch {
-		case lang.Yes.Equals(choice):
+		case actn.Yes.Equals(choice):
 			return true, nil
-		case lang.No.Equals(choice):
+		case actn.No.Equals(choice):
 			return false, nil
-		case lang.Forward.Equals(choice) && isInActions(lang.Forward, p.actions):
+		case actn.Forward.Equals(choice) && actn.IsInActions(actn.Forward, p.actions):
 			p.Forward()
-		case lang.Back.Equals(choice) && isInActions(lang.Back, p.actions):
+		case actn.Back.Equals(choice) && actn.IsInActions(actn.Back, p.actions):
 			p.Back()
-		case lang.Help.Equals(choice):
-			if !p.IsBlockedAction(lang.Help.Action()) {
+		case actn.Help.Equals(choice):
+			if !p.IsBlockedAction(actn.Help.Action()) {
 				p.Help()
 				continue
 			}
@@ -962,15 +963,15 @@ func (p *Page) Help() {
 	help.Body()
 	help.Footer()
 	help.AddParagraph(p.GetHelp())
-	help.AddAction(lang.Yes)
-	help.BlockAction(lang.Help.Action())
+	help.AddAction(actn.Yes)
+	help.BlockAction(actn.Help.Action())
 	//help.SetPrompt("Press Y when done")
 	prompt := lang.HelpPromptSinglePage
 
 	if len(p.actions) > 10 {
 		prompt = lang.HelpPromptMultiPage
-		help.AddAction(lang.Back)
-		help.AddAction(lang.Forward)
+		help.AddAction(actn.Back)
+		help.AddAction(actn.Forward)
 	}
 
 	for {

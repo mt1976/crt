@@ -16,12 +16,6 @@ type Symbol struct {
 	len     int
 }
 
-type Action struct {
-	content string
-	len     int
-	isNum   bool
-}
-
 type Paragraph struct {
 	content []Text
 	len     int
@@ -39,14 +33,6 @@ func NewSymbol(content string) *Symbol {
 		content: content,
 		len:     len(content),
 	}
-}
-
-func NewAction(message string) *Action {
-	action := &Action{}
-	action.content = strings.ReplaceAll(message, Space.Symbol(), "")
-	action.len = len(message)
-	action.isNum = isMessageInt(message)
-	return action
 }
 
 func NewParagraph(message []string) *Paragraph {
@@ -75,34 +61,6 @@ func (s *Symbol) Len() int {
 	return s.len
 }
 
-func (a *Action) Action() string {
-	return a.content
-}
-
-func (a *Action) Len() int {
-	return a.len
-}
-
-func (a *Action) Equals(b string) bool {
-	sideA := strings.ToUpper(a.content)
-	sideB := strings.ToUpper(b)
-	return sideA == sideB
-}
-
-func (a *Action) Is(b *Action) bool {
-
-	sideA := strings.ToUpper(a.content)
-	sideB := strings.ToUpper(b.content)
-	if sideA != sideB {
-		return false
-	}
-
-	if a.len != b.len {
-		return false
-	}
-	return true
-}
-
 func isMessageInt(message string) bool {
 	for _, c := range message {
 		if !unicode.IsDigit(c) {
@@ -110,10 +68,6 @@ func isMessageInt(message string) bool {
 		}
 	}
 	return true
-}
-
-func (a *Action) IsInt() bool {
-	return a.isNum
 }
 
 func (p *Paragraph) Len() int {
@@ -136,24 +90,6 @@ func (p *Paragraph) Add(message string) {
 func (p *Paragraph) AddBlankRow() {
 	p.content = append(p.content, *NewText(Newline.Symbol()))
 	p.len++
-}
-
-// isActionIn determines if the input string contains any of the specified actions.
-// It is case-insensitive.
-//
-// Parameters:
-// in: The input string to search.
-// check: The list of actions to check for.
-//
-// Returns:
-// A boolean indicating whether the input string contains any of the specified actions.
-func IsActionIn(in string, check ...*Action) bool {
-	for i := 0; i < len(check); i++ {
-		if strings.Contains(upcase(in), check[i].Action()) {
-			return true
-		}
-	}
-	return false
 }
 
 func upcase(in string) string {

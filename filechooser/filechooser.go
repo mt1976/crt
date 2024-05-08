@@ -9,6 +9,7 @@ import (
 	errs "github.com/mt1976/crt/errors"
 	lang "github.com/mt1976/crt/language"
 	page "github.com/mt1976/crt/page"
+	actn "github.com/mt1976/crt/page/actions"
 	term "github.com/mt1976/crt/terminal"
 )
 
@@ -107,14 +108,14 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	//page.AddBreakRow()
 
 	// Add an option for the parent directory
-	up := fmt.Sprintf(format, lang.Up.Action(), "", "..", "", "", "")
+	up := fmt.Sprintf(format, actn.Up.Action(), "", "..", "", "", "")
 	p.Add(up, "", "")
 
 	// Add actions for the parent directory, up arrow, and select
-	p.AddAction(lang.Up)
-	p.AddAction(lang.UpArrow)
-	p.AddAction(lang.UpDoubleDot)
-	p.AddAction(lang.Select)
+	p.AddAction(actn.Up)
+	p.AddAction(actn.UpArrow)
+	p.AddAction(actn.UpDoubleDot)
+	p.AddAction(actn.Select)
 
 	// Add options for each file or directory in the list
 	for _, file := range files {
@@ -124,23 +125,23 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 		// Add an action for selecting the directory if it is a directory
 		if file.IsDir {
-			act := lang.NewAction(lang.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
+			act := actn.NewAction(actn.Go.Action() + fmt.Sprintf("%v", file.Seq+1))
 			p.AddAction(act)
 		}
 	}
 
 	// Display the file chooser with actions
 	nextAction := p.Display_Actions()
-	if nextAction.Is(lang.Quit) {
+	if nextAction.Is(actn.Quit) {
 		return "", false, nil
 	}
-	if nextAction.Is(lang.Select) {
+	if nextAction.Is(actn.Select) {
 		// The current folder has been selected
 		return searchPath, true, nil
 	}
-	p.Dump(nextAction.Action(), lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
+	p.Dump(nextAction.Action(), actn.Up.Action(), actn.UpArrow.Action(), actn.UpDoubleDot.Action())
 	// Handle actions for the parent directory, up arrow, and select
-	if nextAction.Is(lang.Up) || nextAction.Is(lang.UpArrow) || nextAction.Is(lang.UpDoubleDot) {
+	if nextAction.Is(actn.Up) || nextAction.Is(actn.UpArrow) || nextAction.Is(actn.UpDoubleDot) {
 		p.Dump("Up One Directory", searchPath, pathSeparator)
 		upPath := strings.Split(searchPath, pathSeparator)
 		p.Dump(fmt.Sprintf("b4 upPath: %v\n", upPath))
@@ -150,7 +151,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 		}
 		p.Dump(fmt.Sprintf("af upPath: %v\n", upPath))
 		toPath := strings.Join(upPath, pathSeparator)
-		p.Dump("Relaunch FileChooser", toPath, lang.Up.Action(), lang.UpArrow.Action(), lang.UpDoubleDot.Action())
+		p.Dump("Relaunch FileChooser", toPath, actn.Up.Action(), actn.UpArrow.Action(), actn.UpDoubleDot.Action())
 		return FileChooser(toPath, flags)
 	}
 
@@ -159,13 +160,13 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	remainder := nextAction.Action()[1:]
 
 	// Handle actions for selecting a directory or file
-	if lang.Go.Equals(first) && isInt(remainder) {
+	if actn.Go.Equals(first) && isInt(remainder) {
 		r := files[t.Helpers.ToInt(remainder)-1]
 		if !r.IsDir {
 			p.Error(errs.ErrNotADirectory, r.Path)
 			return FileChooser(searchPath, flags)
 		}
-		p.Dump("Drilldown", r.Path, first, lang.Go.Action())
+		p.Dump("Drilldown", r.Path, first, actn.Go.Action())
 		return FileChooser(r.Path, flags)
 	}
 
