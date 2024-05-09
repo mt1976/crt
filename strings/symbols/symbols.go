@@ -25,4 +25,5 @@ var (
 	Bullet           *Symbol = New("- ")
 	DotDot           *Symbol = New("..")
 	SymLinkID        *Symbol = New("L")
+	ConfigDelimiter  *Symbol = New("|")
 )

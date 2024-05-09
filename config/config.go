@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	beep "github.com/gen2brain/beeep"
+	symb "github.com/mt1976/crt/strings/symbols"
 	viper "github.com/spf13/viper"
 )
 
@@ -85,12 +86,12 @@ func init() {
 
 // split splits a string by the given separator.
 func split(in string) (r []string) {
-	return strings.Split(in, "|")
+	return strings.Split(in, symb.ConfigDelimiter.Symbol())
 }
 
 // buildOrder splits a string by the given separator and converts each element to an integer.
 func buildOrder(in string) (r []int) {
-	s := strings.Split(in, "|")
+	s := strings.Split(in, symb.ConfigDelimiter.Symbol())
 	r = make([]int, len(s))
 	for i := 0; i < len(s); i++ {
 		r[i], _ = strconv.Atoi(string(s[i]))
