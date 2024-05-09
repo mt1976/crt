@@ -26,4 +26,5 @@ var (
 	DotDot           *Symbol = New("..")
 	SymLinkID        *Symbol = New("L")
 	ConfigDelimiter  *Symbol = New("|")
+	TextDelimiter    *Symbol = New(" - ")
 )
