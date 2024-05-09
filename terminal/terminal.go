@@ -18,6 +18,7 @@ import (
 	hlpr "github.com/mt1976/crt/helpers"
 	lang "github.com/mt1976/crt/language"
 	strg "github.com/mt1976/crt/strings"
+	symb "github.com/mt1976/crt/strings/symbols"
 
 	"golang.org/x/term"
 )
@@ -219,7 +220,7 @@ func (t *ViewPort) DelayInSec() float64 {
 // of the `Crt` struct to format an empty string with the normal character (`chNormal`). Then, it
 // prints the formatted string using `fmt.Println()`.
 func (t *ViewPort) Blank() {
-	t.Println(t.Format("", "") + lang.Newline.Symbol())
+	t.Println(t.Format("", "") + symb.Newline.Symbol())
 }
 
 // The `Break()` function is used to print a line break on the terminal. It calls the `row()` method of
@@ -227,7 +228,7 @@ func (t *ViewPort) Blank() {
 // `fmt.Println()`. This creates a visual separation between different sections or blocks of text on
 // the terminal.
 func (t *ViewPort) Break() {
-	t.PrintIt(t.row() + lang.Newline.Symbol())
+	t.PrintIt(t.row() + symb.Newline.Symbol())
 }
 
 // The `Print` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
@@ -244,7 +245,7 @@ func (t *ViewPort) Paragraph(msg []string) {
 	// make sure the lines are no longer than the screen width and wrap them if they are.
 	out := []string{}
 	for _, s := range msg {
-		s = t.Formatters.TrimRepeatingCharacters(s, lang.Space.Symbol())
+		s = t.Formatters.TrimRepeatingCharacters(s, symb.Space.Symbol())
 		if len(s) > t.Width() {
 			out = append(out, s[:t.Width()])
 			out = append(out, s[t.Width():])
@@ -263,7 +264,7 @@ func (t *ViewPort) Paragraph(msg []string) {
 // special character (`chSpecial`) using the `Format` method of the `Crt` struct. This function is used
 // to print a special message or highlight certain text on the terminal.
 func (t *ViewPort) Special(msg string) {
-	t.Println(t.Format(msg, boxr.DividerLeft) + lang.Newline.Symbol())
+	t.Println(t.Format(msg, boxr.DividerLeft) + symb.Newline.Symbol())
 }
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
@@ -277,7 +278,7 @@ func (t *ViewPort) Input(msg string, options string) (output string) {
 	if options != "" {
 		mesg = (t.Format(msg, "") + strg.PQuote(t.Styles.Bold(options)))
 	}
-	mesg = mesg + lang.PromptSymbol.Symbol()
+	mesg = mesg + symb.PromptSymbol.Symbol()
 	mesg = t.Format(mesg, "")
 	//T.Print(mesg)
 	gtrm.Print(mesg)
@@ -304,7 +305,7 @@ func (t *ViewPort) InputError(err error, msg ...string) {
 func (t *ViewPort) InfoMessage(msg string) {
 	gtrm.MoveCursor(StartColumn, 23)
 	//Print a line that clears the entire line
-	blanks := strings.Repeat(lang.Space.Symbol(), t.width)
+	blanks := strings.Repeat(symb.Space.Symbol(), t.width)
 	gtrm.Print(t.Format(blanks, ""))
 	gtrm.MoveCursor(StartColumn, 23)
 	gtrm.Print(
@@ -345,7 +346,7 @@ func (t *ViewPort) lineBreakEnd() string {
 
 // lineBreakJunction returns a string that represents a line break with the end character.
 func (t *ViewPort) lineBreakJunction(displayChar string) string {
-	return fmt.Sprintf(lang.TextLineConstructor.Text(), displayChar, strings.Repeat(boxr.Horizontal, t.width+1), boxr.Horizontal)
+	return fmt.Sprintf(lang.LineConstructor.Text(), displayChar, strings.Repeat(boxr.Horizontal, t.width+1), boxr.Horizontal)
 }
 
 // The `Format` function is a method of the `Crt` struct. It takes two parameters: `in` of type string
@@ -372,9 +373,9 @@ func (t *ViewPort) Clear() {
 // The `Shout` function is a method of the `Crt` struct. It takes a `msg` parameter of type string and
 // prints a formatted message to the terminal.
 func (t *ViewPort) Shout(msg string) {
-	t.PrintIt(t.row() + lang.Newline.Symbol())
-	t.PrintIt(t.Format(t.Styles.Bold(msg), "") + lang.Newline.Symbol())
-	t.PrintIt(t.lineBreakEnd() + lang.Newline.Symbol())
+	t.PrintIt(t.row() + symb.Newline.Symbol())
+	t.PrintIt(t.Format(t.Styles.Bold(msg), "") + symb.Newline.Symbol())
+	t.PrintIt(t.lineBreakEnd() + symb.Newline.Symbol())
 }
 
 // The `Error` function is a method of the `Crt` struct. It takes two parameters: `msg` of type string
@@ -440,7 +441,7 @@ func (t *ViewPort) Underline(msg string) string {
 func (t *ViewPort) Spool(msg []byte) {
 	//output = []byte(strings.ReplaceAll(string(output), "\n", "\n"+T.Bold("  ")))
 	//create an slice of strings, split by t.SymNewline
-	lines := strings.Split(string(msg), lang.Newline.Symbol())
+	lines := strings.Split(string(msg), symb.Newline.Symbol())
 	// loop through the slice
 	if len(msg) == 0 {
 		return
@@ -466,7 +467,7 @@ func (t *ViewPort) Banner(msg string) {
 	fmt.Println(t.row())
 	//gtrm.Flush()
 	display := fmt.Sprintf(lang.ApplicationVersion.Text(), msg)
-	fmt.Println(t.Format(display+lang.Newline.Symbol(), ""))
+	fmt.Println(t.Format(display+symb.Newline.Symbol(), ""))
 	//t.Break()
 	//gtrm.Flush()
 }
@@ -496,12 +497,12 @@ func (t *ViewPort) Header(msg string) {
 	var headerRowString string
 	for i := 0; i < t.width; i++ {
 		if line[i] == "" {
-			line[i] = lang.Space.Symbol()
+			line[i] = symb.Space.Symbol()
 		}
 		headerRowString = headerRowString + line[i]
 	}
 
-	gtrm.Print(t.Styles.Bold(headerRowString) + lang.Newline.Symbol())
+	gtrm.Print(t.Styles.Bold(headerRowString) + symb.Newline.Symbol())
 	gtrm.Flush()
 	t.Break()
 }
@@ -585,7 +586,7 @@ func (t *ViewPort) Height() int {
 //
 // The function returns without printing a new line. To print a new line, use the Println method.
 func (t *ViewPort) Println(msg string) {
-	t.Print(msg + lang.Newline.Symbol())
+	t.Print(msg + symb.Newline.Symbol())
 }
 
 // Get the width of the terminal

@@ -23,6 +23,7 @@ import (
 	numb "github.com/mt1976/crt/numbers"
 	actn "github.com/mt1976/crt/page/actions"
 	strg "github.com/mt1976/crt/strings"
+	symb "github.com/mt1976/crt/strings/symbols"
 	term "github.com/mt1976/crt/terminal"
 )
 
@@ -87,7 +88,7 @@ func (p *Page) ViewPort() term.ViewPort {
 func NewPage(t *term.ViewPort, title string) *Page {
 	// truncate title to 25 characters
 	if len(title) > config.TitleLength {
-		title = title[:config.TitleLength] + lang.Truncate.Symbol()
+		title = title[:config.TitleLength] + symb.Truncate.Symbol()
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt.Text(), actions: []*actn.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
@@ -134,11 +135,11 @@ func (p *Page) Add(rowContent string, altID string, dateTime string) {
 		return
 	}
 
-	if strings.Trim(rowContent, lang.Space.Symbol()) == "" {
+	if strings.Trim(rowContent, symb.Space.Symbol()) == "" {
 		return
 	}
 
-	if rowContent == lang.Blank.Symbol() {
+	if rowContent == symb.Blank.Symbol() {
 		rowContent = ""
 	}
 
@@ -238,7 +239,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 		return
 	}
 
-	if strings.Trim(rowContent, lang.Space.Symbol()) == "" {
+	if strings.Trim(rowContent, symb.Space.Symbol()) == "" {
 		return
 	}
 
@@ -270,7 +271,7 @@ func (p *Page) AddMenuOption(id int, rowContent string, altID string, dateTime s
 func (p *Page) formatNumberedOptionText(row pageRow) string {
 	si := strconv.Itoa(row.ID)
 	if len(si) < 4 {
-		si = si + strings.Repeat(lang.Space.Symbol(), 4-len(si))
+		si = si + strings.Repeat(symb.Space.Symbol(), 4-len(si))
 	}
 	seq := bold(si)
 
@@ -362,7 +363,7 @@ func (p *Page) addColumns(isBold bool, columns ...string) {
 
 			// Add the spaces to the column
 			if noToAdd > 0 {
-				op = op + strings.Repeat(lang.Space.Symbol(), noToAdd)
+				op = op + strings.Repeat(symb.Space.Symbol(), noToAdd)
 			}
 		}
 
@@ -370,7 +371,7 @@ func (p *Page) addColumns(isBold bool, columns ...string) {
 		output = append(output, op)
 	}
 
-	dsp := strings.Join(output, lang.Space.Symbol())
+	dsp := strings.Join(output, symb.Space.Symbol())
 	//if isBold {
 	//	dsp = p.viewPort.Styles.Bold(dsp)
 	//}
@@ -405,26 +406,26 @@ func (p *Page) AddColumnsTitle(columns ...string) {
 	for i := 0; i < noCols; i++ {
 
 		// noChars := len(op)
-		op := strings.Repeat(lang.TableCharacterUnderline.Text(), colSize-1)
+		op := strings.Repeat(lang.Underline.Text(), colSize-1)
 
 		output = append(output, op)
 	}
 
 	// turn string array into sigle string
-	rtn := strings.Join(output, lang.Space.Symbol())
+	rtn := strings.Join(output, symb.Space.Symbol())
 	//rtn = p.viewPort.Styles.Bold(rtn)
 	p.Add(rtn, "", "")
 }
 
 // AddBlankRow adds a blank row to the page
 func (p *Page) AddBlankRow() {
-	p.Add(lang.Blank.Symbol(), "", "")
+	p.Add(symb.Blank.Symbol(), "", "")
 }
 
 func (p *Page) AddParagraph(msg []string) {
 	// make sure the lines are no longer than the screen width and wrap them if they are.
 	for _, s := range msg {
-		s = strg.TrimRepeatingCharacters(s, lang.Space.Symbol())
+		s = strg.TrimRepeatingCharacters(s, symb.Space.Symbol())
 		p.Add(s, "", "")
 	}
 }
@@ -475,12 +476,12 @@ func (p *Page) Clear() {
 
 func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pageRow) {
 	if p.prompt == "" {
-		p.Error(errs.ErrNoPromptSpecified, lang.TxtSetPrompt.Text())
+		p.Error(errs.ErrNoPromptSpecified, lang.SetPrompt.Text())
 		os.Exit(1)
 	}
 	if minLen > 0 || maxLen > 0 {
 		//	p.Hint(lang.TxtMinMaxLength, strconv.Itoa(minLen), strconv.Itoa(maxLen))
-		p.Add(lang.Blank.Symbol(), "", "")
+		p.Add(symb.Blank.Symbol(), "", "")
 		p.Add(lang.HelpHint.Text(), "", "")
 		p.Add(p.minMaxHint(minLen, maxLen), "", "")
 	}
@@ -529,7 +530,7 @@ func drawScreen(p *Page) {
 		if p.ActivePageIndex == p.pageRows[i].PageIndex {
 			rowsDisplayed++
 			lineNumber := (p.textAreaStart + rowsDisplayed) - 1
-			if p.pageRows[i].RowContent == "" || p.pageRows[i].RowContent == lang.Blank.Symbol() {
+			if p.pageRows[i].RowContent == "" || symb.Blank.Equals(p.pageRows[i].RowContent) {
 				continue
 			}
 			PrintAt(p.pageRows[i].RowContent, term.InputColumn, lineNumber)
@@ -606,9 +607,9 @@ func (p *Page) displayIt() (actn.Action, pageRow) {
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
 func (p *Page) Input(msg string, options string) string {
-	mesg := msg + lang.PromptSymbol.Symbol() + lang.Space.Symbol()
+	mesg := msg + symb.PromptSymbol.Symbol() + symb.Space.Symbol()
 	if p.showOptions {
-		mesg = msg + lang.Space.Symbol() + strg.Italic(p.GetOptions(true))
+		mesg = msg + symb.Space.Symbol() + strg.Italic(p.GetOptions(true))
 		p.showOptions = false
 	}
 
@@ -692,7 +693,7 @@ func (p *Page) FormatRowOutput(msg string) string {
 
 func (p *Page) boxPartDraw(which int) string {
 	bar := strings.Repeat(boxr.Horizontal, p.width-2)
-	space := strings.Repeat(lang.Space.Symbol(), p.width-2)
+	space := strings.Repeat(symb.Space.Symbol(), p.width-2)
 	switch which {
 	case first:
 		return boxr.StartLeft + bar + boxr.StartRight
@@ -851,7 +852,7 @@ func (p *Page) Clearline(row int) {
 }
 
 func (p *Page) ClearContent(row int) {
-	PrintAt(strings.Repeat(lang.Space.Symbol(), p.width-4), term.InputColumn, row)
+	PrintAt(strings.Repeat(symb.Space.Symbol(), p.width-4), term.InputColumn, row)
 }
 
 func (p *Page) GetOptions(includeDefaults bool) string {
@@ -898,7 +899,7 @@ func removeOption(s []string, r string) []string {
 func (p *Page) Display_Confirmation(msg string) (bool, error) {
 
 	if msg == "" {
-		msg = lang.TxtProceed.Text()
+		msg = lang.Proceed.Text()
 	}
 	for {
 		p.prompt = msg
@@ -935,15 +936,15 @@ func (p *Page) SetHelp(msg []string) {
 func (p *Page) GetHelp() []string {
 	if p.helpText == nil {
 		var rtn []string
-		rtn = append(rtn, lang.Blank.Symbol())
+		rtn = append(rtn, symb.Blank.Symbol())
 		rtn = append(rtn, lang.HelpFor.Text()+p.title)
-		rtn = append(rtn, lang.Blank.Symbol())
+		rtn = append(rtn, symb.Blank.Symbol())
 		rtn = append(rtn, lang.HelpSupportedActions.Text())
-		rtn = append(rtn, lang.Blank.Symbol())
+		rtn = append(rtn, symb.Blank.Symbol())
 		for _, v := range p.actions {
-			rtn = append(rtn, lang.HelpBullet.Text()+strg.Upcase(v.Action()))
+			rtn = append(rtn, symb.Bullet.Symbol()+strg.Upcase(v.Action()))
 		}
-		rtn = append(rtn, lang.Blank.Symbol())
+		rtn = append(rtn, symb.Blank.Symbol())
 		rtn = append(rtn, lang.HelpAutoGenerated.Text()+time.Now().Format(time.RFC822))
 		p.SetHelp(rtn)
 		return rtn

@@ -8,6 +8,7 @@ import (
 	"github.com/dustin/go-humanize"
 	conf "github.com/mt1976/crt/config"
 	lang "github.com/mt1976/crt/language"
+	symb "github.com/mt1976/crt/strings/symbols"
 	"github.com/xeonx/timeago"
 )
 
@@ -37,7 +38,7 @@ func TimeString() string {
 
 // The dateTimeString function returns a string that combines the time and date strings.
 func DateTimeString() string {
-	return TimeString() + lang.Space.Symbol() + DateString()
+	return TimeString() + symb.Space.Symbol() + DateString()
 }
 
 // formatDate returns a formatted date string based on the given time.Time value.
@@ -67,7 +68,7 @@ func TimeAgo(t string) string {
 			rtn = rtn[:10]
 		}
 		if len(rtn) < 10 {
-			rtn = strings.Repeat(lang.Space.Symbol(), 10-len(rtn)) + rtn
+			rtn = strings.Repeat(symb.Space.Symbol(), 10-len(rtn)) + rtn
 		}
 		return rtn
 	}

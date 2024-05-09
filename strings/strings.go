@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	colour "github.com/fatih/color"
-	lang "github.com/mt1976/crt/language"
 	numb "github.com/mt1976/crt/numbers"
+	symb "github.com/mt1976/crt/strings/symbols"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"golang.org/x/text/number"
@@ -53,31 +53,31 @@ func BoldInt(s int) string {
 
 // sQuote returns a string with the single quote symbol around it.
 func SQuote(s string) string {
-	return lang.SingleQuote.Symbol() + s + lang.SingleQuote.Symbol()
+	return symb.SingleQuote.Symbol() + s + symb.SingleQuote.Symbol()
 }
 
 // pQuote returns a string with the square bracket symbol around it.
 func PQuote(s string) string {
-	return lang.SquareQuoteOpen.Symbol() + s + lang.SquareQuoteClose.Symbol()
+	return symb.SquareQuoteOpen.Symbol() + s + symb.SquareQuoteClose.Symbol()
 }
 
 // dQuote returns a string with the double quote symbol around it.
 func DQuote(s string) string {
-	return lang.DoubleQuote.Symbol() + s + lang.DoubleQuote.Symbol()
+	return symb.DoubleQuote.Symbol() + s + symb.DoubleQuote.Symbol()
 }
 
 // qQuote returns a string with the square quote symbol around it.
 func QQuote(s string) string {
-	return lang.SquareQuoteOpen.Symbol() + s + lang.SquareQuoteClose.Symbol()
+	return symb.SquareQuoteOpen.Symbol() + s + symb.SquareQuoteClose.Symbol()
 }
 
 // cleanContent removes unwanted characters from the rowContent string
 func CleanContent(msg string) string {
 	// replace \n, \r, \t, and " with empty strings
-	msg = strings.Replace(msg, lang.Newline.Symbol(), "", -1)
-	msg = strings.Replace(msg, lang.CarridgeReturn.Symbol(), "", -1)
-	msg = strings.Replace(msg, lang.Tab.Symbol(), "", -1)
-	msg = strings.Replace(msg, lang.DoubleQuote.Symbol(), lang.Space.Symbol(), -1)
+	msg = strings.Replace(msg, symb.Newline.Symbol(), "", -1)
+	msg = strings.Replace(msg, symb.CarridgeReturn.Symbol(), "", -1)
+	msg = strings.Replace(msg, symb.Tab.Symbol(), "", -1)
+	msg = strings.Replace(msg, symb.DoubleQuote.Symbol(), symb.Space.Symbol(), -1)
 	return msg
 }
 

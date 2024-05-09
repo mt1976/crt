@@ -1,0 +1,26 @@
+package symbols
+
+// General Symbols
+var (
+	Newline          *Symbol = New("\n")
+	CarridgeReturn   *Symbol = New("\r")
+	Tab              *Symbol = New("\t")
+	DoubleQuote      *Symbol = New("\"")
+	SingleQuote      *Symbol = New("'")
+	OpenBracket      *Symbol = New("(")
+	CloseBracket     *Symbol = New(")")
+	SquareQuoteOpen  *Symbol = New("[")
+	SquareQuoteClose *Symbol = New("]")
+	WildcardBlank    *Symbol = New("{{blank}}")
+	Blank            *Symbol = New("-")
+	Degree           *Symbol = New("°")
+	Break            *Symbol = New(" ━━ ")
+	Space            *Symbol = New(" ")
+	PromptSymbol     *Symbol = New("? ")
+	Truncate         *Symbol = New("...")
+	Underline        *Symbol = New("-")
+	FolderIcon       *Symbol = New("+")
+	FileIcon         *Symbol = New("#")
+	SymLinkIcon      *Symbol = New("~")
+	Bullet           *Symbol = New("- ")
+)

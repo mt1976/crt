@@ -4,8 +4,8 @@ import (
 	"strings"
 	"unicode"
 
-	lang "github.com/mt1976/crt/language"
 	numb "github.com/mt1976/crt/numbers"
+	symb "github.com/mt1976/crt/strings/symbols"
 )
 
 type Action struct {
@@ -16,7 +16,7 @@ type Action struct {
 
 func New(message string) *Action {
 	action := &Action{}
-	action.content = strings.ReplaceAll(message, lang.Space.Symbol(), "")
+	action.content = strings.ReplaceAll(message, symb.Space.Symbol(), "")
 	action.len = len(message)
 	action.isNum = isMessageInt(message)
 	return action

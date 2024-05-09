@@ -3,6 +3,8 @@ package language
 import (
 	"strings"
 	"unicode"
+
+	symb "github.com/mt1976/crt/strings/symbols"
 )
 
 type Text struct {
@@ -77,7 +79,7 @@ func (p *Paragraph) Len() int {
 func (p *Paragraph) String() []string {
 	out := []string{}
 	for _, t := range p.content {
-		out = append(out, t.Text()+Newline.Symbol())
+		out = append(out, t.Text()+symb.Newline.Symbol())
 	}
 	return out
 }
@@ -88,7 +90,7 @@ func (p *Paragraph) Add(message string) {
 }
 
 func (p *Paragraph) AddBlankRow() {
-	p.content = append(p.content, *NewText(Newline.Symbol()))
+	p.content = append(p.content, *NewText(symb.Newline.Symbol()))
 	p.len++
 }
 

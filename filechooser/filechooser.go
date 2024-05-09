@@ -12,6 +12,7 @@ import (
 	page "github.com/mt1976/crt/page"
 	actn "github.com/mt1976/crt/page/actions"
 	strg "github.com/mt1976/crt/strings"
+	symb "github.com/mt1976/crt/strings/symbols"
 	sppt "github.com/mt1976/crt/support"
 	term "github.com/mt1976/crt/terminal"
 )
@@ -77,7 +78,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 	// Function to choose a file or directory using the file chooser
 	t := term.New()
-	p := page.NewPage(&t, lang.TxtFileChooserTitle.Text())
+	p := page.NewPage(&t, lang.FileChooserTitle.Text())
 
 	// Get a list of files in the specified directory
 	files, err := GetFolderContent(searchPath, flags)
@@ -248,13 +249,13 @@ func GetFolderContent(dir string, include flagger) ([]File, error) {
 		this.Mode = inf.Mode().String()
 		this.IsDir = file.IsDir()
 		if this.IsDir {
-			this.Icon = lang.TxtFolderIcon.Text()
+			this.Icon = symb.FolderIcon.Symbol()
 		} else {
-			this.Icon = lang.TxtFileIcon.Text()
+			this.Icon = symb.FileIcon.Symbol()
 		}
 		// Check if the file is a symbolic link
 		if isSymLink(this.Mode) {
-			this.Icon = lang.TxtSymLinkIcon.Text()
+			this.Icon = symb.SymLinkIcon.Symbol()
 		}
 		this.Icon = this.Icon + " "
 		this.Seq = itemNo
