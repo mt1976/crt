@@ -1,5 +1,7 @@
 package symbols
 
+import "strings"
+
 type Symbol struct {
 	content string
 	len     int
@@ -29,5 +31,13 @@ func (s *Symbol) Rune() []rune {
 }
 
 func (s *Symbol) Equals(b string) bool {
-	return s.content == b
+	return upcase(s.content) == upcase(b)
+}
+
+func upcase(s string) string {
+	return strings.ToUpper(s)
+}
+
+func Equals(a *Symbol, b string) bool {
+	return a.Equals(b)
 }

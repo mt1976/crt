@@ -89,9 +89,9 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	// Add information about the current user and directory to the page
 	uh, _ := UserHome()
 	un, _ := UserName()
-	p.AddFieldValuePair("User Name", un)
-	p.AddFieldValuePair("User Home", uh)
-	p.AddFieldValuePair("Directory", searchPath)
+	p.AddFieldValuePair(lang.FileChooserUserName, un)
+	p.AddFieldValuePair(lang.FileChooserUserHome, uh)
+	p.AddFieldValuePair(lang.FileChooserDirectory, searchPath)
 
 	// Add a blank row to separate the header from the file list
 	//page.AddBreakRow()
@@ -104,7 +104,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	format := "%-4s) %-1s  %-30s | %-10s | %-12s | %-15s"
 	head := "%-4s| %-1s| %-30s | %-10s | %-12s | %-15s"
 	// Add a title row for the file list
-	title := fmt.Sprintf(head, " ", "T", "Name", "Mode", "Modified", "Size")
+	title := fmt.Sprintf(head, " ", lang.FileChooserHeadType.Text(), lang.FileChooserHeadName.Text(), lang.FileChooserHeadMode.Text(), lang.FileChooserHeadModified.Text(), lang.FileChooserConfirmation.Text(), lang.FileChooserHeadSize.Text())
 	p.Add(title, "", "")
 
 	// Add a row for a separator between the header and the file list
@@ -112,7 +112,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 	//page.AddBreakRow()
 
 	// Add an option for the parent directory
-	up := fmt.Sprintf(format, actn.Up.Action(), "", "..", "", "", "")
+	up := fmt.Sprintf(format, actn.Up.Action(), "", symb.DotDot.Symbol(), "", "", "")
 	p.Add(up, "", "")
 
 	// Add actions for the parent directory, up arrow, and select
@@ -241,7 +241,7 @@ func GetFolderContent(dir string, include flagger) ([]File, error) {
 		this.Name = strings.Trim(file.Name(), " ")
 		this.Path = dir + pathSeparator + file.Name()
 		inf, _ := file.Info()
-		this.Created = "N/A"
+		this.Created = lang.FileChooserNotAvailable.Text()
 		this.Modified = term.New().Formatters.HumanFromUnixDate(inf.ModTime().Local().Unix())
 		this.Size = inf.Size()
 		yy := fmt.Sprintf("%v", this.Size)
@@ -268,7 +268,8 @@ func GetFolderContent(dir string, include flagger) ([]File, error) {
 
 // isSymLink returns true if the input string can be converted to an integer.
 func isSymLink(mode string) bool {
-	return mode[0] == 'L' || mode[0] == 'l'
+	// Function to determine if the input string is a symbolic link
+	return symb.SymLinkID.Equals(string(mode[0]))
 }
 
 // ChooseDirectory is a function to choose a directory using the file chooser.

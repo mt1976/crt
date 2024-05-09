@@ -23,4 +23,6 @@ var (
 	FileIcon         *Symbol = New("#")
 	SymLinkIcon      *Symbol = New("~")
 	Bullet           *Symbol = New("- ")
+	DotDot           *Symbol = New("..")
+	SymLinkID        *Symbol = New("L")
 )
