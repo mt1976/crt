@@ -36,46 +36,6 @@ const (
 	lineBreak
 )
 
-// Page represents a page in a document or a user interface.
-type Page struct {
-	title            string         // The title of the page.
-	pageRows         []pageRow      // The rows of content on the page.
-	noRows           int            // The number of rows on the page.
-	prompt           string         // The prompt displayed to the user.
-	showOptions      bool           // The text to be displayed to the user in the case options are possible
-	actions          []*actn.Action // The available actions on the page.
-	actionLen        int            // The maximum length of an action.
-	blockedActions   []string       // The available actions on the page
-	noPages          int            // The total number of pages.
-	ActivePageIndex  int            // The index of the active page.
-	counter          int            // A counter used for tracking.
-	pageRowCounter   int            // A counter used for tracking the page rows.
-	viewPort         *term.ViewPort // The viewPort object used for displaying the page.
-	headerBarTop     int            // The header row top row
-	headerBarContent int            // The header row content row
-	headerBarBotton  int            // The header row bottom row
-	footerBarTop     int            // The row where the input box starts
-	footerBarInput   int            // The row where the input box is
-	footerBarMessage int            // The row where the info box is
-	footerBarBottom  int            // The last row of the page
-	textAreaStart    int            // The row where the text area starts
-	textAreaEnd      int            // The row where the text area ends
-	height           int            // The height of the page
-	width            int            // The width of the page
-	maxContentRows   int            // The maximum number of rows available for content on the page.
-	helpText         []string       // The help text to be displayed to the user
-}
-
-// pageRow represents a row of content on a page.
-type pageRow struct {
-	ID          int    // The unique identifier of the page row.
-	RowContent  string // The content of the page row.
-	PageIndex   int    // The index of the page row.
-	Title       string // The title of the page row.
-	AlternateID string // The alternate identifier of the page row.
-	DateTime    string // The date and time of the page row.
-}
-
 func (p *Page) ViewPort() term.ViewPort {
 	return *p.viewPort
 }
@@ -90,7 +50,7 @@ func NewPage(t *term.ViewPort, title string) *Page {
 	if len(title) > config.TitleLength {
 		title = title[:config.TitleLength] + symb.Truncate.Symbol()
 	}
-	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt.Text(), actions: []*actn.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
+	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []*actn.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
 	p.SetTitle(title)
@@ -475,7 +435,7 @@ func (p *Page) Clear() {
 }
 
 func (p *Page) Display_Input(minLen, maxLen int) (nextAction string, selected pageRow) {
-	if p.prompt == "" {
+	if p.prompt.Text() == "" {
 		p.Error(errs.ErrNoPromptSpecified, lang.SetPrompt.Text())
 		os.Exit(1)
 	}
@@ -562,7 +522,7 @@ func (p *Page) Body() {
 func (p *Page) Footer() {
 	PrintAt(p.boxPartDraw(middle), term.StartColumn, p.footerBarTop)
 	PrintAt(p.boxPartDraw(99), term.StartColumn, p.footerBarInput)
-	PrintAt(p.FormatRowOutput(p.prompt), term.StartColumn, p.footerBarMessage)
+	PrintAt(p.FormatRowOutput(p.prompt.Text()), term.StartColumn, p.footerBarMessage)
 	PrintAt(p.boxPartDraw(last), term.StartColumn, p.footerBarBottom)
 }
 
@@ -606,10 +566,10 @@ func (p *Page) displayIt() (actn.Action, pageRow) {
 
 // The `Input` function is a method of the `Crt` struct. It is used to display a prompt for the user for input on the
 // terminal.
-func (p *Page) Input(msg string, options string) string {
-	mesg := msg + symb.PromptSymbol.Symbol() + symb.Space.Symbol()
+func (p *Page) Input(msg *lang.Text, options string) string {
+	mesg := msg.Text() + symb.PromptSymbol.Symbol() + symb.Space.Symbol()
 	if p.showOptions {
-		mesg = msg + symb.Space.Symbol() + strg.Italic(p.GetOptions(true))
+		mesg = msg.Text() + symb.Space.Symbol() + strg.Italic(p.GetOptions(true))
 		p.showOptions = false
 	}
 
@@ -726,9 +686,9 @@ func (p *Page) PagingInfo(page, ofPages int) {
 	PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
 }
 
-func (p *Page) InputHintInfo(msg string) {
-	lmsg := len(msg)
-	PrintAt(msg, p.width-lmsg-1, p.footerBarMessage)
+func (p *Page) InputHintInfo(msg *lang.Text) {
+	//lmsg := msg.Len()
+	PrintAt(msg.Text(), p.width-msg.Len()-1, p.footerBarMessage)
 }
 
 func (p *Page) minMaxHint(min, max int) string {
@@ -772,13 +732,18 @@ func (p *Page) GetRows() int {
 }
 
 // SetPrompt sets the prompt for the page
-func (p *Page) SetPrompt(prompt string) {
+func (p *Page) SetPrompt(prompt *lang.Text) {
 	p.prompt = prompt
+}
+
+// SetPrompt sets the prompt for the page
+func (p *Page) setPromptString(prompt string) {
+	p.prompt = lang.New(prompt)
 }
 
 // ResetPrompt resets the prompt to the default value
 func (p *Page) ResetPrompt() {
-	p.prompt = lang.TxtPagingPrompt.Text()
+	p.prompt = lang.TxtPagingPrompt
 }
 
 func (p *Page) Error(err error, msg ...string) {
@@ -794,23 +759,23 @@ func (p *Page) Error(err error, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 }
 
-func (p *Page) Info(info string, msg ...string) {
+func (p *Page) Info(info *lang.Text, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.formatMessage(info, p.viewPort.Styles.White(lang.Info.Text()), msg...)
+	pp := p.formatMessage(info.Text(), p.viewPort.Styles.White(lang.Info.Text()), msg...)
 	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
-func (p *Page) Hint(info string, msg ...string) {
+func (p *Page) Hint(info *lang.Text, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.formatMessage(info, p.viewPort.Styles.Cyan(lang.Hint.Text()), msg...)
+	pp := p.formatMessage(info.Text(), p.viewPort.Styles.Cyan(lang.Hint.Text()), msg...)
 	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
-func (p *Page) Warning(warning string, msg ...string) {
+func (p *Page) Warning(warning lang.Text, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
-	pp := p.formatMessage(warning, p.viewPort.Styles.Yellow(lang.Warning.Text()), msg...)
+	pp := p.formatMessage(warning.Text(), p.viewPort.Styles.Yellow(lang.Warning.Text()), msg...)
 	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 	beep.Beep(config.DefaultBeepFrequency, config.DefaultBeepDuration)
 	oldDelay := p.viewPort.Delay()
@@ -820,10 +785,10 @@ func (p *Page) Warning(warning string, msg ...string) {
 	p.ClearContent(p.footerBarInput)
 	p.ClearContent(p.footerBarMessage)
 }
-func (p *Page) Success(message string, msg ...string) {
+func (p *Page) Success(message *lang.Text, msg ...string) {
 	p.ClearContent(p.footerBarMessage)
 	p.PagingInfo(p.ActivePageIndex, p.noPages)
-	pp := p.formatMessage(message, bold(lang.Success.Text()), msg...)
+	pp := p.formatMessage(message.Text(), bold(lang.Success.Text()), msg...)
 	PrintAt(pp, term.InputColumn, p.footerBarMessage)
 }
 
@@ -896,13 +861,14 @@ func removeOption(s []string, r string) []string {
 	return s
 }
 
-func (p *Page) Display_Confirmation(msg string) (bool, error) {
+func (p *Page) Display_Confirmation(msg *lang.Text) (bool, error) {
 
-	if msg == "" {
-		msg = lang.Proceed.Text()
+	if msg.IsEmpty() {
+		msg = lang.Proceed
 	}
 	for {
-		p.prompt = msg
+		//	p.prompt = msg
+		p.SetPrompt(msg)
 		p.AddAction(actn.Yes)
 		p.AddAction(actn.No)
 		p.actions = append(p.actions, actn.Help)
@@ -975,7 +941,7 @@ func (p *Page) Help() {
 	}
 
 	for {
-		ok, err := help.Display_Confirmation(prompt.Text())
+		ok, err := help.Display_Confirmation(prompt)
 		if err != nil {
 			p.Error(err)
 		}

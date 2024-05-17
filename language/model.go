@@ -77,3 +77,7 @@ func (p *Paragraph) AddBlankRow() {
 func upcase(in string) string {
 	return strings.ToUpper(in)
 }
+
+func (t *Text) IsEmpty() bool {
+	return t.Len() == 0
+}
