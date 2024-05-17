@@ -1,6 +1,7 @@
 package crt
 
 import (
+	lang "github.com/mt1976/crt/language"
 	page "github.com/mt1976/crt/page"
 	actn "github.com/mt1976/crt/page/actions"
 	term "github.com/mt1976/crt/terminal"
@@ -8,7 +9,7 @@ import (
 
 func Sample() {
 	vp := term.NewWithSize(80, 25)
-	pg := page.NewPage(&vp, "Testing testing 123")
+	pg := page.NewPage(&vp, lang.New("Testing testing 123"))
 	pg.AddMenuOption(1, "Option 1 Description", "Option 1 Action", "Option")
 	pg.AddFieldValuePair("Field1", "Value1")
 	pg.AddFieldValuePair("Field2", "Value2")

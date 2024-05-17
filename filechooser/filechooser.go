@@ -78,7 +78,7 @@ func FileChooser(searchPath string, flags flagger) (string, bool, error) {
 
 	// Function to choose a file or directory using the file chooser
 	t := term.New()
-	p := page.NewPage(&t, lang.FileChooserTitle.Text())
+	p := page.NewPage(&t, lang.FileChooserTitle)
 
 	// Get a list of files in the specified directory
 	files, err := GetFolderContent(searchPath, flags)

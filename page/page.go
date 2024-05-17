@@ -45,15 +45,17 @@ func (p *Page) ViewPort() term.ViewPort {
 //}
 
 // The NewPage function creates a new page with a truncated title and initializes other properties.
-func NewPage(t *term.ViewPort, title string) *Page {
+func NewPage(t *term.ViewPort, pageTitle *lang.Text) *Page {
+	title := pageTitle.Text()
 	// truncate title to 25 characters
-	if len(title) > config.TitleLength {
+	if pageTitle.Len() > config.TitleLength {
 		title = title[:config.TitleLength] + symb.Truncate.Symbol()
 	}
 	p := Page{title: title, pageRows: []pageRow{}, noRows: 0, prompt: lang.TxtPagingPrompt, actions: []*actn.Action{}, actionLen: 0, noPages: 0, ActivePageIndex: 0, counter: 0}
 	p.viewPort = t
 	// Now for the more complex setup
-	p.SetTitle(title)
+	//	xx := lang.New(title)
+	p.SetTitle(lang.New(title))
 	p.AddAction(actn.Quit)    // Add Quit action
 	p.AddAction(actn.Forward) // Add Next action
 	p.AddAction(actn.Back)    // Add Previous action
@@ -81,8 +83,8 @@ func NewPage(t *term.ViewPort, title string) *Page {
 	return &p
 }
 
-func (p *Page) SetTitle(title string) {
-	p.title = p.viewPort.Styles.Bold(title)
+func (p *Page) SetTitle(title *lang.Text) {
+	p.title = p.viewPort.Styles.Bold(title.Text())
 }
 
 // The `Add` function is used to add a new row of data to a page. It takes four parameters:
@@ -923,7 +925,7 @@ func (p *Page) ResetSetHelp() {
 }
 
 func (p *Page) Help() {
-	help := NewPage(p.viewPort, lang.HelpPageTitle.Text())
+	help := NewPage(p.viewPort, lang.HelpPageTitle)
 	help.Clear()
 	help.Header(lang.HelpFor.Text() + p.title)
 	help.Body()
